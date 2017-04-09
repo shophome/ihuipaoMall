@@ -1,0 +1,108 @@
+@import 'mixin';
+
+.icon {
+    @include wh(1rem, 1rem);
+}
+
+.icon_home {
+    @include bis('../../images/home.png');
+}
+
+.icon_category {
+    @include bis('../../images/category.png');
+}
+
+.icon_cart {
+    @include bis('../../images/cart.png');
+}
+
+.icon_profile {
+    @include bis('../../images/profile.png');
+}
+
+.icon_search {
+    @include bis('../../images/search.png');
+}
+
+.icon_back {
+    @include bis('../../images/back.png');
+}
+
+.icon_choosed {
+    @include bis('../../images/choosed.png');
+}
+
+.icon_choose {
+    @include bis('../../images/choose.png');
+}
+
+.icon_order {
+    @include bis('../../images/order.png');
+}
+
+.icon_order_paying {
+    @include bis('../../images/order-paying.png');
+}
+
+.icon_order_delivering {
+    @include bis('../../images/order-delivering.png');
+}
+
+.icon_order_finished {
+    @include bis('../../images/order-finished.png');
+}
+
+.icon_address {
+    @include bis('../../images/icon-address-red.png');
+    // @include bis('../../images/icon-address-blue.png');
+}
+
+.icon_coupon {
+    @include bis('../../images/icon-coupon.png');
+}
+
+.icon_balance {
+    @include bis('../../images/icon-bal.png');
+}
+
+.icon_config {
+    @include bis('../../images/icon-conf.png');
+}
+
+// .icon_home {
+//     display: block;
+//     @include spr('../../images/nav_icon_spr.png');
+//     background-position-y: -7rem;
+//     &.active {
+//         background-position-y: -6rem;
+//     }
+// }
+
+// .icon_category {
+//     display: block;
+//     @include spr('../../images/nav_icon_spr.png');
+//     background-position-y: -1rem;
+//     &.active {
+//         background-position-y: 0rem;
+//     }
+// }
+
+// .icon_cart {
+//     display: block;
+//     @include spr('../../images/nav_icon_spr.png');
+//     background-position-y: -3rem;
+//     &.cart {
+//         background-position-y: -2rem;
+//     }
+// }
+
+// .icon_profile {
+//     display: block;
+//     @include spr('../../images/nav_icon_spr.png');
+//     background-position-y: -5rem;
+//     &.cart {
+//         background-position-y: -4rem;
+//     }
+// }
+
+

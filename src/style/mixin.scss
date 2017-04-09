@@ -1,0 +1,116 @@
+// $theme: #e91e63;
+// $theme: #00bcd4;
+// $theme: #2a282b;
+// $theme: #eeca2c;
+// $theme: #312349;
+$theme: #362057;
+$themeSecond: #3b3d71;
+$yellow: #FFC107;
+$blue: #3190e8;  
+$red: #e91e63;
+$bc: #e4e4e4;
+$fc:#fff;
+
+// 快速过渡
+@mixin transition($sec) {
+    transition: all ease $sec;
+}
+// 背景图片地址和大小
+@mixin bis($url) { 
+    background-image: url($url);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+// 雪碧背景图片地址和大小
+@mixin spr($url) { 
+    background-image: url($url);
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+}
+
+@mixin borderRadius($radius) {
+    -webkit-border-radius: $radius;
+    -moz-border-radius: $radius;
+    -ms-border-radius: $radius;
+    -o-border-radius: $radius;
+    border-radius: $radius;
+}
+//定位全屏
+@mixin allcover{
+    position:absolute;
+    top:0;
+    right:0;
+}
+
+//定位上下左右居中
+@mixin center {  
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+//定位上下居中
+@mixin ct {  
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+//定位上下居中
+@mixin cl {  
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+//宽高
+@mixin wh($width, $height){
+    width: $width;
+    height: $height;
+}
+
+//字体大小、行高、字体
+@mixin font($size, $line-height, $family: 'Microsoft YaHei') {  
+    font: #{$size}/#{$line-height} $family;
+}
+
+//字体大小，颜色
+@mixin sc($size, $color){
+    font-size: $size;
+    color: $color;
+}
+
+//flex 布局和 子元素 对其方式
+@mixin fj($type: space-between){
+    display: flex;
+    justify-content: $type;
+}
+//flex 布局和 子元素 水平等分居中对齐
+@mixin fmidhoz {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+//flex 布局和 子元素 水平等分两端对齐折行排列
+@mixin fbethoz {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-content: flex-start;
+    align-items: center;
+}
+//flex 布局和 子元素 靠左对齐折行排列
+@mixin flefthoz {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    align-items: center;
+}
+//flex 布局和 子元素 垂直等分居中对齐
+@mixin fmidver {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

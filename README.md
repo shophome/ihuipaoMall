@@ -1,6 +1,7 @@
 # ihuipaoMall
 
 > A Vue.js & webpack webApp
+> [**在线预览:**](http://t.cn/R6kFNhV)
 
 ## Build Setup
 

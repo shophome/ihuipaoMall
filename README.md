@@ -1,6 +1,6 @@
 # ihuipaoMall
 
-> A Vue.js & webpack project
+> A Vue.js & webpack webApp
 
 ## Build Setup
 

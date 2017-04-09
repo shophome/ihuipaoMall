@@ -74,7 +74,8 @@
         opacity: .3;
         transition: opacity .3s ease;
         p {
-            font-size: 0.4rem;
+            line-height: .8rem;
+            font-size: .4rem;
             color: #fff;
         }
         &.active {

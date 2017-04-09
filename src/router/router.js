@@ -8,9 +8,10 @@ import cart from '../pages/cart/cart'
 import profile from '../pages/profile/profile'
 import info from '../pages/profile/children/info'
 import address from '../pages/profile/children/address'
+import addressEdit from '../pages/profile/children/children/addressEdit'
 import add from '../pages/profile/children/children/children/add'
 import balance from '../pages/profile/children/balance'
-import benefit from '../pages/profile/children/benefit'
+import coupon from '../pages/profile/children/coupon'
 import order from '../pages/profile/children/order'
 import orderDetail from '../pages/profile/children/children/orderDetail'
 
@@ -73,8 +74,8 @@ export default [{
                     path: 'address',
                     component: address,     //编辑地址
                     children: [{
-                        path: 'add',
-                        component: add,
+                        path: 'edit',
+                        component: addressEdit,
                     }]
                 },
                 {
@@ -82,8 +83,8 @@ export default [{
                     component: balance,
                 },
                 {
-                    path: 'benefit',  //我的优惠页
-                    component: benefit,
+                    path: 'coupon',  //我的优惠页
+                    component: coupon,
                 },
                 {
                     path: 'order',  //订单列表页

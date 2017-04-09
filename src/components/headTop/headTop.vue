@@ -1,6 +1,7 @@
 <template>
     <header id='head_top'>
         <slot name='logo'></slot>
+        <slot name='title'></slot>
         <div v-if="back" class="icon icon_back head_goback" @click="$router.go(-1)"></div>
         <section v-if="search" class="head_search">
             <mu-text-field :fullWidth="true" hintText="搜索商品" icon="search"/>

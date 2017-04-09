@@ -38,7 +38,7 @@
                 <div class="icon icon_balance"></div>
                 <div class="content">我的余额</div>
             </router-link>
-            <router-link to="/profile/benefit" tag="div" class="collapse-right">
+            <router-link to="/profile/coupon" tag="div" class="collapse-right">
                 <div class="icon icon_coupon"></div>
                 <div class="content">我的返券</div>
             </router-link>

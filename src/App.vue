@@ -50,6 +50,8 @@ export default {
 }
 
 .wrap { 
+    height: 100%;
+    overflow: auto;
     background: #eee;
 }
 

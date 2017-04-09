@@ -120,8 +120,17 @@ img {
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: #ebebef;
+    overflow: auto;
+    background-color: #f8f8f8;
     z-index: 1070;
+}
+
+.head-title {
+    position: absolute;
+    color: #fff;
+    line-height: 1.95rem;
+    left: 14%;
+    font-size: .7rem;
 }
 
 //过度动画
@@ -147,6 +156,16 @@ img {
     transform: translate3d(2rem, 0, 0);
     opacity: 0;
 }
+
+.router-float-enter-active, .router-float-leave-active {
+    transition: all .2s;
+}
+.router-float-enter, .router-float-leave-active {
+    transform: translate3d(0, 30%, 0);
+    opacity: 0;
+}
+
+//效果样式
 
 .shadow {
     box-shadow: 0 3px 10px rgba(0,0,0,.156863), 0 3px 10px rgba(0,0,0,.227451);

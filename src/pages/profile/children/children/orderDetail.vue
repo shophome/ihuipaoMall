@@ -1,6 +1,8 @@
 <template>
     <div class="order-detail-page child-page paddingTop">
-        <head-top :back="true"></head-top>
+        <head-top :back="true">
+            <span slot='title' class="head-title">订单详情</span>
+        </head-top>
         <div class="info order-info">
             <div class="title">订单信息</div>
             <ul class="info-list">

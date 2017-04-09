@@ -1,6 +1,8 @@
 <template>
     <div class="order-page child-page paddingTop">
-        <head-top :back="true"></head-top>
+        <head-top :back="true">
+            <span slot='title' class="head-title">我的订单</span>
+        </head-top>
         <div class="order-container">
             <div class="tab">
                 <div class="tab-container">
@@ -291,7 +293,7 @@ export default {
     },
     methods: {
         handleTabChange (val) {
-            this.activeTab = val
+            this.activeTab = val;
         },
     },
     beforeRouteEnter (to, from, next) {
@@ -360,13 +362,14 @@ export default {
             }
         }
         .tab-content {
-            margin-top: 3rem;
+            margin-top: 2.6rem;
         }
         .order-list {
             .order-item {
-                border-top: 1px solid #e4e4e4;
-                border-bottom: 1px solid #e4e4e4;
-                margin-top: .6rem;
+                // border-top: 1px solid #e4e4e4;
+                // border-bottom: 1px solid #e4e4e4;
+                box-shadow: 0 3px 6px rgba(0,0,0,.056863), 0 3px 6px rgba(0,0,0,.027451);
+                margin-top: .4rem;
                 background-color: #fff;
                 .time {
                     padding: .1rem .4rem;

@@ -77,8 +77,19 @@ export default {
 
 .wrap {
     height: 100%;
-    background-color: $themeSecond;
-    background: linear-gradient($theme, $themeSecond);
+    // background-color: #fff;
+    background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
+    // background-color: $themeSecond;
+    // background: linear-gradient($theme, $themeSecond);
+    // background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    // background-image: linear-gradient(to top, #0250c5 0%, #d43f8d 100%);
+    // background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
+    // background-image: linear-gradient(to top, #f3e7e9 0%, #e3eeff 99%, #e3eeff 100%);
+    // background-image: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);537895
+    // background-image: linear-gradient(to top, #fff 0%, #537895 100%);
+    // background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+    // background-image: linear-gradient(to top, #30cfd0 0%, #330867 100%);
+    // background-image: linear-gradient(to top, #f43b47 0%, #453a94 100%);
     overflow-y: scroll;
 }
 

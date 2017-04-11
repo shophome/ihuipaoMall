@@ -10,7 +10,7 @@
                 <p>分类</p>
             </router-link>
             <router-link :to="{ path: '/cart' }" tag="li" active-class="active" class="nav_item">
-                <mu-badge :content="cartItemNum" circle secondary class="badge">
+                <mu-badge :content="cartItemNum" circle secondary class="badge" :class="{ hide : cartItemNum === '0'}">
                     <div class="icon icon_cart"></div>
                 </mu-badge>
                 <p>购物车</p>
@@ -56,11 +56,20 @@
 
 <style lang="scss">
 #foot_nav {
-    .mu-badge {
-        transform: translate(.5rem,.5rem);
-        width: .9rem;
-        height: .9rem;
-        font-size: .4rem;
+    .badge {
+        .mu-badge {
+            transform: translate(.2rem,.5rem);
+            width: .66rem;
+            height: .66rem;
+            line-height: .66rem;
+            font-size: .4rem;
+
+        }
+        &.hide {
+            .mu-badge {
+                display: none;
+            }
+        }
     }
 }
 </style>

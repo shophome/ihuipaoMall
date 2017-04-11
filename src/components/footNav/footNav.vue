@@ -1,43 +1,34 @@
 <template>
     <div id="foot_nav">
         <ul>
-            <router-link ref="li" v-for='(item, index) in navigation' :key="index" :to="{ path: item.path }" tag="li" active-class="active" class="nav_item">
-                <div :class="'icon icon_' + item.name"></div>
-                <p>{{ item.nameCN }}</p>
+            <router-link :to="{ path: '/home' }" tag="li" active-class="active" class="nav_item">
+                <div class="icon icon_home"></div>
+                <p>首页</p>
+            </router-link>
+            <router-link :to="{ path: '/category' }" tag="li" active-class="active" class="nav_item">
+                <div class="icon icon_category"></div>
+                <p>分类</p>
+            </router-link>
+            <router-link :to="{ path: '/cart' }" tag="li" active-class="active" class="nav_item">
+                <mu-badge :content="cartItemNum" circle secondary class="badge">
+                    <div class="icon icon_cart"></div>
+                </mu-badge>
+                <p>购物车</p>
+            </router-link>
+            <router-link :to="{ path: 'profile' }" tag="li" active-class="active" class="nav_item">
+                <div class="icon icon_profile"></div>
+                <p>我的</p>
             </router-link>
         </ul>
     </div>
 </template>
 
 <script>
-    // import {mapState, mapActions} from 'vuex'
+    import { mapState } from 'vuex'
     export default {
         name: 'footNav',
         data(){
             return{
-                navigation: [
-                {
-                    name: 'home',
-                    nameCN: '首页',
-                    path: '/home'
-                },
-                {
-                    name: 'category',
-                    nameCN: '分类',
-                    path: '/category'
-                },
-                {
-                    name: 'cart',
-                    nameCN: '购物车',
-                    path: '/cart'
-                },
-                {
-                    name: 'profile',
-                    nameCN: '我的',
-                    path: '/profile'
-                },
-                ]
-
             }
         },
         created() {
@@ -46,13 +37,33 @@
         },
         props: [''],
         computed: {
+            cartItemNum() {
+                var result = 0;
+                for(var i in this.cartList) {
+                    result ++;
+                }
+                return String(result);
+            },
+            ...mapState([
+               'cartList',
+            ])
         },
         methods: {
         },
-
     }
 
 </script>
+
+<style lang="scss">
+#foot_nav {
+    .mu-badge {
+        transform: translate(.5rem,.5rem);
+        width: .9rem;
+        height: .9rem;
+        font-size: .4rem;
+    }
+}
+</style>
 
 <style lang="scss" scoped>
 @import '../../style/icon';

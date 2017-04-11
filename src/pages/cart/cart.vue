@@ -1,6 +1,7 @@
 <template>
     <div class="wrap paddingTop paddingBottom">
         <div class="cart">
+            <div class="tip-nodata" v-show="itemNum === 0">您的购物车空空如也，赶紧去逛逛吧～</div>
             <ul class="cart-list">
                 <li v-for="(item, index) in cartList" :key="index" class="cart-item">
                     <div class="choose-box" @click="checkItem(item.id)">
@@ -19,9 +20,9 @@
                             <span>{{ item.price * item.num }}元</span>
                         </div>
                         <div class="input-num">
-                            <div class="sub">-</div>
+                            <div class="sub" @click="subCart(item.id)">-</div>
                             <div class="input">{{ item.num }}</div>
-                            <div class="add">+</div>
+                            <div class="add" @click="addCart(item.id)">+</div>
                         </div>
                         <div class="delete" @click="callReduce(item)"></div>
                     </div>
@@ -31,16 +32,16 @@
         <div class="bottom-submit">
             <div class="price">
                 <div class="up">
-                    <span>共{{ itemNum }}件</span>
+                    <span>共{{ selectedNum }}件</span>
                     <span>金额：</span>
                 </div>
-                <div class="down">1690.00<span>元</span></div>
+                <div class="down">{{ sumPrice }}<span>元</span></div>
             </div>
             <div class="btn btn-grey" @click="$router.push('/')">继续购物</div>
             <div class="btn btn-alert">去结算</div>
         </div>
         <mu-dialog :open="dialog" title="" @close="closeDialog">
-            确认要删除该地址吗？
+            确认要从购物车移除该商品吗？
             <mu-flat-button slot="actions" @click="closeDialog" primary label="取消"/>
             <mu-flat-button slot="actions" primary @click="reduceCart" label="确定"/>
         </mu-dialog>
@@ -63,17 +64,39 @@ export default {
             itemChecked: {},
         }
     },
-    computed: mapState([
-        'cartList',
-    ]),
+    computed: {
+        selectedNum() {
+            var result = 0;
+            for(var i in this.itemChecked) {
+                if(this.itemChecked[i].checked) {
+                    result ++ ;
+                }
+            }
+            return result;
+        },
+        sumPrice() {
+            var result = 0;
+            for(var i in this.itemChecked) {
+                if(this.itemChecked[i].checked) {
+                    result += this.itemChecked[i].price * this.cartList[i].num;
+                }
+            }
+            return result;
+        },
+        ...mapState([
+           'cartList',
+        ])
+    },
     created() {
         this.SHOW_HEADTOP(true);
         this.SHOW_HEADTOP_BACK(true);
         this.SHOW_HEADTOP_SEARCH(false);
         this.SHOW_FOOTNAV(false);
         this.itemChecked = Clone(this.cartList);
+        console.log(this.cartList);
         for(var i in this.cartList) {
             this.$set(this.itemChecked[i], 'checked', true);
+            this.itemNum ++ ;
         }
     },
     mounted() {
@@ -91,13 +114,24 @@ export default {
             const _self = this;
             _self.LOADING(true);
             setTimeout(function() {
-                console.log(_self.deleteId);
                 _self.REDUCE_CART(_self.deleteId);
-                _self.INIT_CART()
+                _self.INIT_CART();
+                _self.$delete(_self.itemChecked, _self.deleteId);
                 _self.LOADING(false);
                 _self.deleteId = '';
+                _self.itemNum --;
                 _self.closeDialog();
             }, 1000);
+        },
+        addCart(id) {
+            if(this.cartList[id].num < this.cartList[id].store_count) {
+                this.cartList[id].num ++ ;
+            }
+        },
+        subCart(id) {
+            if(this.cartList[id].num > 1) {
+                this.cartList[id].num -- ;
+            }
         },
         openDialog() {
 
@@ -120,6 +154,14 @@ export default {
 
 .cart {
     background-color: #fff;
+    .tip-nodata {
+        position: absolute;
+        width: 100%;
+        top: 40%;
+        text-align: center;
+        font-size: .8rem;
+        color: #9a9a9a;
+    }
     .cart-list {
         .cart-item {
             padding: .3rem .6rem .3rem 0;

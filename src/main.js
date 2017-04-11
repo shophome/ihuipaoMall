@@ -46,6 +46,15 @@ Vue.config.debug = true
 Vue.http.options.emulateJSON = true
 Vue.http.options.emulateHTTP = true
 
+Vue.http.interceptors.push((request, next)=> {
+    store.commit('LOADING', true);
+    next((response=> {
+        setTimeout(function() {
+            store.commit('LOADING', false);
+        }, 800);
+    }));
+});
+
 /* eslint-disable no-new */
 new Vue({
     el: '#app',

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import API from '../config/api'
+import getData from '../service/getData'
 
 function apiFactory(api, params) {
 	var customActions = {

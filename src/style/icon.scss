@@ -8,12 +8,20 @@
     @include bis('../../images/home.png');
 }
 
+.icon_home_black {
+    @include bis('../../images/home-black.png');
+}
+
 .icon_category {
     @include bis('../../images/category.png');
 }
 
 .icon_cart {
     @include bis('../../images/cart.png');
+}
+
+.icon_cart_black {
+    @include bis('../../images/cart-black.png');
 }
 
 .icon_profile {

@@ -4,8 +4,8 @@
         <section class="carousel">
             <div class="swiper-container">
                 <div class="swiper-wrapper">
-                    <div class="swiper-slide" v-for="(item, index) in carousel" :key="index">
-                        <img v-lazy="item.imgSrc">
+                    <div class="swiper-slide" v-for="(item, index) in goods.image_list" :key="index">
+                        <img :src="item">
                     </div>
                 </div>
                 <div class="swiper-pagination"></div>
@@ -13,15 +13,15 @@
         </section>
         <section class="title-view">
             <section class="title">
-                <p class="name">亚瑟士 Asics KINSEI 金星6 男子 慢跑鞋 跑步鞋 T644N-0701</p>
+                <p class="name">{{ goods.goods_name }}</p>
             </section>
             <section class="price">
-                <p class="price-count">1690</p>
-                <p class="price-origin">1690</p>
+                <p class="price-count">{{ goods.shop_price }}</p>
+                <p class="price-origin">{{ goods.shop_price }}</p>
             </section>
             <section class="spec-choose collapse-right" @click="showSpecMenu">
                 <p class="has">已选</p>
-                <p class="chooseInfo">红色/银色/黑色T644N-2493 41.5|270</p>
+                <p class="chooseInfo">{{ specSelectedStr }} x {{ num }}</p>
             </section>
         </section>
         <section class="tab-view">
@@ -64,71 +64,38 @@
                     <span class="right">查看全部留言</span>
                 </div>
             </div>
-            <div class="detail" ref="detail">
-                <div v-for="(item, index) in detaiImg" :key=index>
-                    <img v-lazy="item.imgSrc">
-                </div>
-            </div>
+            <div id="detail" class="detail" ref="detail"></div>
         </section>
         <section ref="specMenu" v-show="specMenuIsShow" class="spec-menu" @click="closeSpecMenu">
             <div class="panel" :class="{enter : panelEnter}">
                 <div ref="close" class="close" @click="closeSpecMenu"></div>
                 <div class="pro-info">
                     <div class="pro-thumbnail">
-                        <img src="http://stor.ihuipao.cn/jpg/2016/10/19/82407cc72b578bb6.jpg">
+                        <img :src="specSelectedImg">
                     </div>
                     <div class="pro-desc">
-                        <p class="price">1690</p>
-                        <p class="desc">红色/银色/黑色T644N-2493 41.5|270</p>
+                        <p class="price">{{ sumPrice }}</p>
+                        <p class="desc">{{ specSelectedStr }}</p>
                     </div>
                 </div>
                 <div class="spec-container">
-                    <div class="spec-group">
-                        <div class="spec-title">尺码</div>
+                    <div class="spec-group" v-for="(spec, index) in goods.filter_spec_list" :key="index">
+                        <div class="spec-title">{{ spec.name }}</div>
                         <div class="spec-row">
-                            <div class="spec-item selected">
-                                <p>41.5|270</p>
-                            </div>
-                            <div class="spec-item">
-                                <p>42|275</p>
-                            </div>
-                            <div class="spec-item">
-                                <p>42.5|280</p>
-                            </div>
-                            <div class="spec-item">
-                                <p>43.5|275</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="spec-group">
-                        <div class="spec-title">颜色</div>
-                        <div class="spec-row">
-                            <div class="spec-item selected">
-                                <div class="spec-img">
-                                    <img src="http://stor.ihuipao.cn/jpg/2016/10/19/82407cc72b578bb6.jpg">
+                            <div v-for="(item, idx) in spec.items" :key="idx" class="spec-item" :class="{ selected : (idx === specIdxSelected[index]) }" @click="selectSpec(index, idx)">
+                                <div v-if="item.src" class="spec-img">
+                                    <img :src="item.src">
                                 </div>
-                                <p>红色/银色/黑色T644N-2493</p>
-                            </div>
-                            <div class="spec-item">
-                                <div class="spec-img">
-                                    <img src="http://stor.ihuipao.cn/jpg/2016/10/19/82407cc72b578bb6.jpg">
-                                </div>
-                                <p>红色/银色/亮橘色T642N-2393</p>
-                            </div>
-                            <div class="spec-item">
-                                <div class="spec-img">
-                                    <img src="http://stor.ihuipao.cn/jpg/2016/10/19/82407cc72b578bb6.jpg">
-                                </div>
-                                <p>金黄/白/亮蓝 T644N-0701</p>
+                                <p>{{ item.value }}</p>
                             </div>
                         </div>
                     </div>
                     <div class="spec-num">
                         <p class="spec-title">购买数量</p>
                         <div class="input-num">
-                            <div class="sub">-</div>
-                            <div class="input">1</div>
-                            <div class="add">+</div>
+                            <div class="sub" @click="subNum">-</div>
+                            <div class="input">{{ num }}</div>
+                            <div class="add" @click="addNum">+</div>
                         </div>
                     </div>
                 </div>
@@ -136,14 +103,14 @@
         </section>
         <div class="foot-buy">
             <div class="home" @click="$router.push({ path: 'home' })">
-                <div class="icon icon_home"></div>
+                <div class="icon icon_home_black"></div>
                 <p>首页</p>
             </div>
             <div class="cart" @click="$router.push({ path: 'cart' })">
-                <div class="icon icon_cart"></div>
+                <div class="icon icon_cart_black"></div>
                 <p>购物车</p>
             </div>
-            <div class="addCart">加入购物车</div>
+            <div class="addCart" @click="addToCart">加入购物车</div>
             <div class="buyNow">立即购买</div>
         </div>
     </div>
@@ -151,6 +118,7 @@
 
 <script>
 import { mapMutations } from 'vuex'
+import { getProductData } from 'src/service/getData'
 import 'src/plugins/swiper.min.js'
 import 'src/style/swiper.min.css'
 import BScroll from 'better-scroll'
@@ -158,89 +126,74 @@ import BScroll from 'better-scroll'
 export default {
     data() {
         return {
+            id: '',
             tabTop: 0,
             tabActive: -1,
             specMenuIsShow: false,
             panelEnter: false,
-            carousel: [
-                {
-                    imgSrc: 'http://stor.ihuipao.cn/jpg/2016/10/19/82407cc72b578bb6.jpg'
-                },
-                {
-                    imgSrc: 'http://stor.ihuipao.cn/jpg/2016/10/19/8a4ae419fec9af1e.jpg'
-                },
-                {
-                    imgSrc: 'http://stor.ihuipao.cn/jpg/2016/10/19/cc8827d9ad836b40.jpg'
-                },
-            ],
-            detaiImg: [
-                {
-                    imgSrc: "http://stor.ihuipao.cn/@/media/2016/11/19/582ff15c04d5e.jpeg?imageView2/2/w/800/q/100"
-                },
-                {
-                    imgSrc: "http://stor.ihuipao.cn/@/media/2016/11/09/58228d4cb2b8f.jpeg?imageView2/2/w/800/q/100"
-                },
-                {
-                    imgSrc: "http://stor.ihuipao.cn/@/media/2016/11/19/5830054ac4288.jpeg?imageView2/2/w/800/q/100"
-                },
-                {
-                    imgSrc: "http://stor.ihuipao.cn/@/media/2016/11/19/5830054b13fd5.jpeg?imageView2/2/w/800/q/100"
-                },
-                {
-                    imgSrc: "http://stor.ihuipao.cn/@/media/2016/11/19/5830054ae699e.jpeg?imageView2/2/w/800/q/100"
-                },
-                {
-                    imgSrc: "http://stor.ihuipao.cn/@/media/2016/11/18/582e641db3da7.jpeg?imageView2/2/w/800/q/100"
-                },
-                {
-                    imgSrc: "http://stor.ihuipao.cn/@/media/2016/11/19/58300568202cf.jpeg?imageView2/2/w/800/q/100"
-                },
-                {
-                    imgSrc: "http://stor.ihuipao.cn/@/media/2016/11/19/5830056821d43.jpeg?imageView2/2/w/800/q/100"
-                },
-                {
-                    imgSrc: "http://stor.ihuipao.cn/@/media/2016/11/19/5830056842ab5.jpeg?imageView2/2/w/800/q/100"
-                },
-                {
-                    imgSrc: "http://stor.ihuipao.cn/@/media/2016/11/19/58300560c7c59.jpeg?imageView2/2/w/800/q/100"
-                },
-                {
-                    imgSrc: "http://stor.ihuipao.cn/@/media/2016/11/19/58300560c8af4.jpeg?imageView2/2/w/800/q/100"
-                },
-                {
-                    imgSrc: "http://stor.ihuipao.cn/@/media/2016/11/19/58300560d54e6.jpeg?imageView2/2/w/800/q/100"
-                },
-                {
-                    imgSrc: "http://stor.ihuipao.cn/@/media/2016/11/19/583005614ed39.jpeg?imageView2/2/w/800/q/100"
-                },
-                {
-                    imgSrc: "http://stor.ihuipao.cn/@/media/2016/11/19/5830056181a40.jpeg?imageView2/2/w/800/q/100"
-                },
-                {
-                    imgSrc: "http://stor.ihuipao.cn/@/media/2016/11/19/583005618f712.jpeg?imageView2/2/w/800/q/100"
-                },
-                {
-                    imgSrc: "http://stor.ihuipao.cn/@/media/2016/11/19/582fd25eba026.jpeg?imageView2/2/w/800/q/100"
-                },
-                {
-                    imgSrc: "http://stor.ihuipao.cn/@/media/2016/11/19/582ff181c4b23.jpeg?imageView2/2/w/800/q/100"
-                },
-            ]
+            goods: {},
+            specIdxSelected: [],
+            specSelected: [],
+            specSelectedStr: '',
+            specSelectedImg: '',
+            specSelectedId: '',
+            num: 1,
+            sumPrice: 0,
         }
     },
+    beforeRouteEnter (to, from, next) {
+        next(vm => {
+            vm.id = vm.$route.query.id;
+            getProductData(vm.id).then(res => {
+                console.log(res);
+                vm.goods = res.goods;
+                vm.specSelectedImg = res.goods.image_list[0];
+                vm.sumPrice = res.goods.price;
+                for(var i in res.goods.filter_spec_list) {
+                    var temp = {
+                        name: res.goods.filter_spec_list[i].name,
+                        item_id: res.goods.filter_spec_list[i].items[0].item_id,
+                        value: res.goods.filter_spec_list[i].items[0].value,
+                        src: res.goods.filter_spec_list[i].items[0].src,
+                    }
+                    vm.specIdxSelected.push(0);
+                    vm.specSelected.push(temp);
+                }
+                setTimeout(function() {
+                    vm.initSwiper();
+                    vm.$refs.detail.innerHTML = vm.goods.goods_content;
+                }, 300);
+            });
+        })
+    },
     created() {
-        this.SHOW_HEADTOP(false);
-        this.SHOW_FOOTNAV(false);
+        const _self = this;
+        _self.SHOW_HEADTOP(false);
+        _self.SHOW_FOOTNAV(false);
     },
     mounted() {
-        this.$refs.tabContainer.style.height = this.$refs.tab.clientHeight + 'px';
-        this.tabStick();
+        const _self = this;
+        setTimeout(function() {
+            _self.$refs.tabContainer.style.height = _self.$refs.tab.clientHeight + 'px';
+            _self.tabStick();
+
+        },300);
+    },
+    watch: {
+        specIdxSelected: function(value) {
+            this.updateSpecSelectedStr(value);
+            this.updateSpecSelectedImg(value);
+            this.updateSpecSelectedId(value);
+        },
+        // num: function(value) {
+        //     this.sumPrice = this.goods.price * value;
+        // }
     },
     methods: {
-        ...mapMutations(['SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV']),
+        ...mapMutations(['LOADING','SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV','ADD_CART']),
         initSwiper() {
             new Swiper('.swiper-container', {
-                loop: true,
+                // loop: true,
                 autoplay: 5000,
                 pagination: '.swiper-pagination',
             });
@@ -281,12 +234,71 @@ export default {
             }, 100);
         },
         closeSpecMenu(e) {
-            if(e.target === this.$refs.specMenu || e.target === this.$refs.close) {
-                this.specMenuIsShow = false;
-                this.panelEnter = false;
+            const _self = this;
+            console.log(e);
+            if(!e || e.target === _self.$refs.specMenu || e.target === _self.$refs.close) {
+                _self.panelEnter = false;
+                setTimeout(function() {
+                    _self.specMenuIsShow = false;
+                }, 300);
             } else {
                 return false;
             }
+        },
+        selectSpec(index, idx) {
+            this.specSelected[index] = this.goods.filter_spec_list[index].items[idx];
+            this.$set(this.specIdxSelected, index, idx);  //调用Vue set方法，检测数组变动才能更新视图
+        },
+        updateSpecSelectedStr(value) {   //更新已选择属性显示文本
+            this.specSelectedStr = '';
+            for(var i in value) {
+                this.specSelectedStr += this.specSelected[i].value + ' ';
+            }
+        },
+        updateSpecSelectedImg(value) {   //更新预览图
+            for(var i in value) {
+                if(this.specSelected[i].src) {
+                    this.specSelectedImg = this.specSelected[i].src;
+                }
+            }
+        },
+        updateSpecSelectedId(value) {   //更新已选择属性id
+            this.specSelectedId = '';
+            for(var i in value) {
+                this.specSelectedId += this.specSelected[i].item_id + '-';
+            }
+            var a = this.specSelectedId;
+            this.specSelectedId = a.substring(0, a.length - 1);
+        },
+        addNum() {
+            if(this.num < Number(this.goods.store_count)) {
+                this.num ++;
+            }
+        },
+        subNum() {
+            if(this.num > 1) {
+                this.num --;
+            }
+        },
+        addToCart() {
+            const _self = this;
+            _self.LOADING(true);
+            setTimeout(function() {
+                _self.ADD_CART({
+                    id: _self.goods.goods_id + '-' + _self.specSelectedId,
+                    goods_id: _self.goods.goods_id,
+                    spec_id: _self.specSelectedId,
+                    goods_name: _self.goods.goods_name,
+                    store_count: _self.goods.store_count,
+                    price: _self.goods.price,
+                    img: _self.specSelectedImg,
+                    spec: _self.specSelectedStr,
+                    num: _self.num
+                });
+                _self.LOADING(false);
+                _self.closeSpecMenu();
+            }, 1000);
+
         }
     }
 }
@@ -615,6 +627,7 @@ export default {
         @include fmidver;
         align-content: space-around;
         p {
+            color: #8a8a8a;
             font-size: .5rem;
         }
     }

@@ -1,35 +1,48 @@
 <template>
-    <div class="app">
+    <div id="app" class="app" ref="app">
         <transition name="router-fade" mode="out-in">
-            <head-top v-if="showHeadTop" :search="showHeadTopSearch" :back="showHeadTopBack"></head-top>
+            <head-top v-if="showHeadTop" :search="showHeadTopSearch" :back="showHeadTopBack" :showLogin="showHeadTopLogin"></head-top>
         </transition>
         <transition name="router-fade" mode="out-in">
             <router-view></router-view>
         </transition>
         <foot-nav v-if="showFootNav"></foot-nav>
+        <loading v-if="loading"></loading>
     </div>
 </template>
 
 <script>
 import headTop from 'components/headTop/headTop'
 import footNav from 'components/footNav/footNav'
-import { mapState } from 'vuex'
+import loading from 'components/loading/loading'
+import {mapState, mapMutations} from 'vuex'
 
 export default {
     name: 'app',
     components: {
         'head-top': headTop,
         'foot-nav': footNav,
+        'loading': loading,
     },
     computed: mapState([
+        'loading',
         'showHeadTop',
         'showHeadTopBack',
+        'showHeadTopLogin',
         'showHeadTopSearch',
-        'showFootNav'
+        'showFootNav',
     ]),
     data() {
         return {
+            isShowLoading: true,
         }
+    },
+    created() {
+        this.INIT_CART();
+        // this.CLEAR_CART();
+    },
+    methods: {
+        ...mapMutations(['INIT_CART','CLEAR_CART']),
     }
 }
 
@@ -54,7 +67,5 @@ export default {
     overflow: auto;
     background: #eee;
 }
-
-
 
 </style>

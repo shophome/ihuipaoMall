@@ -2,100 +2,28 @@
     <div class="wrap paddingTop paddingBottom">
         <div class="cart">
             <ul class="cart-list">
-                <li class="cart-item">
-                    <div class="choose-box">
-                        <div class="icon icon_choosed"></div>
+                <li v-for="(item, index) in cartList" :key="index" class="cart-item">
+                    <div class="choose-box" @click="checkItem(item.id)">
+                        <div class="icon icon_choosed" :class="{ icon_choose : !itemChecked[item.id].checked }"></div>
                     </div>
                     <div class="pro-img">
-                        <img src="http://stor.ihuipao.cn/jpg/2016/10/19/82407cc72b578bb6.jpg">
+                        <img :src="item.img">
                     </div>
                     <div class="pro-info">
-                        <p class="name">亚瑟士 Asics KINSEI 金星6 男子 慢跑鞋 跑步鞋 T644N-0701</p>
-                        <p class="spec">红色/银色/黑色T644N-2493 41.5|270</p>
+                        <p class="name" @click="$router.push('/product?id='+ item.goods_id +'')">{{ item.goods_name }}</p>
+                        <p class="spec">{{ item.spec }}</p>
                         <div class="price">
                             <span>售价：</span>
-                            <span>1690元</span>
+                            <span>{{ item.price }}元</span>
                             <span>合计：</span>
-                            <span>1690元</span>
+                            <span>{{ item.price * item.num }}元</span>
                         </div>
                         <div class="input-num">
                             <div class="sub">-</div>
-                            <div class="input">1</div>
+                            <div class="input">{{ item.num }}</div>
                             <div class="add">+</div>
                         </div>
-                        <div class="delete"></div>
-                    </div>
-                </li>
-                <li class="cart-item">
-                    <div class="choose-box">
-                        <div class="icon icon_choosed"></div>
-                    </div>
-                    <div class="pro-img">
-                        <img src="http://stor.ihuipao.cn/jpg/2016/10/19/82407cc72b578bb6.jpg">
-                    </div>
-                    <div class="pro-info">
-                        <p class="name">亚瑟士 Asics KINSEI 金星6 男子 慢跑鞋 跑步鞋 T644N-0701</p>
-                        <p class="spec">红色/银色/黑色T644N-2493 41.5|270</p>
-                        <div class="price">
-                            <span>售价：</span>
-                            <span>1690元</span>
-                            <span>合计：</span>
-                            <span>1690元</span>
-                        </div>
-                        <div class="input-num">
-                            <div class="sub">-</div>
-                            <div class="input">1</div>
-                            <div class="add">+</div>
-                        </div>
-                        <div class="delete"></div>
-                    </div>
-                </li>
-                <li class="cart-item">
-                    <div class="choose-box">
-                        <div class="icon icon_choosed"></div>
-                    </div>
-                    <div class="pro-img">
-                        <img src="http://stor.ihuipao.cn/jpg/2016/10/19/82407cc72b578bb6.jpg">
-                    </div>
-                    <div class="pro-info">
-                        <p class="name">亚瑟士 Asics KINSEI 金星6 男子 慢跑鞋 跑步鞋 T644N-0701</p>
-                        <p class="spec">红色/银色/黑色T644N-2493 41.5|270</p>
-                        <div class="price">
-                            <span>售价：</span>
-                            <span>1690元</span>
-                            <span>合计：</span>
-                            <span>1690元</span>
-                        </div>
-                        <div class="input-num">
-                            <div class="sub">-</div>
-                            <div class="input">1</div>
-                            <div class="add">+</div>
-                        </div>
-                        <div class="delete"></div>
-                    </div>
-                </li>
-                <li class="cart-item">
-                    <div class="choose-box">
-                        <div class="icon icon_choose"></div>
-                    </div>
-                    <div class="pro-img">
-                        <img src="http://stor.ihuipao.cn/jpg/2016/10/19/82407cc72b578bb6.jpg">
-                    </div>
-                    <div class="pro-info">
-                        <p class="name">亚瑟士 Asics KINSEI 金星6 男子 慢跑鞋 跑步鞋 T644N-0701</p>
-                        <p class="spec">红色/银色/黑色T644N-2493 41.5|270</p>
-                        <div class="price">
-                            <span>售价：</span>
-                            <span>1690元</span>
-                            <span>合计：</span>
-                            <span>1690元</span>
-                        </div>
-                        <div class="input-num">
-                            <div class="sub">-</div>
-                            <div class="input">1</div>
-                            <div class="add">+</div>
-                        </div>
-                        <div class="delete"></div>
+                        <div class="delete" @click="callReduce(item)"></div>
                     </div>
                 </li>
             </ul>
@@ -103,43 +31,92 @@
         <div class="bottom-submit">
             <div class="price">
                 <div class="up">
-                    <span>共1件</span>
+                    <span>共{{ itemNum }}件</span>
                     <span>金额：</span>
                 </div>
                 <div class="down">1690.00<span>元</span></div>
             </div>
-            <div class="btn btn-grey">继续购物</div>
+            <div class="btn btn-grey" @click="$router.push('/')">继续购物</div>
             <div class="btn btn-alert">去结算</div>
         </div>
+        <mu-dialog :open="dialog" title="" @close="closeDialog">
+            确认要删除该地址吗？
+            <mu-flat-button slot="actions" @click="closeDialog" primary label="取消"/>
+            <mu-flat-button slot="actions" primary @click="reduceCart" label="确定"/>
+        </mu-dialog>
     </div>
 </template>
 
 <script>
 import { mapMutations } from 'vuex'
+import { mapState } from 'vuex'
+import { Clone } from '../../config/mUtils'
 import BScroll from 'better-scroll'
 
 export default {
     name: 'cart',
     data() {
         return {
+            itemNum: 0,
+            dialog: false,
+            deleteId: '',
+            itemChecked: {},
         }
     },
+    computed: mapState([
+        'cartList',
+    ]),
     created() {
         this.SHOW_HEADTOP(true);
         this.SHOW_HEADTOP_BACK(true);
         this.SHOW_HEADTOP_SEARCH(false);
         this.SHOW_FOOTNAV(false);
+        this.itemChecked = Clone(this.cartList);
+        for(var i in this.cartList) {
+            this.$set(this.itemChecked[i], 'checked', true);
+        }
     },
     mounted() {
     },
     methods: {
-        ...mapMutations(['SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV']),
+        ...mapMutations(['LOADING','SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV','REDUCE_CART','INIT_CART']),
+        checkItem(id) {
+            this.$set(this.itemChecked[id], 'checked', !this.itemChecked[id].checked);
+        },
+        callReduce(value) {
+            this.deleteId = value.id;
+            this.openDialog();
+        },
+        reduceCart() {
+            const _self = this;
+            _self.LOADING(true);
+            setTimeout(function() {
+                console.log(_self.deleteId);
+                _self.REDUCE_CART(_self.deleteId);
+                _self.INIT_CART()
+                _self.LOADING(false);
+                _self.deleteId = '';
+                _self.closeDialog();
+            }, 1000);
+        },
+        openDialog() {
+
+            this.dialog = true;
+        },
+        closeDialog() {
+            this.dialog = false;
+        },
+        
     }
 }
 </script>
 
 <style lang="scss" scoped>
 @import '../../style/icon';
+
+.wrap {
+    background-color: #f5f5f5;
+}
 
 .cart {
     background-color: #fff;
@@ -177,6 +154,8 @@ export default {
                 .name {
                     font-size: .6rem;
                     line-height: 1rem;
+                    height: 2rem;
+                    overflow: hidden;
                 }
                 .spec {
                     font-size: .5rem;

@@ -2,29 +2,53 @@
     <div class="order-detail-page child-page paddingTop">
         <head-top :back="true">
             <span slot='title' class="head-title">修改地址</span>
-            <span slot='save' class="head-title">保存</span>
+            <span slot='save' class="head-save">保存</span>
         </head-top>
         <div class="form-container">
-            <div class="form-group">
+            <div class="form-group name">
                 <label>收货人</label>
-                <input type="text">
+                <input type="text" value="邵一波">
             </div>
-            <div class="form-group">
+            <div class="form-group mobile">
                 <label>联系电话</label>
-                <input type="text">
+                <input type="text" value="13771084707">
             </div>
-            <div class="form-group">
+            <div class="form-group collapse-right area" @click="openPicker">
                 <label>所在地区</label>
-                <mu-picker :slots="addressSlots" :visible-item-count="5" @change="addressChange" :values="address"/>
-                <p>
-                    您选择的城市是： {{addressProvince}} {{addressCity}}
-                </p>
+                <span>{{addressProvince}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{addressCity}}</span>
             </div>
-            <div class="form-group">
-                <label>收货人</label>
-                <input type="text">
+            <div class="form-group address">
+                <input type="text" placeholder="详细地址" value="江苏无锡滨湖区东南大学立业楼D区402">
             </div>
         </div>
+        <div class="delete" @click="deleteAddress">删除地址</div>
+        <mu-dialog :open="dialog" title="" @close="closeDialog">
+            确认要删除该地址吗？
+            <mu-flat-button slot="actions" @click="closeDialog" primary label="取消"/>
+            <mu-flat-button slot="actions" primary @click="closeDialog" label="确定"/>
+        </mu-dialog>
+        <mu-popup position="bottom" popupClass="picker" :open="pickerIsShow" @close="closePicker">
+            <div class="picker-head">
+                <span class="cancle" @click="pickerIsShow = false">取消</span>
+                <span class="confirm" @click="pickerConfirm">确认</span>
+            </div>
+            <mu-content-block>
+                <mu-picker :slots="addressSlots" :visible-item-count="5" @change="pickerChange" :values="address"/>
+            </mu-content-block>
+        </mu-popup>
+
+        <!-- <transition name="router-float" mode="out-in">
+            <div v-show="pickerIsShow" class="area-picker">
+                <div>
+                    <div class="picker-head">
+                        <span class="cancle" @click="pickerIsShow = false">取消</span>
+                        <span class="confirm" @click="pickerConfirm">确认</span>
+                    </div>
+                    <mu-picker :slots="addressSlots" :visible-item-count="5" @change="pickerChange" :values="address"/>
+                </div>
+                <div class="shade"></div>
+            </div>
+        </transition> -->
     </div>
 </template>
     
@@ -76,6 +100,8 @@ export default {
     data() {
         return {
             key: '',
+            dialog: false,
+            pickerIsShow: false,
             addressSlots: [
             {
                 width: '100%',
@@ -87,9 +113,14 @@ export default {
                 values: ['北京']
             }
             ],
+            picker1: '',
+            picker2: '',
             address: ['北京', '北京'],
             addressProvince: '北京',
-            addressCity: '北京'
+            addressCity: '北京',
+              topPopup: false,
+              leftPopup: false,
+              rightPopup: false
         }
     },
     created() {
@@ -98,6 +129,37 @@ export default {
         handleTabChange (val) {
             this.activeTab = val
         },
+        pickerChange (value, index) {
+            switch (index) {
+                case 0:
+                    this.picker1 = value
+                    const arr = address[value]
+                    this.addressSlots[1].values = arr
+                    this.picker2 = arr[0]
+                    break
+                case 1:
+                    this.picker2 = value
+                    break
+            }
+            this.address = [this.picker1, this.picker2]
+        },
+        pickerConfirm() {
+            this.addressProvince = this.address[0];
+            this.addressCity = this.address[1];
+            this.pickerIsShow = false;
+        },
+        deleteAddress() {
+            this.dialog = true;
+        },
+        closeDialog() {
+            this.dialog = false;
+        },
+        openPicker () {
+            this.pickerIsShow = true;
+        },
+        closePicker (position) {
+            this.pickerIsShow = false;
+        }
     },
     beforeRouteEnter (to, from, next) {
         next(vm => {
@@ -107,9 +169,95 @@ export default {
 }
 </script>
 
+<style lang="scss">
+@import '../../../../style/mixin';
+.picker {
+    width: 100%;
+    background-color: #f9f9f9 !important;
+    .picker-head {
+        @include fbethoz;
+        background-color: $theme;
+        span {
+            color: #fff;
+            display: inline-block;
+            width: 2rem;
+            line-height: 1.4rem;
+            text-align: center;
+        }
+    }
+    .mu-content-block {
+        .mu-picker {
+            background-color: #f9f9f9;
+        }
+    }
+}
+</style>
 <style lang="scss" scoped>
 @import '../../../../style/mixin';
 
+.collapse-right {
+    position: relative;
 
+    &:after {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 50%;
+        right: .6rem;
+        transform: translate(0, -50%);
+        width: .5rem;
+        height: .5rem;
+        @include bis('../../../../images/collapse_right.png');
+    }
+}
+
+.form-container {
+    background-color: #fff;
+    .form-group {
+        padding: 0 .6rem;
+        border-bottom: 1px solid #eee;
+        min-height: 2rem;
+        label {
+            display: inline-block;
+            width: 20%;
+            line-height: 2rem;
+            text-align: left;
+        }
+        input {
+            line-height: 2rem;
+        }
+        &.address {
+            input {
+                width: 100%;
+            }
+        }
+    }
+}
+
+.delete {
+    background-color: #fff;
+    height: 2rem;
+    line-height: 2rem;
+    padding: 0 .6rem;
+    margin-top: .6rem;
+    text-align: left;
+    color: $red;
+}
+
+.area-picker {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    box-shadow: 0 3px 10px rgba(0,0,0,.156863), 0 3px 10px rgba(0,0,0,.227451);
+    .picker-head {
+        @include fbethoz;
+        span {
+            display: inline-block;
+            width: 2rem;
+            line-height: 1.4rem;
+            text-align: center;
+        }
+    }
+}
 
 </style>

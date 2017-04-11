@@ -2,11 +2,12 @@
     <header id='head_top'>
         <slot name='logo'></slot>
         <slot name='title'></slot>
+        <slot name='save'></slot>
         <div v-if="back" class="icon icon_back head_goback" @click="$router.go(-1)"></div>
         <section v-if="search" class="head_search">
-            <mu-text-field :fullWidth="true" hintText="搜索商品" icon="search"/>
+            <mu-text-field :fullWidth="true" hintText="搜索商品"/>
         </section>
-        <section class="head_login">
+        <section v-if="showLogin" class="head_login">
             <a href="http://passport.ihuipao.cn/site/login" class="login_span">登录</a>
         </section>
         <!-- <router-link to="/profile" class="head_login" tag="section">
@@ -30,7 +31,7 @@
             // this.getUserInfo();
 
         },
-        props: ['search', 'back'],
+        props: ['search', 'back', 'showLogin'],
         computed: {
             // ...mapState([
             //     'userInfo'

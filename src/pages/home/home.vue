@@ -26,6 +26,7 @@ import { mapMutations } from 'vuex'
 import 'src/plugins/swiper.min.js'
 import 'src/style/swiper.min.css'
 import productCard from '../../components/productCard/productCard'
+import { getHomeData } from 'src/service/getData'
 
 export default {
     name: 'home',
@@ -43,13 +44,18 @@ export default {
         this.SHOW_HEADTOP_BACK(false);
         this.SHOW_HEADTOP_SEARCH(true);
         this.SHOW_FOOTNAV(true);
-        this.$store.dispatch('getCarousel').then((response) => {
-            this.carousel = response.array;
+        getHomeData({a:1}).then(res => {
+            console.log(res);
+            this.carousel = res.carousel;
+            this.newProduct = res.newProduct;
         });
-        this.$store.dispatch('getNewProduct').then((response) => {
-            console.log(response);
-            this.newProduct = response.array;
-        });
+        // this.$store.dispatch('getCarousel').then((response) => {
+        //     this.carousel = response.array;
+        // });
+        // this.$store.dispatch('getNewProduct').then((response) => {
+        //     console.log(response);
+        //     this.newProduct = response.array;
+        // });
     },
     mounted() {
         setTimeout(function() {

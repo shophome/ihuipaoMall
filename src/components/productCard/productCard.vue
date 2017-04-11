@@ -4,7 +4,7 @@
             :to="{ path: '/product?id=' + property.id}" 
             tag="a"
             target="_blank">
-            <img v-lazy="property.thumbnailSrc" />
+            <img v-lazy="property.imgSrc" />
             <div class="info">
                 <p class="desc">
                     {{ property.desc }}
@@ -68,8 +68,9 @@ img {
             .price-origin {
                 position: relative;
                 margin: 0;
-                font-size: .4rem;
+                font-size: .6rem;
                 color: #9e9e9e;
+                padding-top: .1rem;
                 &:before {
                     content: '';
                     display: block;

@@ -1,11 +1,11 @@
 <template>
     <div id="root">
         <head-top v-show="showHeadTop" :search="showHeadTopSearch" :back="showHeadTopBack" :showLogin="showHeadTopLogin"></head-top>
-        <transition name="router-fade" mode="out-in">
-            <router-view></router-view>
-        </transition>
+        <router-view></router-view>
         <foot-nav v-show="showFootNav"></foot-nav>
-        <loading v-show="loading"></loading>
+        <transition name="fade">
+            <loading v-if="loading"></loading>
+        </transition>
     </div>
 </template>
 
@@ -33,7 +33,6 @@ export default {
     ]),
     data() {
         return {
-            isShowLoading: true,
         }
     },
     created() {

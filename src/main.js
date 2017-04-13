@@ -12,11 +12,7 @@ Vue.use(VueRouter)
 const router = new VueRouter({
     routes,
     mode: 'hash',
-    strict: process.env.NODE_ENV !== 'production',
-    scrollBehavior (to, from, savedPosition) {
-        console.log(savedPosition)
-        return { x: 0, y: 0 }
-    }
+    strict: process.env.NODE_ENV !== 'production'
 })
 // import store from './store/'
 //Polyfill to remove click delays on browsers with touch UIs
@@ -57,7 +53,7 @@ Vue.http.interceptors.push((request, next)=> {
     next((response=> {
         setTimeout(function() {
             store.commit('LOADING', false);
-        }, 800);
+        }, 600);
     }));
 });
 

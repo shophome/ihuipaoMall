@@ -29,7 +29,7 @@ export default {
         this.SHOW_FOOTNAV(true);
         getCategoryData().then(res => {
             this.categoryData = res.data;
-            console.log(res);
+            // console.log(this.categoryData);
         });
     },
     methods: {
@@ -38,13 +38,36 @@ export default {
 }
 </script>
 
+<style lang="scss">
+.category_card {
+    div {
+        .info {
+            padding: .3rem .3rem;
+            .desc {
+                font-size: .5rem;
+                height: 1.6rem;
+                line-height: .8rem;
+            }
+            .price {
+                height: 1rem;
+                .price-count {
+                    font-size: .6rem;
+                }
+            }
+        }
+    }
+}   
+</style>
+
 <style lang="scss" scoped>
 @import '../../style/mixin';
 
 .wrap {
     height: 100%;
-    background-color: $themeSecond;
-    background: linear-gradient($theme, $themeSecond);
+    // background-color: $themeSecond;
+    // background: linear-gradient($theme, $themeSecond);
+    @include gradientBg;
     overflow-y: scroll;
 }
+
 </style>

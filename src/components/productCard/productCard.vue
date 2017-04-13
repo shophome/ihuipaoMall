@@ -2,8 +2,7 @@
     <div class="card shadow" :class="myClass">
         <router-link 
             :to="{ path: '/product?id=' + property.id}" 
-            tag="a"
-            target="_blank">
+            tag="div">
             <img v-lazy="property.img" />
             <div class="info">
                 <p class="desc">
@@ -42,16 +41,19 @@ img {
     background-color: $themeSecond;
     margin: 0;
     .info {
-        padding: .3rem .8rem;
-        height: 3rem;
+        padding: .8rem .6rem;
+        // height: 3rem;
         .desc {
+            height: 1.6rem;
+            line-height: .8rem;
             color: #fff;
-            height: 1rem;
+            font-size: .5rem;
+            text-align:justify;
             overflow: hidden;
         }
         .price {
             // text-align: center;
-            height: 2rem;
+            height: 1rem;
             p {
                 display: inline-block;
                 font-size: 16px;
@@ -62,13 +64,13 @@ img {
             }
             .price-count {
                 color: $yellow;
-                font-size: .8rem;
+                font-size: .6rem;
                 margin-right: 1rem;
             }
             .price-origin {
                 position: relative;
                 margin: 0;
-                font-size: .6rem;
+                font-size: .5rem;
                 color: #9e9e9e;
                 padding-top: .1rem;
                 &:before {

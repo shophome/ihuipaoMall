@@ -9,6 +9,10 @@
                 <div class="icon icon_category"></div>
                 <p>分类</p>
             </router-link>
+            <router-link :to="{ path: '/brand' }" tag="li" active-class="active" class="nav_item">
+                <div class="icon icon_brand"></div>
+                <p>品牌</p>
+            </router-link>
             <router-link :to="{ path: '/cart' }" tag="li" active-class="active" class="nav_item">
                 <mu-badge :content="cartItemNum" circle secondary class="badge" :class="{ hide : cartItemNum === '0'}">
                     <div class="icon icon_cart"></div>
@@ -82,8 +86,8 @@
     padding-top: 0.1rem;
     position: fixed;
     bottom: 0;
-    background: $themeSecond;
-    z-index: 1050;
+    background: $theme;
+    z-index: 1090;
     ul {
         height: 100%;
         @include fmidhoz;

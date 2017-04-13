@@ -3,7 +3,11 @@ var baseUrl = 'http://tpshop.ihuipao.cn/index.php/ajax';
 
 export default {
 	get_homeData: {
-		url: baseUrl + '/carousel',
+		url: baseUrl + '/index/data',
+		method: 'GET',
+	},
+	get_categoryData: {
+		url: baseUrl + '/goods/category',
 		method: 'GET',
 	},
 	get_productData: {

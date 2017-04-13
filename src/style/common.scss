@@ -156,10 +156,10 @@ img {
 }
 
 .fade-enter-active, .fade-leave-active {
-  transition: opacity .5s
+    transition: opacity .3s
 }
 .fade-enter, .fade-leave-active {
-  opacity: 0
+    opacity: 0
 }
 
 .router-slid-enter-active, .router-slid-leave-active {

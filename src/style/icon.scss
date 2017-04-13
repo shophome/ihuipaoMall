@@ -16,6 +16,10 @@
     @include bis('../../images/category.png');
 }
 
+.icon_brand {
+    @include bis('../../images/brand.png');
+}
+
 .icon_cart {
     @include bis('../../images/cart.png');
 }

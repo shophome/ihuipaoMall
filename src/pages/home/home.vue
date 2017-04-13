@@ -3,7 +3,7 @@
         <section class="carousel">
             <div class="swiper-container">
                 <div class="swiper-wrapper">
-                    <div class="swiper-slide" v-for="(item, index) in carousel" :key="index">
+                    <div class="swiper-slide" v-for="(item, index) in banner" :key="index">
                         <img :src="item.img">
                     </div>
                 </div>
@@ -32,7 +32,7 @@ export default {
     name: 'home',
     data() {
         return {
-            carousel: [],
+            banner: [],
             newProduct: []
         }
     },
@@ -44,11 +44,11 @@ export default {
         this.SHOW_HEADTOP_BACK(false);
         this.SHOW_HEADTOP_SEARCH(true);
         this.SHOW_FOOTNAV(true);
-        console.log(1111);
-        getHomeData({a:1}).then(res => {
-            // console.log(res);
-            this.carousel = res.carousel;
-            this.newProduct = res.newProduct;
+        getHomeData().then(res => {
+            console.log(res);
+            var data = res.data;
+            this.banner = data.banner;
+            this.newProduct = data.newProduct;
         });
         // this.$store.dispatch('getCarousel').then((response) => {
         //     this.carousel = response.array;
@@ -84,19 +84,7 @@ export default {
 
 .wrap {
     height: 100%;
-    // background-color: #fff;
-    background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
-    // background-color: $themeSecond;
-    // background: linear-gradient($theme, $themeSecond);
-    // background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    // background-image: linear-gradient(to top, #0250c5 0%, #d43f8d 100%);
-    // background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
-    // background-image: linear-gradient(to top, #f3e7e9 0%, #e3eeff 99%, #e3eeff 100%);
-    // background-image: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);537895
-    // background-image: linear-gradient(to top, #fff 0%, #537895 100%);
-    // background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
-    // background-image: linear-gradient(to top, #30cfd0 0%, #330867 100%);
-    // background-image: linear-gradient(to top, #f43b47 0%, #453a94 100%);
+    @include gradientBg;
     overflow-y: scroll;
 }
 
@@ -122,7 +110,7 @@ export default {
     }
     .product-item {
         width: 48%;
-        margin-bottom: .6rem;
+        margin-bottom: 1rem;
         float: left;
         img {
             width: 100%;

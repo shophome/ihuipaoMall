@@ -1,11 +1,5 @@
-// $theme: #e91e63;
-// $theme: #00bcd4;
-// $theme: #2a282b;
-// $theme: #eeca2c;
-// $theme: #312349;
-// $theme: #362057;
-// $theme: #2b5876;
-$theme: #4e4376;
+// $theme: #4e4376;
+$theme: #322758;
 // $themeSecond: #3b3d71;
 $themeSecond: #4e4376;
 $yellow: #FFC107;
@@ -13,6 +7,10 @@ $blue: #3190e8;
 $red: #e91e63;
 $bc: #e4e4e4;
 $fc:#fff;
+
+@mixin gradientBg {
+    background-image: linear-gradient(-20deg, #2b5876 0%, $theme 100%);
+}
 
 // 快速过渡
 @mixin transition($sec) {
@@ -39,7 +37,7 @@ $fc:#fff;
     border-radius: $radius;
 }
 //定位全屏
-@mixin allcover{
+@mixin allcover {
     position:absolute;
     top:0;
     right:0;

@@ -114,8 +114,8 @@ export default {
 .wrap {
     position: static;
     width: 100%;
-    background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
     padding-bottom: 1rem;
+    @include gradientBg;
     @include paddingLR;
 }
 

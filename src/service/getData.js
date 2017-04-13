@@ -4,6 +4,7 @@ import API from '../config/api'
 import * as home from './tempdata/home'
 import * as list from './tempdata/list'
 import * as category from './tempdata/category'
+import * as brand from './tempdata/brand'
 import * as product from './tempdata/product'
 
 /**
@@ -36,23 +37,29 @@ if (process.env.NODE_ENV == 'development') {    //开发环境
      */
 
     var getHomeData = () => setpromise(home);
-    var getCategoryData = () => setpromise(category);
+    // var getHomeData = () => apiFactory(API.get_homeData, {});
+    // var getCategoryData = () => setpromise(category);
+    var getCategoryData = () => apiFactory(API.get_categoryData, {});
+
+    var getBrandData = () => setpromise(brand);
     var getListData = () => setpromise(list);
     var getProductData = (id) => setpromise(product);
 
-    // var getHomeData = () => apiFactory(API.get_homeData, {});
     // var getProductData = (id) => apiFactory(API.get_productData, {
     //     id: id
     // });
 
 }else{                                           //真实环境
 
-    var getHomeData = () => setpromise(home);
-    var getCategoryData = () => setpromise(category);
+    // var getHomeData = () => setpromise(home);
+    var getHomeData = () => apiFactory(API.get_homeData, {});
+    // var getCategoryData = () => setpromise(category);
+    var getCategoryData = () => apiFactory(API.get_categoryData, {});
+    
+    var getBrandData = () => setpromise(brand);
     var getListData = () => setpromise(list);
     var getProductData = (id) => setpromise(product);
 
-    // var getHomeData = () => apiFactory(API.get_homeData, {});
     // var getProductData = (id) => apiFactory(API.get_productData, {
     //     id: id
     // });
@@ -65,4 +72,4 @@ if (process.env.NODE_ENV == 'development') {    //开发环境
 
 // var sendLogin = (code, mobile, validate_token) => setpromise(login.userInfo);
 
-export { getHomeData, getCategoryData, getListData, getProductData }
+export { getHomeData, getCategoryData, getBrandData, getListData, getProductData }

@@ -2,12 +2,12 @@
     <div id="list_navbar">
         <div id="list_nav" ref="listNav">
             <ul>
-                <li v-for="(item, index) in options" :key="index" @click="pickNav(index, true)" :class="{active : navActive === index}"><span>{{ item.name }}</span></li>
+                <li v-for="(item, index) in options" :key="index" :ref="'nav'+index" @click="pickNav(index, true)" :class="{active : navActive === index}"><span>{{ item.name }}</span></li>
             </ul>
         </div>
         <div id="list_container" class="shadow" ref="listContainer">
             <ul>
-                <li v-for="(item, index) in options" :key="index" class="list">
+                <li v-for="(item, index) in options" :key="index" :ref="'list'+index" class="list">
                     <div class="list-head">
                         <div class="title">{{ item.name }}</div>
                         <div class="more" @click="$router.push('/list?type=category&id='+ item.id +'')">
@@ -23,7 +23,6 @@
                 </li>
             </ul>
         </div>
-       
     </div>
 </template>
 
@@ -57,21 +56,46 @@ export default {
     components: {
         'product-card': productCard
     },
-    created() {
-        this.checkWechat();
-    },
-    mounted() {
-        const _self = this;
-        setTimeout(function() {
-            var pecent = 1 - (document.getElementById('head_top').clientHeight + document.getElementById('foot_nav').clientHeight)/window.screen.availHeight;
-            document.getElementById('list_navbar').style.height = String(pecent * 100) + '%';
-        },300);
-        setTimeout(function() {
-            _self.initScroll();
-        },1000);
-    },
     props: ['options'],
     computed: {
+    },
+    created() {
+        this.checkWechat();
+        
+    },
+    mounted() {
+        var len = 0;
+        setTimeout(() => {
+            const topH = document.getElementById('head_top').clientHeight;
+            const footH = document.getElementById('foot_nav').clientHeight;
+            const screenH = window.screen.availHeight;
+            const ulH = Math.ceil(document.getElementById('list_nav').getElementsByTagName('ul')[0].clientHeight);
+            var contentH = screenH - topH - footH;
+            if(ulH < contentH) {
+                var len = 0;
+                var liH = 0;
+                for(var i in this.options) {
+                    len ++;
+                }
+                liH = screenH / len;
+                var liList = document.getElementById('list_nav').getElementsByTagName('li');
+                for(var i in liList) {
+                    if(liList[i].style) {
+                        liList[i].style.height = liH + 'px';
+                    }
+                }
+            }
+            var pecent = 1 - (topH + footH) / screenH;
+
+            if(!this.isWechat) {
+                document.getElementById('list_navbar').style.height = String(pecent * 100) + '%';
+            } else {
+                document.getElementById('list_navbar').style.height = String(pecent * 100 - 3.3) + '%';
+            }
+        }, 300);
+        setTimeout(() => {
+            this.initScroll();
+        },1000);
     },
     methods: {
         checkWechat() {
@@ -83,22 +107,55 @@ export default {
                 this.isWechat = false;
             }
         },
-        pickNav(index, itemScrollFlag) {
+        initScroll() {
             const _self = this;
-            const navPicked = _self.$refs.listNav.children[0].children[index];
-            const flag = (navPicked.offsetTop + _self.navWrapperHeight) > _self.navContainerHeight;
+            _self.navScroll = new BScroll(_self.$refs.listNav, {  
+                probeType: 2,
+                bounce: true,
+                resizePolling: 60,
+                click: true,
+            });
+            _self.itemScroll = new BScroll(_self.$refs.listContainer, {  
+                probeType: 2,
+                bounce: true,
+                resizePolling: 60,
+                click: true,
+            }); 
+
+            //保存两侧元素和高度
+            _self.listNavArr = Array.from(_self.$refs.listNav.children[0].children);  //左侧导航每个元素集合
+            _self.navWrapperHeight = _self.$refs.listNav.clientHeight;  //左侧导航容器的高度
+            _self.navContainerHeight = _self.$refs.listNav.children[0].clientHeight;  //左侧导航整体的高度
+            _self.navSingleHeight = _self.$refs.listNav.children[0].children[0].clientHeight;   //左侧导航每个元素的高度
+            _self.listArr = Array.from(this.$refs.listContainer.children[0].children);  
+            //右侧列表每个元素集合
+            _self.itemWrapperHeight = _self.$refs.listContainer.clientHeight;  //右侧列表容器的高度
+            _self.itemContainerHeight = _self.$refs.listContainer.children[0].clientHeight;  //右侧列表整体的高度
+            _self.navPageItemNum = Math.ceil(_self.navWrapperHeight / _self.navSingleHeight)  //左侧导航一页包括的元素数量
+            for(var i in _self.options) {     //右侧列表每个元素的高度
+                _self.itemListTop[i] = _self.$refs['list' + i][0].offsetTop;
+            }
+            console.log(_self.itemListTop);
+            _self.getNavScrollArea();
+            _self.itemScrollListen();
+        },
+        pickNav(key, itemScrollFlag) {
+            const _self = this;
+            const navPicked = _self.$refs['nav' + key][0];
+            const listPicked = this.$refs['list' + key][0];
+            const index = _self.listNavArr.indexOf(navPicked);
             const midHeight = _self.$refs.listNav.children[0].children[5].offsetTop;
-            const distanceToMid = navPicked.offsetTop - midHeight;
+            const distanceToMid = navPicked.offsetTop - _self.navWrapperHeight / 2;
             var top = 0;
             if(!_self.isWechat) {
-                top = _self.itemListTop[index];
+                top = _self.itemListTop[key];
             } else {
-                top = _self.itemListTop[index] - 46;
+                top = _self.itemListTop[key];   //微信浏览器高度计算可能不同
             }
-            _self.navActive = index;
+            _self.navActive = key;
             //左侧菜单定位
             if(index > _self.navTopIdx && index < _self.navBottomIdx) {
-                _self.navScroll.scrollTo(0, -distanceToMid, 300);
+                _self.navScroll.scrollTo(0, - distanceToMid, 300);
             } else if(index <= _self.navTopIdx){
                 _self.navScroll.scrollTo(0, 0, 300);
             } else {
@@ -119,70 +176,50 @@ export default {
         getNavScrollArea() {
             const _self = this;
             for(let i = 0; i < _self.listNavArr.length; i++) {
-                if(_self.listNavArr[i].offsetTop > _self.navWrapperHeight/2) {
+                if(_self.listNavArr[i].offsetTop > _self.navWrapperHeight / 2 ) {
                     _self.navTopIdx = i - 1;
                     break;
                 }
             }
             for(let i = _self.listNavArr.length - 1; i > 0; i-- ) {
-                if(_self.listNavArr[i].offsetTop > (_self.navContainerHeight - _self.navWrapperHeight/2)) {
-                    _self.navBottomIdx = i - 7;
+                if(_self.listNavArr[i].offsetTop < (_self.navContainerHeight - _self.navWrapperHeight/2)) {
+                    _self.navBottomIdx = i;
                     break;
                 }
             }
         },
-        initScroll() {
-            const _self = this;
-            _self.navScroll = new BScroll(_self.$refs.listNav, {  
-                probeType: 2,
-                bounce: true,
-                click: true,
-            });
-            _self.itemScroll = new BScroll(_self.$refs.listContainer, {  
-                probeType: 2,
-                bounce: true,
-                click: true,
-            }); 
-
-            //保存两侧元素和高度
-            _self.listNavArr = Array.from(_self.$refs.listNav.children[0].children);  //左侧导航每个元素集合
-            _self.navWrapperHeight = _self.$refs.listNav.clientHeight;  //左侧导航容器的高度
-            _self.navContainerHeight = _self.$refs.listNav.children[0].clientHeight;  //左侧导航整体的高度
-            _self.navSingleHeight = _self.$refs.listNav.children[0].children[0].clientHeight;   //左侧导航每个元素的高度
-            _self.listArr = Array.from(this.$refs.listContainer.children[0].children);  //右侧列表每个元素集合
-            _self.itemWrapperHeight = _self.$refs.listContainer.clientHeight;  //右侧列表容器的高度
-            _self.itemContainerHeight = _self.$refs.listContainer.children[0].clientHeight;  //右侧列表整体的高度
-            _self.navPageItemNum = Math.ceil(_self.navWrapperHeight/_self.navSingleHeight)  //左侧导航一页包括的元素数量
-            _self.listArr.forEach((item, index) => {
-                _self.itemListTop[index] = item.offsetTop;   //右侧列表每个元素的高度
-            });
-            _self.getNavScrollArea();
-            _self.itemScrollListen();
-        },
         itemScrollListen() {
             const _self = this;
+            const num = Math.floor(_self.navPageItemNum / 2);
              //监听拖动右侧list,改变左侧导航滚动位置
             _self.itemScroll.on('scroll', (pos) => {
-                    var num = Math.floor(_self.navPageItemNum/2);
-                    for(var i = 0; i < _self.itemListTop.length; i++) {
-                        //拖动右侧list到底部时，左侧nav acitve元素保持为最后一个
-                        if(-pos.y >= (_self.itemContainerHeight - _self.itemWrapperHeight - 20)) {
-                            _self.navActive = _self.itemListTop.length - 1;
-                            break;
-                        }
-                        //判断右侧当前位置和左侧导航位置关系
-                        if (-pos.y < (_self.itemListTop[i] - _self.itemWrapperHeight/2)) {
-                            _self.navActive = i - 1;
-                            var rectTop = _self.listNavArr[_self.navActive].getBoundingClientRect().top;
-                            if(_self.navActive <= num) {
-                                _self.navScroll.scrollTo(0, 0, 300);
-                            } else if (_self.navActive >= _self.listNavArr.length - num) {
-                                //左侧nav滚动到最后一页时，左侧nav保持滚动到底部
-                                _self.navScroll.scrollTo(0, -(_self.navContainerHeight - _self.navWrapperHeight + 45), 300);
-                            } else {
-                                _self.navScroll.scrollTo(0, -(_self.listNavArr[_self.navActive + 1].offsetTop - _self.navWrapperHeight/2), 300);
+                    if(- pos.y > (_self.itemListTop[_self.itemListTop.length - 1] - _self.itemWrapperHeight / 2)) {
+                        _self.navActive = _self.itemListTop.length - 1;
+                    } else {
+                        for(var i = 0; i < _self.itemListTop.length; i++) {
+                            //拖动右侧list到底部时，左侧nav acitve元素保持为最后一个
+                            // if(-pos.y < (_self.itemListTop[i] - _self.itemWrapperHeight/2)) {
+                            //     _self.navActive = i - 1;
+                            //     break;
+                            // }
+                            // if(-pos.y >= (_self.itemContainerHeight - _self.itemWrapperHeight)) {
+                            //     console.log(111);
+                            //     _self.navActive = _self.itemListTop.length - 1;
+                            //     break;
+                            // }
+                            //判断右侧当前位置和左侧导航位置关系
+                            if (- pos.y < (_self.itemListTop[i] - _self.itemWrapperHeight / 2)) {
+                                _self.navActive = i - 1;
+                                if(_self.navActive <= num) {
+                                    _self.navScroll.scrollTo(0, 0, 300);
+                                } else if (_self.navActive >= _self.listNavArr.length - 1 - num) {
+                                    //左侧nav滚动到最后一页时，左侧nav保持滚动到底部
+                                    _self.navScroll.scrollTo(0, -(_self.navContainerHeight - _self.navWrapperHeight), 300);
+                                } else {
+                                    _self.navScroll.scrollTo(0, -(_self.listNavArr[_self.navActive + 1].offsetTop - _self.navWrapperHeight/2), 300);
+                                }
+                                break;
                             }
-                            break;
                         }
                     }
                 // }
@@ -222,10 +259,10 @@ export default {
             li {
                 position: relative;
                 height: 1.8rem;
-                border-bottom: 1px solid #f3f3f3;
-                background-color: #ebedf1;
+                // border-bottom: 1px solid #f3f3f3;
+                // background-color: #ebedf1;
+                background-color: $theme;
                 display: block;
-                font-size: .4rem;
                 text-align: center;
                 vertical-align: middle;
                 &.active {
@@ -238,16 +275,19 @@ export default {
                         content: '';
                         display: block;
                         position: absolute;
-                        top: -1px;
+                        top: 0;
                         left: 0;
                         width: 3px;
-                        height: 110%;
+                        height: 100%;
                         background-color: $yellow;
                     }
                 }
                 span {
                     width: 100%;
                     padding: .3rem .3rem;
+                    font-size: .4rem;
+                    color: #fff;
+                    letter-spacing: 1px;
                     display: inline-block;
                     line-height: .8rem;
                     @include center;
@@ -256,11 +296,9 @@ export default {
         }
     }
     #list_container {
-        // padding-top: 4.3rem;
-        // padding-bottom: 4.3rem;
         float: left;
         width: 80%;
-        background-color: $theme;
+        @include gradientBg;
         z-index: 1;
         .list-head {
             @include fbethoz;
@@ -273,18 +311,30 @@ export default {
             }
             .more {
                 width: 2.4rem;
+                height: 1.8rem;
                 margin-right: .5rem;
-                @include fbethoz;
+                position: relative;
                 span {
+                    position: absolute;
+                    top: 50%;
+                    lef: 0;
+                    transform: translate(0, -50%);
                     color: #fff;
+                    line-height: .7rem;
+                    vertical-align: middle;
                 }
                 .icon {
-                    @include wh(.8rem, .8rem);
+                    position: absolute;
+                    top: 50%;
+                    right: 0;
+                    transform: translate(0, -50%);
+                    vertical-align: middle;
+                    @include wh(.7rem, .7rem);
                 }
             }
         }
         .item_list {
-            background-color: $theme;
+            background-color: inherit;
             .item {
                 width: 50%;
                 height: auto;
@@ -294,20 +344,6 @@ export default {
         }
     }
 }
-.category_card {
-    .info {
-        padding: .1rem .2rem;
-        font-size: .5rem;
-        .desc {
-            height: 1.7rem;
-        }
-        .price {
-            height: 1rem;
-            .price-count {
-                font-size: .6rem;
-            }
-        }
-    }
-}
+
 
 </style>

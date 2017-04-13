@@ -97,7 +97,7 @@
     background-color: $theme;
     // background-color: rgba(42, 40, 43, .6);
     position: fixed;
-    z-index: 100;
+    z-index: 1090;
     left: 0;
     top: 0;
     @include wh(100%, 1.95rem);

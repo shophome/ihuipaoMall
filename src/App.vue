@@ -1,11 +1,11 @@
 <template>
-    <div>
-        <head-top v-if="showHeadTop" :search="showHeadTopSearch" :back="showHeadTopBack" :showLogin="showHeadTopLogin"></head-top>
+    <div id="root">
+        <head-top v-show="showHeadTop" :search="showHeadTopSearch" :back="showHeadTopBack" :showLogin="showHeadTopLogin"></head-top>
         <transition name="router-fade" mode="out-in">
             <router-view></router-view>
         </transition>
-        <foot-nav v-if="showFootNav"></foot-nav>
-        <loading v-if="loading"></loading>
+        <foot-nav v-show="showFootNav"></foot-nav>
+        <loading v-show="loading"></loading>
     </div>
 </template>
 
@@ -52,6 +52,7 @@ export default {
 
 .app {
     height: 100%;
+    overflow-y: scroll;
 }
 
 #toasted-container {

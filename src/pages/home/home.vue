@@ -44,8 +44,9 @@ export default {
         this.SHOW_HEADTOP_BACK(false);
         this.SHOW_HEADTOP_SEARCH(true);
         this.SHOW_FOOTNAV(true);
+        console.log(1111);
         getHomeData({a:1}).then(res => {
-            console.log(res);
+            // console.log(res);
             this.carousel = res.carousel;
             this.newProduct = res.newProduct;
         });

@@ -1,5 +1,5 @@
 <template>
-    <div class="wrap paddingBottom">
+    <div class="wrap paddingBottom" ref="wrap">
         <div class="icon icon_back head_goback" @click="$router.go(-1)"></div>
         <section class="carousel">
             <div class="swiper-container">
@@ -128,6 +128,7 @@ export default {
         return {
             id: '',
             tabTop: 0,
+            scrollWatch: true,
             tabActive: -1,
             specMenuIsShow: false,
             panelEnter: false,
@@ -169,15 +170,20 @@ export default {
     created() {
         const _self = this;
         _self.SHOW_HEADTOP(false);
+        // console.log(_self.$refs.tab);
         _self.SHOW_FOOTNAV(false);
     },
     mounted() {
         const _self = this;
+        // console.log(_self.$refs.tabContainer);
+        // console.log(_self.$refs.tab);
         setTimeout(function() {
             _self.$refs.tabContainer.style.height = _self.$refs.tab.clientHeight + 'px';
             _self.tabStick();
-
         },300);
+    },
+    destroyed () {
+        this.scrollWatch = false;
     },
     watch: {
         specIdxSelected: function(value) {
@@ -203,21 +209,23 @@ export default {
             _self.tabTop = _self.$refs.tab.offsetTop;
             _self.$nextTick(function() {
                 window.addEventListener('scroll', function() {
-                    var top = document.getElementsByTagName('body')[0].scrollTop;
-                    if(top >= _self.$refs.tabContainer.offsetTop) {
-                        _self.$refs.tab.style.position = 'fixed';
-                        _self.$refs.tab.style.top = 0;
-                        _self.$refs.tab.style.left = 0;
-                        _self.tabActive = 0;   //设置标签active状态
-                        if(top >= (_self.$refs.detail.offsetTop - _self.$refs.tab.clientHeight)) {
-                            _self.tabActive = 1;
+                    if(_self.scrollWatch) {
+                        var top = document.getElementsByTagName('body')[0].scrollTop;
+                        if(top >= _self.$refs.tabContainer.offsetTop) {
+                            _self.$refs.tab.style.position = 'fixed';
+                            _self.$refs.tab.style.top = 0;
+                            _self.$refs.tab.style.left = 0;
+                            _self.tabActive = 0;   //设置标签active状态
+                            if(top >= (_self.$refs.detail.offsetTop - _self.$refs.tab.clientHeight)) {
+                                _self.tabActive = 1;
+                            }
+                        } else {
+                            _self.tabActive = -1;
+                            _self.$refs.tab.style.position = 'relative';
+                            _self.tabTop = _self.$refs.tab.offsetTop;
                         }
-                    } else {
-                        _self.tabActive = -1;
-                        _self.$refs.tab.style.position = 'relative';
-                        _self.tabTop = _self.$refs.tab.offsetTop;
                     }
-                }, false);
+                }, true);
             });
         },
         scrollToConsult() {
@@ -235,7 +243,6 @@ export default {
         },
         closeSpecMenu(e) {
             const _self = this;
-            console.log(e);
             if(!e || e.target === _self.$refs.specMenu || e.target === _self.$refs.close) {
                 _self.panelEnter = false;
                 setTimeout(function() {
@@ -316,6 +323,10 @@ export default {
 @mixin paddingTB($top, $bottom) {
     padding-top: $top;
     padding-bottom: $bottom;
+}
+
+.wrap {
+    height: auto;
 }
 
 .head_goback {

@@ -269,7 +269,7 @@
                 </transition>
             </div>
         </div>
-         <transition name="router-slid" mode="out-in">
+        <transition name="router-slid" mode="out-in">
             <router-view></router-view>
         </transition>
     </div>

@@ -1,8 +1,6 @@
 <template>
-    <div id="app" class="app" ref="app">
-        <transition name="router-fade" mode="out-in">
-            <head-top v-if="showHeadTop" :search="showHeadTopSearch" :back="showHeadTopBack" :showLogin="showHeadTopLogin"></head-top>
-        </transition>
+    <div>
+        <head-top v-if="showHeadTop" :search="showHeadTopSearch" :back="showHeadTopBack" :showLogin="showHeadTopLogin"></head-top>
         <transition name="router-fade" mode="out-in">
             <router-view></router-view>
         </transition>
@@ -12,6 +10,7 @@
 </template>
 
 <script>
+
 import headTop from 'components/headTop/headTop'
 import footNav from 'components/footNav/footNav'
 import loading from 'components/loading/loading'
@@ -53,6 +52,20 @@ export default {
 
 .app {
     height: 100%;
+}
+
+#toasted-container {
+    bottom: 1rem !important;
+    .toasted {
+        margin: 0 auto !important;
+        width: 6rem !important;
+        height: 1.1rem !important;
+        line-height: 1.6rem !important;
+        font-size: .6rem !important;
+        text-align: center !important;
+        display: block !important;
+        opacity: .9 !important;
+    }
 }
 
 .head_logo {

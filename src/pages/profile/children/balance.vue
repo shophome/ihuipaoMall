@@ -131,6 +131,7 @@ export default {
 .present {
     width: 100%;
     height: 4rem;
+    position: fixed;
     // background-image: radial-gradient(circle 248px at center, #16d9e3 0%, #30c7ec 47%, #46aef7 100%);
     // background-image: linear-gradient(to top, #37ecba 0%, #72afd3 100%);
     // background-image: linear-gradient(to top, #a3bded 0%, #6991c7 100%);
@@ -149,7 +150,10 @@ export default {
 }
 
 .detail {
+    margin-top: 4rem;
     .detail-head {
+        position: fixed;
+        width: 100%;
         @include fmidhoz;
         line-height: 1.6rem;
         // background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
@@ -164,6 +168,7 @@ export default {
         }
     }
     .detail-list {
+        padding-top: 1.6rem;
         .detail-item {
             @include fmidhoz;
             &:nth-child(2n) {

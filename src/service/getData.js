@@ -2,6 +2,8 @@ import Vue from 'vue'
 import API from '../config/api'
 
 import * as home from './tempdata/home'
+import * as list from './tempdata/list'
+import * as category from './tempdata/category'
 import * as product from './tempdata/product'
 
 /**
@@ -34,6 +36,8 @@ if (process.env.NODE_ENV == 'development') {    //开发环境
      */
 
     var getHomeData = () => setpromise(home);
+    var getCategoryData = () => setpromise(category);
+    var getListData = () => setpromise(list);
     var getProductData = (id) => setpromise(product);
 
     // var getHomeData = () => apiFactory(API.get_homeData, {});
@@ -44,6 +48,8 @@ if (process.env.NODE_ENV == 'development') {    //开发环境
 }else{                                           //真实环境
 
     var getHomeData = () => setpromise(home);
+    var getCategoryData = () => setpromise(category);
+    var getListData = () => setpromise(list);
     var getProductData = (id) => setpromise(product);
 
     // var getHomeData = () => apiFactory(API.get_homeData, {});
@@ -59,4 +65,4 @@ if (process.env.NODE_ENV == 'development') {    //开发环境
 
 // var sendLogin = (code, mobile, validate_token) => setpromise(login.userInfo);
 
-export { getHomeData, getProductData }
+export { getHomeData, getCategoryData, getListData, getProductData }

@@ -24,6 +24,7 @@
     "vue-lazyload-img": "^0.1.6",
     "vue-resource": "^1.0.3",
     "vue-router": "^2.3.0",
+    "vue-toasted": "^1.0.27",
     "vuex": "^2.2.1"
   },
   "devDependencies": {

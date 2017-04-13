@@ -4,7 +4,7 @@
             <div class="swiper-container">
                 <div class="swiper-wrapper">
                     <div class="swiper-slide" v-for="(item, index) in carousel" :key="index">
-                        <img :src="item.imgSrc">
+                        <img :src="item.img">
                     </div>
                 </div>
                 <!-- <div class="swiper-pagination"></div> -->

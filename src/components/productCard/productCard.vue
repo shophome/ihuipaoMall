@@ -4,14 +4,14 @@
             :to="{ path: '/product?id=' + property.id}" 
             tag="a"
             target="_blank">
-            <img v-lazy="property.imgSrc" />
+            <img v-lazy="property.img" />
             <div class="info">
                 <p class="desc">
                     {{ property.desc }}
                 </p>
                 <div class="price">
-                    <span class="price-count">¥{{ property.priceCount }}</span>
-                    <span v-if="property.priceCount !== property.priceOriginal" class="price-origin">¥{{ property.priceOriginal }}</span>
+                    <span class="price-count">¥{{ property.price }}</span>
+                    <span v-if="property.price !== property.priceOriginal" class="price-origin">¥{{ property.priceOriginal }}</span>
                 </div>
             </div>
         </router-link>

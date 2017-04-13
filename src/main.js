@@ -23,14 +23,16 @@ if ('addEventListener' in document) {
     }, false);
 }
 
-import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-default/index.css'
+// import ElementUI from 'element-ui'
+// import 'element-ui/lib/theme-default/index.css'
 import MuseUI from 'muse-ui'
 import 'muse-ui/dist/muse-ui.css'
 import VueLazyload from 'vue-lazyload'
+import Toasted from 'vue-toasted'
 
-Vue.use(ElementUI)
+// Vue.use(ElementUI)
 Vue.use(MuseUI)
+Vue.use(Toasted)
 
 Vue.use(VueLazyload, {
     error: require('./images/loading.svg'),

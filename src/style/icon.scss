@@ -77,6 +77,10 @@
     @include bis('../../images/icon-conf.png');
 }
 
+.icon_more {
+    @include bis('../../images/more.png');
+}
+
 // .icon_home {
 //     display: block;
 //     @include spr('../../images/nav_icon_spr.png');

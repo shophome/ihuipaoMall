@@ -8,15 +8,22 @@
         <div id="list_container" class="shadow" ref="listContainer">
             <ul>
                 <li v-for="(item, index) in options" :key="index" class="list">
-                    <h3 class="title">{{ item.name }}</h3>
+                    <div class="list-head">
+                        <div class="title">{{ item.name }}</div>
+                        <div class="more" @click="$router.push('/list?type=category&id='+ item.id +'')">
+                            <span>更多</span>
+                            <div class="icon icon_more"></div>
+                        </div>
+                    </div>
                     <div class="item_list">
-                        <div class="item" v-for="(product, index) in item.data" :key="index">
+                        <div class="item" v-for="(product, index) in item.items" :key="index">
                             <product-card :property="product" :myClass="'category_card'"></product-card>
                         </div>
                     </div>
                 </li>
             </ul>
         </div>
+       
     </div>
 </template>
 
@@ -56,8 +63,12 @@ export default {
     mounted() {
         const _self = this;
         setTimeout(function() {
+            var pecent = 1 - (document.getElementById('head_top').clientHeight + document.getElementById('foot_nav').clientHeight)/window.screen.availHeight;
+            document.getElementById('list_navbar').style.height = String(pecent * 100) + '%';
+        },300);
+        setTimeout(function() {
             _self.initScroll();
-        },500);
+        },1000);
     },
     props: ['options'],
     computed: {
@@ -153,7 +164,6 @@ export default {
              //监听拖动右侧list,改变左侧导航滚动位置
             _self.itemScroll.on('scroll', (pos) => {
                     var num = Math.floor(_self.navPageItemNum/2);
-                    console.log(num);
                     for(var i = 0; i < _self.itemListTop.length; i++) {
                         //拖动右侧list到底部时，左侧nav acitve元素保持为最后一个
                         if(-pos.y >= (_self.itemContainerHeight - _self.itemWrapperHeight - 20)) {
@@ -186,11 +196,13 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../style/common';
-@import '../../style/mixin';
+@import '../../style/icon';
 
 #list_navbar {
-    // padding-top: 1.95rem;
-    position: absolute;
+    top: 1.95rem;
+    // bottom: 2.25rem;
+    // padding-bottom: 2.25rem;
+    // position: relative;
     display: flex;
     flex: 1;
     // flex-direction: row;
@@ -199,9 +211,12 @@ export default {
     left: 0;
     height: 100%;
     overflow-y: hidden;
+    height: 82.6%;
     #list_nav {
         width: 20%;
         float: left;
+        // padding-top: 4.3rem;
+        // padding-bottom: 4.3rem;
         ul {
             width: 100%;
             li {
@@ -241,16 +256,32 @@ export default {
         }
     }
     #list_container {
+        // padding-top: 4.3rem;
+        // padding-bottom: 4.3rem;
         float: left;
         width: 80%;
         background-color: $theme;
         z-index: 1;
-        .title {
-            font-size: .7rem;
-            font-weight: 500;
-            line-height: 1.8rem;
-            color: $yellow;
-            padding-left: 1rem;
+        .list-head {
+            @include fbethoz;
+            .title {
+                font-size: .7rem;
+                font-weight: 500;
+                line-height: 1.8rem;
+                color: $yellow;
+                padding-left: 1rem;
+            }
+            .more {
+                width: 2.4rem;
+                margin-right: .5rem;
+                @include fbethoz;
+                span {
+                    color: #fff;
+                }
+                .icon {
+                    @include wh(.8rem, .8rem);
+                }
+            }
         }
         .item_list {
             background-color: $theme;

@@ -1,4 +1,5 @@
 export const LOADING = 'LOADING'
+export const PAGE_LOADING = 'PAGE_LOADING'
 export const LOGIN = 'LOGIN'
 export const SHOW_HEADTOP_LOGIN = 'SHOW_HEADTOP_LOGIN'
 export const SHOW_HEADTOP = 'SHOW_HEADTOP'

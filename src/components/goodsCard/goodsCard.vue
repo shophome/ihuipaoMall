@@ -1,7 +1,7 @@
 <template>
     <div class="card shadow" :class="myClass">
         <router-link 
-            :to="{ path: '/product?id=' + property.id}" 
+            :to="{ path: '/goods?id=' + property.id}" 
             tag="div">
             <img v-lazy="property.img" />
             <div class="info">
@@ -19,7 +19,7 @@
 
 <script>
 export default {
-    name: 'productCard',
+    name: 'goodsCard',
     data() {
         return {
         }
@@ -41,7 +41,7 @@ img {
     background-color: $themeSecond;
     margin: 0;
     .info {
-        padding: .8rem .6rem;
+        padding: .4rem .5rem;
         // height: 3rem;
         .desc {
             height: 1.6rem;

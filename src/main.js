@@ -49,11 +49,11 @@ Vue.http.options.emulateJSON = true
 Vue.http.options.emulateHTTP = true
 
 Vue.http.interceptors.push((request, next)=> {
-    store.commit('LOADING', true);
+    store.commit('PAGE_LOADING', true);
     next((response=> {
         setTimeout(function() {
-            store.commit('LOADING', false);
-        }, 600);
+            store.commit('PAGE_LOADING', false);
+        }, 400);
     }));
 });
 

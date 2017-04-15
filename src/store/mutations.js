@@ -1,5 +1,6 @@
 import {
     LOADING,
+    PAGE_LOADING,
     LOGIN,
     SHOW_HEADTOP_LOGIN,
     SHOW_HEADTOP,
@@ -21,6 +22,10 @@ export default {
     //加载动画显示状态
     [LOADING] (state, loading) {
         state.loading = loading;
+    },
+    //页面加载动画显示状态
+    [PAGE_LOADING] (state, pageLoading) {
+        state.pageLoading = pageLoading;
     },
     //是否登陆状态
     [LOGIN] (state, login) {

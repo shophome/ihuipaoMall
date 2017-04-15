@@ -1,8 +1,8 @@
 <template>
     <div class="wrap paddingTop infinite-container">
-        <div class="product-list" ref="container">
-            <div class="product-item shadow" v-for="(item, index) in productList" :key="index">
-                <product-card :property="item"></product-card>
+        <div class="goods-list" ref="container">
+            <div class="goods-item shadow" v-for="(item, index) in goodsList" :key="index">
+                <goods-card :property="item"></goods-card>
             </div>
         </div>
       <mu-infinite-scroll :scroller="scroller" :loading="loading" @load="loadMore" :loadingText="loadingText"/>
@@ -12,13 +12,13 @@
 <script>
 import { mapMutations } from 'vuex'
 import { getListData } from 'src/service/getData'
-import productCard from '../../components/productCard/productCard'
+import goodsCard from '../../components/goodsCard/goodsCard'
 
 export default {
     name: 'list',
     data() {
         return {
-            productList: [],
+            goodsList: [],
             page: 1,
             loading: false,
             scroller: null,
@@ -27,7 +27,7 @@ export default {
         }
     },
     components: {
-        'product-card': productCard
+        'goods-card': goodsCard
     },
     beforeRouteEnter (to, from, next) {
         next(vm => {
@@ -41,7 +41,7 @@ export default {
         this.SHOW_HEADTOP_SEARCH(false);
         this.SHOW_FOOTNAV(false);
         getListData().then(res => {
-            this.productList = res.data1;
+            this.goodsList = res.data1;
         });
     },
     mounted() {
@@ -72,7 +72,7 @@ export default {
                     setTimeout(() => {
                         getListData().then(res => {
                             this.page += 1;
-                            this.productList = this.productList.concat(res['data' + this.page]);
+                            this.goodsList = this.goodsList.concat(res['data' + this.page]);
                         });
                         this.loading = false;
                     }, 2000);
@@ -108,8 +108,8 @@ export default {
 @import '../../style/mixin';
 
 @mixin paddingLR {
-    padding-left: .6rem;
-    padding-right: .6rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 .wrap {
     position: static;
@@ -125,16 +125,16 @@ export default {
     // overflow-y: scroll;
 }
 
-.product-list {
+.goods-list {
     margin-top: 1rem;
     width: 100%;
     position: relative;
     overflow-x: hidden;
     overflow-y: visible;
     @include fbethoz;
-    .product-item {
-        width: 48%;
-        margin-bottom: .6rem;
+    .goods-item {
+        width: 46%;
+        margin-bottom: 1.4rem;
         float: left;
         img {
             width: 100%;

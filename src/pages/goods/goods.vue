@@ -4,8 +4,8 @@
         <section class="carousel">
             <div class="swiper-container">
                 <div class="swiper-wrapper">
-                    <div class="swiper-slide" v-for="(item, index) in goods.image_list" :key="index">
-                        <img :src="item">
+                    <div class="swiper-slide" v-for="(item, index) in imgList" :key="index">
+                        <img :src="item.image_url">
                     </div>
                 </div>
                 <div class="swiper-pagination"></div>
@@ -16,12 +16,12 @@
                 <p class="name">{{ goods.goods_name }}</p>
             </section>
             <section class="price">
-                <p class="price-count">{{ goods.shop_price }}</p>
-                <p class="price-origin">{{ goods.shop_price }}</p>
+                <p class="price-count">{{ price }}</p>
+                <!-- <p class="price-origin">{{ goods.shop_price }}</p> -->
             </section>
             <section class="spec-choose collapse-right" @click="showSpecMenu">
                 <p class="has">已选</p>
-                <p class="chooseInfo">{{ specSelectedStr }} x {{ num }}</p>
+                <p class="chooseInfo">{{ specSelectedStr }}{{ num == 0 ? '' : 'x' + num }}</p>
             </section>
         </section>
         <section class="tab-view">
@@ -74,19 +74,20 @@
                         <img :src="specSelectedImg">
                     </div>
                     <div class="pro-desc">
-                        <p class="price">{{ sumPrice }}</p>
+                        <p class="price">{{ price }}</p>
                         <p class="desc">{{ specSelectedStr }}</p>
+                        <p class="store">库存： {{ store }}件</p>
                     </div>
                 </div>
                 <div class="spec-container">
-                    <div class="spec-group" v-for="(spec, index) in goods.filter_spec_list" :key="index">
+                    <div class="spec-group" v-for="(spec, index) in filter_spec" :key="index">
                         <div class="spec-title">{{ spec.name }}</div>
                         <div class="spec-row">
-                            <div v-for="(item, idx) in spec.items" :key="idx" class="spec-item" :class="{ selected : (idx === specIdxSelected[index]) }" @click="selectSpec(index, idx)">
+                            <div v-for="(item, idx) in spec.items" :key="idx" class="spec-item" :class="{ selected : (idx === specIdxSelected[index]), disabled : (specDisabled.indexOf(item.item_id) > -1) }" @click="selectSpec(index, idx)">
                                 <div v-if="item.src" class="spec-img">
                                     <img :src="item.src">
                                 </div>
-                                <p>{{ item.value }}</p>
+                                <p>{{ item.item }}</p>
                             </div>
                         </div>
                     </div>
@@ -101,7 +102,7 @@
                 </div>
             </div>
         </section>
-        <div class="foot-buy">
+        <div class="foot-buy shadow">
             <div class="home" @click="$router.push({ path: 'home' })">
                 <div class="icon icon_home_black"></div>
                 <p>首页</p>
@@ -118,12 +119,13 @@
 
 <script>
 import { mapMutations } from 'vuex'
-import { getProductData } from 'src/service/getData'
+import { getGoodsData, getCommentData } from 'src/service/getData'
 import 'src/plugins/swiper.min.js'
 import 'src/style/swiper.min.css'
 import BScroll from 'better-scroll'
 
 export default {
+    name: 'goods',
     data() {
         return {
             id: '',
@@ -133,50 +135,46 @@ export default {
             specMenuIsShow: false,
             panelEnter: false,
             goods: {},
+            imgList: [],
+            filter_spec: [],
+            spec_goods_price: {},
             specIdxSelected: [],
             specSelected: [],
             specSelectedStr: '',
             specSelectedImg: '',
             specSelectedId: '',
+            specSelectedIdArr: [],
+            specNoStore: [],
+            specDisabled: [],
             num: 1,
+            price: 0,
             sumPrice: 0,
+            store: 0,
         }
     },
     beforeRouteEnter (to, from, next) {
         next(vm => {
             vm.id = vm.$route.query.id;
-            getProductData(vm.id).then(res => {
-                console.log(res);
-                vm.goods = res.goods;
-                vm.specSelectedImg = res.goods.image_list[0];
-                vm.sumPrice = res.goods.price;
-                for(var i in res.goods.filter_spec_list) {
-                    var temp = {
-                        name: res.goods.filter_spec_list[i].name,
-                        item_id: res.goods.filter_spec_list[i].items[0].item_id,
-                        value: res.goods.filter_spec_list[i].items[0].value,
-                        src: res.goods.filter_spec_list[i].items[0].src,
-                    }
-                    vm.specIdxSelected.push(0);
-                    vm.specSelected.push(temp);
-                }
+            getGoodsData(vm.id).then(res => {
+                var data = res.data;
+                vm.initSpecData(data);
                 setTimeout(function() {
                     vm.initSwiper();
                     vm.$refs.detail.innerHTML = vm.goods.goods_content;
                 }, 300);
+            });
+            getCommentData(vm.id, 1).then(res => {
+                console.log(res);
             });
         })
     },
     created() {
         const _self = this;
         _self.SHOW_HEADTOP(false);
-        // console.log(_self.$refs.tab);
         _self.SHOW_FOOTNAV(false);
     },
     mounted() {
         const _self = this;
-        // console.log(_self.$refs.tabContainer);
-        // console.log(_self.$refs.tab);
         setTimeout(function() {
             _self.$refs.tabContainer.style.height = _self.$refs.tab.clientHeight + 'px';
             _self.tabStick();
@@ -190,13 +188,30 @@ export default {
             this.updateSpecSelectedStr(value);
             this.updateSpecSelectedImg(value);
             this.updateSpecSelectedId(value);
+            if(!this.spec_goods_price[this.specSelectedId]) {
+                this.store = 0;
+                this.num = 0;
+            } else {
+                this.price = this.spec_goods_price[this.specSelectedId].price;
+                this.store = this.spec_goods_price[this.specSelectedId].store_count;
+                if(this.spec_goods_price[this.specSelectedId].store_count == 0) {
+                    this.num = 0;
+                } else {
+                    this.num = 1;
+                }
+            }
         },
-        // num: function(value) {
-        //     this.sumPrice = this.goods.price * value;
-        // }
+        num: function(value) {
+            if(value > 0) {
+                this.sumPrice = (this.spec_goods_price[this.specSelectedId].price * value).toFixed(2);
+            } else {
+                this.sumPrice = 0;
+            }
+        }
     },
     methods: {
         ...mapMutations(['LOADING','SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV','ADD_CART']),
+//-----------  UI交互start  -----------
         initSwiper() {
             new Swiper('.swiper-container', {
                 // loop: true,
@@ -252,14 +267,84 @@ export default {
                 return false;
             }
         },
+//-----------  UI交互end  -----------
+//
+//-----------  数据逻辑 start  -----------
+        initSpecData(data) {
+            this.goods = data.goods;
+            this.price = data.goods.shop_price;
+            if(data.goods_images_list.length > 0) {
+                this.imgList = data.goods_images_list;
+            } else {
+                var obj = {
+                    image_url: data.goods.original_img
+                }
+                this.imgList.push(obj);
+            }
+            this.filter_spec = data.filter_spec;
+            this.specSelectedImg = this.imgList[0].image_url;
+            this.spec_goods_price = data.spec_goods_price;
+            this.setSpecDisabled();
+            for(var i in data.filter_spec) {
+                for(var j in data.filter_spec[i].items) {
+                    var obj = data.filter_spec[i].items[j];
+                    if(this.specDisabled.indexOf(String(obj.item_id)) === -1) {
+                        var temp = {
+                            name: data.filter_spec[i].name,
+                            item_id: obj.item_id,
+                            item: obj.item,
+                            src: obj.src
+                        }
+                        this.specIdxSelected.push(Number(j));
+                        this.specSelected.push(temp);
+                        this.specSelectedIdArr.push(obj.item_id);
+                        break;
+                    }
+                }
+            }
+            this.specSelectedId = this.specSelectedIdArr.join('_');
+            if(this.specSelected.length > 0) {
+                this.sumPrice = data.spec_goods_price[this.specSelectedId].price;
+            } else {
+                this.num = 0;
+                this.sumPrice = 0;
+                this.specSelectedStr = '没有库存了';
+            }
+        },
+        setSpecDisabled() {   //初始进入没库存的置灰
+            var result = [];
+            for(var i in this.filter_spec) {
+                for(var j in this.filter_spec[i].items) {
+                    var id = this.filter_spec[i].items[j].item_id;
+                    var flag = false;
+                    for(var a in this.spec_goods_price) {
+                        if(a.indexOf(String(id)) > -1) {
+                            if(this.spec_goods_price[a].store_count > 0) {
+                                flag = true;
+                                break;
+                            }
+                        }
+                    }
+                    if(!flag) {
+                        result.push(id);
+                    }
+                }
+            }
+            this.specDisabled = result;
+        },
         selectSpec(index, idx) {
-            this.specSelected[index] = this.goods.filter_spec_list[index].items[idx];
-            this.$set(this.specIdxSelected, index, idx);  //调用Vue set方法，检测数组变动才能更新视图
+            if(this.specDisabled.indexOf(this.filter_spec[index].items[idx].item_id) > -1) {
+                return false;
+            } else {
+                this.specSelected[index] = this.filter_spec[index].items[idx];
+                this.$set(this.specIdxSelected, index, idx);  //调用Vue set方法，检测数组变动才能更新视图
+            }
+            this.updateSpecDisabled(index, idx);
         },
         updateSpecSelectedStr(value) {   //更新已选择属性显示文本
             this.specSelectedStr = '';
             for(var i in value) {
-                this.specSelectedStr += this.specSelected[i].value + ' ';
+                this.specSelectedStr += this.specSelected[i].item + ' ';
             }
         },
         updateSpecSelectedImg(value) {   //更新预览图
@@ -271,14 +356,35 @@ export default {
         },
         updateSpecSelectedId(value) {   //更新已选择属性id
             this.specSelectedId = '';
+            this.specSelectedIdArr = [];
             for(var i in value) {
-                this.specSelectedId += this.specSelected[i].item_id + '-';
+                this.specSelectedIdArr.push(this.specSelected[i].item_id);
             }
-            var a = this.specSelectedId;
-            this.specSelectedId = a.substring(0, a.length - 1);
+            this.specSelectedId = this.specSelectedIdArr.join('_');
+        },
+        updateSpecDisabled(index, idx) {   //更新已选择属性搭配的其他属性是否置灰
+            const _self = this;
+            const selectId = String(_self.filter_spec[index].items[idx].item_id);
+            for(var i in _self.spec_goods_price) {
+                if(i.indexOf(selectId) > -1) {
+                    var arr = String(i).split('_');
+                    arr.splice(arr.indexOf(selectId), 1);
+                    arr.forEach(function(item) {
+                        if(Number(_self.spec_goods_price[i].store_count) === 0) {
+                            if(_self.specDisabled.indexOf(item) === -1) {
+                                _self.specDisabled.push(item);
+                            }
+                        } else {
+                            if(_self.specDisabled.indexOf(item) > -1) {
+                                _self.specDisabled.splice(_self.specDisabled.indexOf(item), 1);
+                            }
+                        }
+                    });
+                }
+            }
         },
         addNum() {
-            if(this.num < Number(this.goods.store_count)) {
+            if(this.num < Number(this.store)) {
                 this.num ++;
             }
         },
@@ -297,7 +403,7 @@ export default {
                     spec_id: _self.specSelectedId,
                     goods_name: _self.goods.goods_name,
                     store_count: _self.goods.store_count,
-                    price: _self.goods.price,
+                    price: _self.price,
                     img: _self.specSelectedImg,
                     spec: _self.specSelectedStr,
                     num: _self.num
@@ -305,8 +411,8 @@ export default {
                 _self.LOADING(false);
                 _self.closeSpecMenu();
             }, 1000);
-
         }
+//-----------  数据逻辑 end  -----------
     }
 }
 </script>
@@ -330,10 +436,11 @@ export default {
 }
 
 .head_goback {
+    @include wh(2rem, 2rem);
     border-radius: 100%;
     background-color: rgba(0, 0, 0, .3);
     background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAYAAACOEfKtAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAAsSAAALEgHS3X78AAAE20lEQVR42u2dW08TQRTHh6gVgXCRNATCE6WhEi6BgOX2AQxReOERL4k+SJSLGlFIDFVR49030vA98AvAGyAQrgL1QqClpcVvoGdwFkvtbkvZnTmz3X/yfyrszPzS7c6cM3OWELHKAjvAF8Ht4GvgO+CH4GGwB/wE/AjcD+5hf9PO/sfBrpE2OgOuAF8C3waPMEgn8Qi71iV27TNmg5YBLgd3RX2rjPQwa6uctS2tbOAm8AAHaGoeYH2wyXabtoIHBYKL9SDrE/rbuwp8DxG4WN9jfUSnfHA3YnCx7mZ9RqEa8JBE8BQPsb4L02lwp4TgYt3JxsJV2eCbJoCn+CYbExcVgPtMBE9xHxubobKDH5gQnuIHbIyG6Dz4vonhKb7Pxqr7b15fGsCLvp11+008Bb6VRvAU39Lr6dyRhvAUd+gxSfakuVOebOdLusIwYsWS0rKv24J3ZO187KgKysHk5OQ893q9n6empubGx8c/5+bmPufUdvVx4nkoQ1JFRUUvNzY2fvyO0vT09BLHUFhS8cRWjPBKS0tf+Xy+n7/jqKGh4QOnfrQmE4YflAkeVXNz8yeOkW3N9IAbG7ySkhJNeGtraz7OfXKrwaMZrH5M8IqLi19ubm6qwtva2vKXlZW9FpCoipvtK8f2wAB4P9TgbW9v+x0Ox2tB/SuPB7AL89M2Fp7T6XwjsI9d8aYuwxjg2e32FwngBQTD8zBWRx4mLgzwCgsLKbzvavB2dnYCFRUVb5DcKa5ogJcxwFtfX1eF5/f7dxHB8zBmh+oVDQ+mI9804AWRwfMwZofRZgteas4WOn2h8FZXV31q8AKBQNDlcr1FHKVxUoBtouCtrKxsasALVVZWYobnYez4h+wLCgpGl5eXNySHdxjyv44J3u7ubqiqquqdJIFWyo7c5dVgXl7e6NLSkha8vZqaGlngeRi7gw3dhjdGI8cAb10LXm1t7XvJQv2UnfGJIxqGX1xcVIUXDAZlhKcs6cTCC4VC4bq6OhnhKT44h2FYAzab7SnNW6gBjEQivzhGlA0BaHgIPzMz89nMzIwWxH232/1R1lt4gEdjWVlZFOKyySAePER6eDWYCGI4HN5vbGz8KNs0hutEmj5UZmdntSBGOKYpT+obQpZyFOLc3NyKGsS9vb1IfX29DBA7hAUTKMT5+flVySG2CQ1nJQExjByiU3hAlUJcWFhYk3SifbgNuE80RFitfJVsqdcbnRO5IrpDiZZ8CCM1l9GlNSWDeCStacOSWE8i7IUh4PpfYh3V1g4J8iVd6DcXJZOxE5jujLu5KIOIrW9w7JyxoB1aA0SjmAW6DZaJtnzQzzj3qYloCOUW30QQW1paeAVkE27xpUK5yVxr5xamTeZUaI85sL2D37Efc6CqxrqAp0HZsbGxicnJyS9er3eCTr45tZ30QRtF1lGvf75KUlA+sQ4behiDlGsp1FoADxicSOl84LqT6CB67N068n9CWUUndJBV9kQH2Qnu8nZ6TJYNK7yjKI/8LRRrNnh32Ni46BwxX/Gxc4Sz6BOq3QTw2omA8nfRugB+LCG4x6zvKJRPrBKguqia4C9CW02QC2sZ5DYiWZXzswRPIe6zRGJZpeB1vr2VlxHQrcV6vYygh5j4ZQSJghSJXoehfKsess9iX4eRLXIAfwCTdwg03nnLRgAAAABJRU5ErkJggg==') no-repeat;
-    background-size: 100%;
+    background-size: 70%;
     background-position: center;
     line-height: 1rem;
 }
@@ -531,7 +638,7 @@ export default {
             min-height: 3.8rem;
             @include flefthoz;
             .pro-thumbnail {
-                @include wh(4rem, 4rem);
+                @include wh(4.4rem, 4.4rem);
                 margin-top: -1.4rem;
                 padding: .1rem;
                 background-color: #fff;
@@ -556,6 +663,9 @@ export default {
                         left: -.4rem;
                     }
                 }
+                .store {
+                    font-size: .5rem;
+                }
                 .desc {
                     width: 100%;
                     overflow: hidden;
@@ -579,6 +689,7 @@ export default {
                     border-bottom: 1px solid #eee;
                     padding-bottom: .6rem;
                     .spec-item {
+                        position: relative;
                         font-size: .5rem;
                         border-radius: 2px;
                         padding: .2rem .4rem;
@@ -587,6 +698,9 @@ export default {
                         @include flefthoz;
                         &.selected {
                             border: 1px solid $red;
+                        }
+                        &.disabled {
+                            opacity: .3;
                         }
                         .spec-img {
                             margin-right: .3rem;
@@ -630,8 +744,8 @@ export default {
     justify-content: space-between;
     align-items: stretch;
     background-color: #fff;
-    border-top: 1px solid #eee;
-    z-index: 1090;
+    // border-top: 1px solid #eee;
+    z-index: 1060;
     .home, .cart {
         box-sizing: border-box;
         padding: .2rem 1rem;
@@ -654,9 +768,11 @@ export default {
         flex-grow: 1;
     }
     .addCart {
-        background-color: #f90;
+        background-color: #ffc107;
     }
     .buyNow {
+        padding-left: .4rem;
+        padding-right: .4rem;
         background-color: $red;
     }
 }

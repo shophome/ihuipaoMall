@@ -16,8 +16,8 @@
                         </div>
                     </div>
                     <div class="item_list">
-                        <div class="item" v-for="(product, index) in item.items" :key="index">
-                            <product-card :property="product" :myClass="'category_card'"></product-card>
+                        <div class="item" v-for="(goods, index) in item.items" :key="index">
+                            <goods-card :property="goods" :myClass="'category_card'"></goods-card>
                         </div>
                     </div>
                 </li>
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import productCard from '../../components/productCard/productCard'
+import goodsCard from '../../components/goodsCard/goodsCard'
 import BScroll from 'better-scroll'
 
 // import {mapState, mapActions} from 'vuex'
@@ -54,7 +54,7 @@ export default {
         }
     },
     components: {
-        'product-card': productCard
+        'goods-card': goodsCard
     },
     props: ['options'],
     computed: {
@@ -95,7 +95,7 @@ export default {
         }, 300);
         setTimeout(() => {
             this.initScroll();
-        },1000);
+        },800);
     },
     methods: {
         checkWechat() {
@@ -135,7 +135,6 @@ export default {
             for(var i in _self.options) {     //右侧列表每个元素的高度
                 _self.itemListTop[i] = _self.$refs['list' + i][0].offsetTop;
             }
-            console.log(_self.itemListTop);
             _self.getNavScrollArea();
             _self.itemScrollListen();
         },
@@ -197,16 +196,6 @@ export default {
                         _self.navActive = _self.itemListTop.length - 1;
                     } else {
                         for(var i = 0; i < _self.itemListTop.length; i++) {
-                            //拖动右侧list到底部时，左侧nav acitve元素保持为最后一个
-                            // if(-pos.y < (_self.itemListTop[i] - _self.itemWrapperHeight/2)) {
-                            //     _self.navActive = i - 1;
-                            //     break;
-                            // }
-                            // if(-pos.y >= (_self.itemContainerHeight - _self.itemWrapperHeight)) {
-                            //     console.log(111);
-                            //     _self.navActive = _self.itemListTop.length - 1;
-                            //     break;
-                            // }
                             //判断右侧当前位置和左侧导航位置关系
                             if (- pos.y < (_self.itemListTop[i] - _self.itemWrapperHeight / 2)) {
                                 _self.navActive = i - 1;

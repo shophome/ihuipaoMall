@@ -127,7 +127,7 @@ img {
     right: 0;
     overflow: auto;
     background-color: #f8f8f8;
-    z-index: 1070;
+    z-index: 1080;
 }
 
 .head-title {
@@ -186,4 +186,9 @@ img {
 
 .shadow-white {
     box-shadow: 0 3px 10px rgba(255,255,255,.156863), 0 3px 10px rgba(255,255,255,.227451);
+}
+
+//第三方插件样式修改
+.swiper-pagination-bullet-active {
+    background: #8360ff !important;
 }

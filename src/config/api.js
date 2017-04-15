@@ -10,8 +10,12 @@ export default {
 		url: baseUrl + '/goods/category',
 		method: 'GET',
 	},
-	get_productData: {
+	get_goodsData: {
 		url: baseUrl + '/goods/goodsinfo',
+		method: 'GET',
+	},
+	get_commentData: {
+		url: baseUrl + '/goods/comment',
 		method: 'GET',
 	},
 	// get_carousel: {

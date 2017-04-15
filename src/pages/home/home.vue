@@ -1,20 +1,20 @@
 <template>
     <div class="wrap paddingTop paddingBottom">
-        <section class="carousel">
+        <section class="banner">
             <div class="swiper-container">
                 <div class="swiper-wrapper">
                     <div class="swiper-slide" v-for="(item, index) in banner" :key="index">
                         <img :src="item.img">
                     </div>
                 </div>
-                <!-- <div class="swiper-pagination"></div> -->
+                <div class="swiper-pagination"></div>
             </div>
         </section>
-        <section class="newProduct clearfix">
+        <section class="newGoods clearfix">
             <p class="title">新品上市</p>
             <div class="product-list">
-                <div class="product-item shadow" v-for="(item, index) in newProduct" :key="index">
-                    <product-card :property="item"></product-card>
+                <div class="product-item shadow" v-for="(item, index) in newGoods" :key="index">
+                    <goods-card :property="item"></goods-card>
                 </div>
             </div>
         </section>
@@ -25,7 +25,7 @@
 import { mapMutations } from 'vuex'
 import 'src/plugins/swiper.min.js'
 import 'src/style/swiper.min.css'
-import productCard from '../../components/productCard/productCard'
+import goodsCard from '../../components/goodsCard/goodsCard'
 import { getHomeData } from 'src/service/getData'
 
 export default {
@@ -33,11 +33,11 @@ export default {
     data() {
         return {
             banner: [],
-            newProduct: []
+            newGoods: []
         }
     },
     components: {
-        'product-card': productCard
+        'goods-card': goodsCard
     },
     created() {
         this.SHOW_HEADTOP(true);
@@ -48,15 +48,8 @@ export default {
             console.log(res);
             var data = res.data;
             this.banner = data.banner;
-            this.newProduct = data.newProduct;
+            this.newGoods = data.newProduct;
         });
-        // this.$store.dispatch('getCarousel').then((response) => {
-        //     this.carousel = response.array;
-        // });
-        // this.$store.dispatch('getNewProduct').then((response) => {
-        //     console.log(response);
-        //     this.newProduct = response.array;
-        // });
     },
     mounted() {
         setTimeout(function() {
@@ -74,12 +67,27 @@ export default {
 }
 </script>
 
-<style lang="scss" rel="stylesheet/scss" scoped>
+<style lang="scss">
+.banner {
+    .swiper-pagination {
+        text-align: right;
+        padding-right: 1rem;
+        .swiper-pagination-bullet {
+            background: #eee !important;
+            &.swiper-pagination-bullet-active {
+                background: #fff !important;
+            }
+        }
+    }
+}
+</style>
+
+<style lang="scss" scoped>
 @import '../../style/mixin';
 
 @mixin paddingLR {
-    padding-left: .6rem;
-    padding-right: .6rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 .wrap {
@@ -94,14 +102,19 @@ export default {
     }
 }
 
-.newProduct {
+.swiper-pagination-bullet-active {
+    background: #fff !important;
+}
+
+.newGoods {
     @include paddingLR;
     .product-list {
         @include fbethoz;
     }
     .title {
         background-color: inherit;
-        line-height: 1.4rem;
+        line-height: 1.8rem;
+        margin-bottom: .8rem;
         padding: 0.2rem 1rem;
         box-sizing: border-box;
         font-size: 0.8rem;
@@ -109,8 +122,8 @@ export default {
         text-align: center;
     }
     .product-item {
-        width: 48%;
-        margin-bottom: 1rem;
+        width: 46%;
+        margin-bottom: 1.4rem;
         float: left;
         img {
             width: 100%;

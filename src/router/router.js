@@ -4,7 +4,7 @@ import list from '../pages/list/list'
 import category from '../pages/category/category'
 import brand from '../pages/brand/brand'
 import branddetail from '../pages/brand/children/branddetail'
-import product from '../pages/product/product'
+import goods from '../pages/goods/goods'
 import cart from '../pages/cart/cart'
 import profile from '../pages/profile/profile'
 import info from '../pages/profile/children/info'
@@ -51,8 +51,8 @@ export default [
     },
     //商品详情页
     {
-        path: '/product',
-        component: product,
+        path: '/goods',
+        component: goods,
     },
     //购物车
     {

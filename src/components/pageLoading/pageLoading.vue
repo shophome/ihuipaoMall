@@ -1,12 +1,12 @@
 <template>
-    <div id="loading">
+    <div id="pageLoading">
         <img src="../../images/httpLoading.svg">
     </div>
 </template>
 
 <script>
 export default {
-    name: 'loading',
+    name: 'pageLoading',
     data(){
         return{
         }
@@ -18,14 +18,14 @@ export default {
 @import '../../style/common';
 @import '../../style/mixin';
 
-#loading {
+#pageLoading {
     width: 100%;
     height: 100%;
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 999999999;
-    background: rgba(0, 0, 0, .3);
+    z-index: 1060;
+    @include gradientBg;
     &.fade-enter {
         opacity: 1
     }
@@ -37,5 +37,6 @@ export default {
         transform: translate(-50% ,-50%);
     }
 }
+
 
 </style>

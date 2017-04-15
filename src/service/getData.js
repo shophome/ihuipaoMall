@@ -5,7 +5,7 @@ import * as home from './tempdata/home'
 import * as list from './tempdata/list'
 import * as category from './tempdata/category'
 import * as brand from './tempdata/brand'
-import * as product from './tempdata/product'
+import * as goods from './tempdata/goods'
 
 /**
  * 请求线上数据
@@ -37,13 +37,16 @@ if (process.env.NODE_ENV == 'development') {    //开发环境
      */
 
     var getHomeData = () => setpromise(home);
-    // var getHomeData = () => apiFactory(API.get_homeData, {});
     // var getCategoryData = () => setpromise(category);
-    var getCategoryData = () => apiFactory(API.get_categoryData, {});
 
+    // var getHomeData = () => apiFactory(API.get_homeData, {});
+    var getCategoryData = () => apiFactory(API.get_categoryData, {});
     var getBrandData = () => setpromise(brand);
     var getListData = () => setpromise(list);
-    var getProductData = (id) => setpromise(product);
+    // var getProductData = (id) => setpromise(product);
+    var getGoodsData = (id) => apiFactory(API.get_goodsData, {id: id});
+    var getCommentData = (goods_id, p) => apiFactory(API.get_commentData, {goods_id: goods_id, p: p});
+
 
     // var getProductData = (id) => apiFactory(API.get_productData, {
     //     id: id
@@ -51,14 +54,16 @@ if (process.env.NODE_ENV == 'development') {    //开发环境
 
 }else{                                           //真实环境
 
-    // var getHomeData = () => setpromise(home);
-    var getHomeData = () => apiFactory(API.get_homeData, {});
+    var getHomeData = () => setpromise(home);
     // var getCategoryData = () => setpromise(category);
-    var getCategoryData = () => apiFactory(API.get_categoryData, {});
     
+    // var getHomeData = () => apiFactory(API.get_homeData, {});
+    var getCategoryData = () => apiFactory(API.get_categoryData, {});
     var getBrandData = () => setpromise(brand);
     var getListData = () => setpromise(list);
-    var getProductData = (id) => setpromise(product);
+    // var getProductData = (id) => setpromise(product);
+    var getGoodsData = (id) => apiFactory(API.get_goodsData, {});
+    var getCommentData = (goods_id, p) => apiFactory(API.get_commentData, {goods_id: goods_id, p: p});
 
     // var getProductData = (id) => apiFactory(API.get_productData, {
     //     id: id
@@ -72,4 +77,4 @@ if (process.env.NODE_ENV == 'development') {    //开发环境
 
 // var sendLogin = (code, mobile, validate_token) => setpromise(login.userInfo);
 
-export { getHomeData, getCategoryData, getBrandData, getListData, getProductData }
+export { getHomeData, getCategoryData, getBrandData, getListData, getGoodsData, getCommentData }

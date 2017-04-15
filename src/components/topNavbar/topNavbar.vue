@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import productCard from '../../components/productCard/productCard'
+import goodsCard from '../../components/goodsCard/goodsCard'
 import BScroll from 'better-scroll'
 
 // import {mapState, mapActions} from 'vuex'
@@ -43,7 +43,7 @@ export default {
         }
     },
     components: {
-        'product-card': productCard
+        'goods-card': goodsCard
     },
     created() {
         this.checkWechat();

@@ -1,5 +1,5 @@
 <template>
-    <div id="foot_nav">
+    <div id="foot_nav" class="shadow">
         <ul>
             <router-link :to="{ path: '/home' }" tag="li" active-class="active" class="nav_item">
                 <div class="icon icon_home"></div>
@@ -87,7 +87,7 @@
     position: fixed;
     bottom: 0;
     background: $theme;
-    z-index: 1090;
+    z-index: 1070;
     ul {
         height: 100%;
         @include fmidhoz;

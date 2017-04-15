@@ -6,6 +6,9 @@
         <transition name="fade">
             <loading v-if="loading"></loading>
         </transition>
+        <transition name="fade">
+            <page-loading v-if="pageLoading"></page-loading>
+        </transition>
     </div>
 </template>
 
@@ -14,6 +17,7 @@
 import headTop from 'components/headTop/headTop'
 import footNav from 'components/footNav/footNav'
 import loading from 'components/loading/loading'
+import pageLoading from 'components/pageLoading/pageLoading'
 import {mapState, mapMutations} from 'vuex'
 
 export default {
@@ -22,9 +26,11 @@ export default {
         'head-top': headTop,
         'foot-nav': footNav,
         'loading': loading,
+        'page-loading': pageLoading,
     },
     computed: mapState([
         'loading',
+        'pageLoading',
         'showHeadTop',
         'showHeadTopBack',
         'showHeadTopLogin',

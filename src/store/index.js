@@ -10,6 +10,7 @@ Vue.use(Vuex)
 
 const state = {
     loading: false, //加载动画显示状态
+    pageLoading: false, //页面加载动画显示状态
     login: false, //是否为登陆状态
     showHeadTopLogin: true, //是否显示顶部导航登录按钮
     showHeadTop: true, //是否显示顶部导航

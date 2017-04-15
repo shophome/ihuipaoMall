@@ -2,7 +2,7 @@
 
 > A Vue.js & webpack webApp
 > 
-> [**在线预览**](http://0x9.me/CEQz6)
+> [**在线预览**](http://t.cn/RXGYel7)
 
 ## Build Setup
 

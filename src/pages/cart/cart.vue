@@ -17,7 +17,7 @@
                             <span>售价：</span>
                             <span>{{ item.price }}元</span>
                             <span>合计：</span>
-                            <span>{{ item.price * item.num }}元</span>
+                            <span>{{ (item.price * item.num).toFixed(2) }}元</span>
                         </div>
                         <div class="input-num">
                             <div class="sub" @click="subCart(item.id)">-</div>
@@ -81,7 +81,7 @@ export default {
                     result += this.itemChecked[i].price * this.cartList[i].num;
                 }
             }
-            return result;
+            return result.toFixed(2);
         },
         ...mapState([
            'cartList',
@@ -93,7 +93,6 @@ export default {
         this.SHOW_HEADTOP_SEARCH(false);
         this.SHOW_FOOTNAV(false);
         this.itemChecked = Clone(this.cartList);
-        console.log(this.cartList);
         for(var i in this.cartList) {
             this.$set(this.itemChecked[i], 'checked', true);
             this.itemNum ++ ;
@@ -134,7 +133,6 @@ export default {
             }
         },
         openDialog() {
-
             this.dialog = true;
         },
         closeDialog() {
@@ -205,6 +203,7 @@ export default {
                     color: $red;
                 }
                 .price {
+                    width: 100%;
                     font-size: .5rem;
                     line-height: 1.2rem;
                     span {

@@ -32,17 +32,21 @@ const setpromise = data => {
 //编译环境使用真实数据  'development' || 'production'
 if (process.env.NODE_ENV == 'development') {    //开发环境
 
-    /**
-     * 获取首页默认数据
-     */
-
     var getHomeData = () => setpromise(home);
-    // var getCategoryData = () => setpromise(category);
-
     // var getHomeData = () => apiFactory(API.get_homeData, {});
+
+    // var getCategoryData = () => setpromise(category);
     var getCategoryData = () => apiFactory(API.get_categoryData, {});
-    var getBrandData = () => setpromise(brand);
-    var getListData = () => setpromise(list);
+
+    var getCategoryListData = () => setpromise(list);
+    // var getCategoryListData = (cat_id, p) => apiFactory(API.get_categoryListData, {cat_id: cat_id, p: p});
+
+    // var getBrandData = () => setpromise(brand);
+    var getBrandData = () => apiFactory(API.get_brandData, {});
+
+    // var getListData = () => setpromise(list);
+    var getBrandListData = (brand_id, p) => apiFactory(API.get_brandListData, {brand_id: brand_id, p: p});
+
     // var getProductData = (id) => setpromise(product);
     var getGoodsData = (id) => apiFactory(API.get_goodsData, {id: id});
     var getCommentData = (goods_id, p) => apiFactory(API.get_commentData, {goods_id: goods_id, p: p});
@@ -55,14 +59,22 @@ if (process.env.NODE_ENV == 'development') {    //开发环境
 }else{                                           //真实环境
 
     var getHomeData = () => setpromise(home);
-    // var getCategoryData = () => setpromise(category);
-    
     // var getHomeData = () => apiFactory(API.get_homeData, {});
+    
+    // var getCategoryData = () => setpromise(category);
     var getCategoryData = () => apiFactory(API.get_categoryData, {});
-    var getBrandData = () => setpromise(brand);
-    var getListData = () => setpromise(list);
+
+    var getCategoryListData = () => setpromise(list);
+    // var getCategoryListData = () => apiFactory(API.get_categoryData, {});
+
+    // var getBrandData = () => setpromise(brand);
+    var getBrandData = () => apiFactory(API.get_brandData, {});
+
+    // var getBrandListData = () => setpromise(list);
+    var getBrandListData = (brand_id, p) => apiFactory(API.get_brandListData, {brand_id: brand_id, p: p});
+
     // var getProductData = (id) => setpromise(product);
-    var getGoodsData = (id) => apiFactory(API.get_goodsData, {});
+    var getGoodsData = (id) => apiFactory(API.get_goodsData, {id: id});
     var getCommentData = (goods_id, p) => apiFactory(API.get_commentData, {goods_id: goods_id, p: p});
 
     // var getProductData = (id) => apiFactory(API.get_productData, {
@@ -77,4 +89,4 @@ if (process.env.NODE_ENV == 'development') {    //开发环境
 
 // var sendLogin = (code, mobile, validate_token) => setpromise(login.userInfo);
 
-export { getHomeData, getCategoryData, getBrandData, getListData, getGoodsData, getCommentData }
+export { getHomeData, getCategoryData, getBrandData, getCategoryListData, getBrandListData, getGoodsData, getCommentData }

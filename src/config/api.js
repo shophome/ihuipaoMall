@@ -10,6 +10,18 @@ export default {
 		url: baseUrl + '/goods/category',
 		method: 'GET',
 	},
+	get_brandData: {
+		url: baseUrl + '/goods/brand',
+		method: 'GET',
+	},
+	get_categoryListData: {
+		url: baseUrl + '/goods/goodslist',
+		method: 'GET',
+	},
+	get_brandListData: {
+		url: baseUrl + '/goods/goodslist',
+		method: 'GET',
+	},
 	get_goodsData: {
 		url: baseUrl + '/goods/goodsinfo',
 		method: 'GET',

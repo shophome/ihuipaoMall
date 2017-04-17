@@ -19,7 +19,7 @@
                 <p class="price-count">{{ price }}</p>
                 <!-- <p class="price-origin">{{ goods.shop_price }}</p> -->
             </section>
-            <section class="spec-choose collapse-right" @click="showSpecMenu">
+            <section class="spec-choose collapse-right" ref="specChoose" @click="showSpecMenu">
                 <p class="has">已选</p>
                 <p class="chooseInfo">{{ specSelectedStr }}{{ num == 0 ? '' : 'x' + num }}</p>
             </section>
@@ -103,22 +103,45 @@
             </div>
         </section>
         <div class="foot-buy shadow">
-            <div class="home" @click="$router.push({ path: 'home' })">
-                <div class="icon icon_home_black"></div>
-                <p>首页</p>
-            </div>
-            <div class="cart" @click="$router.push({ path: 'cart' })">
-                <div class="icon icon_cart_black"></div>
-                <p>购物车</p>
+            <div v-if="!specMenuIsShow" class="handleNav">
+                <div class="home" @click="$router.push({ path: 'home' })">
+                    <div class="icon icon_home_black"></div>
+                    <p>首页</p>
+                </div>
+                <div class="cart" @click="$router.push({ path: 'cart' })">
+                    <transition 
+                        name="cartTransition"
+                        enter-active-class="animated tada"
+                        leave-active-class="animated tada"
+                        v-on:before-enter="cartBeforeEnter"
+                        v-on:after-leave="cartAfterLeave"
+                    >
+                        <div v-show="cartShow" ref="cart" class="icon icon_cart_black"></div>
+                    </transition>
+                    <div class="badge"><span>{{ cartItemNum }}</span></div>
+                    <p>购物车</p>
+                </div>
             </div>
             <div class="addCart" @click="addToCart">加入购物车</div>
             <div class="buyNow">立即购买</div>
+        </div>
+        <div class="ball-container">
+            <transition
+                name="ballTransition"
+                v-on:before-enter="ballBeforeEnter"
+                v-on:enter="ballEnter"
+                v-on:after-enter="ballAfterEnter"
+            >
+                <div class="ball" ref="ball" v-show="ballShow">
+                    <div class="inner"></div>
+                </div>
+            </transition>
         </div>
     </div>
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import { getGoodsData, getCommentData } from 'src/service/getData'
 import 'src/plugins/swiper.min.js'
 import 'src/style/swiper.min.css'
@@ -150,6 +173,9 @@ export default {
             price: 0,
             sumPrice: 0,
             store: 0,
+            cartBadgeCount: 0,
+            cartShow: true,
+            ballShow: false,
         }
     },
     beforeRouteEnter (to, from, next) {
@@ -180,6 +206,17 @@ export default {
             _self.tabStick();
         },300);
     },
+    computed: {
+        cartItemNum: function() {
+            let result = 0;
+            for(var i in this.cartList) {
+                result ++;
+            }
+            //计算中加入变量依赖以消除计算属性缓存
+            return result + this.cartBadgeCount - this.cartBadgeCount;
+        },
+        ...mapState(['cartList'])
+    },
     destroyed () {
         this.scrollWatch = false;
     },
@@ -207,6 +244,9 @@ export default {
             } else {
                 this.sumPrice = 0;
             }
+        },
+        cartList: function(value) {
+            console.log(121212);
         }
     },
     methods: {
@@ -258,6 +298,7 @@ export default {
         },
         closeSpecMenu(e) {
             const _self = this;
+            _self.cartShow = true;   //防止购物车图标消失
             if(!e || e.target === _self.$refs.specMenu || e.target === _self.$refs.close) {
                 _self.panelEnter = false;
                 setTimeout(function() {
@@ -395,10 +436,15 @@ export default {
         },
         addToCart() {
             const _self = this;
+            let badgeFlag = false;
             _self.LOADING(true);
             setTimeout(function() {
+                const id = _self.goods.goods_id + '-' + _self.specSelectedId;
+                if(!_self.cartList[id]) {
+                    badgeFlag = true;
+                }
                 _self.ADD_CART({
-                    id: _self.goods.goods_id + '-' + _self.specSelectedId,
+                    id: id,
                     goods_id: _self.goods.goods_id,
                     spec_id: _self.specSelectedId,
                     goods_name: _self.goods.goods_name,
@@ -410,10 +456,44 @@ export default {
                 });
                 _self.LOADING(false);
                 _self.closeSpecMenu();
+                _self.ballShow = true;
+                setTimeout(() => {
+                    if(badgeFlag) {
+                        _self.cartBadgeCount ++ ;
+                    }
+                    _self.cartShow = !_self.cartShow;
+                }, 500);
             }, 1000);
-        }
+        },
 //-----------  数据逻辑 end  -----------
-    }
+//-----------  过渡效果 start  -----------
+        cartBeforeEnter(el) {
+            el.style.display = '';
+        },
+        cartAfterLeave(el) {
+            el.style.display = '';
+        },
+        ballBeforeEnter(el) {
+            let rect = this.$refs.specChoose.getBoundingClientRect();
+            el.style.top = rect.top + 'px';
+            el.style.webkitTransform = 'translate3d(0,0,0)';
+            el.style.transform = 'translate3d(0,0,0)';
+            el.getElementsByClassName('inner')[0].style.webkitTransform = 'translate3d(0,0,0)';
+            el.getElementsByClassName('inner')[0].style.transform = 'translate3d(0,0,0)';
+        },
+        ballEnter(el) {
+            let rect = this.$refs.specChoose.getBoundingClientRect();
+            let height = window.screen.availHeight - rect.top;
+            el.style.webkitTransform = 'translate3d(0,' + height + 'px,0)';
+            el.style.transform = 'translate3d(0,' + height + 'px,0)';
+            el.getElementsByClassName('inner')[0].style.webkitTransform = 'translate3d(2.6rem,0,0)';
+            el.getElementsByClassName('inner')[0].style.transform = 'translate3d(2.6rem,0,0)';
+        },
+        ballAfterEnter(el) {
+            this.ballShow = false;
+        },
+//-----------  过渡效果 end  -----------
+    },
 }
 </script>
 
@@ -746,21 +826,31 @@ export default {
     background-color: #fff;
     // border-top: 1px solid #eee;
     z-index: 1060;
-    .home, .cart {
-        box-sizing: border-box;
-        padding: .2rem 1rem;
-        @include fmidver;
-        align-content: space-around;
-        p {
-            color: #8a8a8a;
-            font-size: .5rem;
+    .handleNav {
+        width: 42%;
+        @include fmidhoz;
+        .home, .cart {
+            position: relative;
+            box-sizing: border-box;
+            padding: .2rem 1rem;
+            @include fmidver;
+            align-content: space-around;
+            p {
+                color: #8a8a8a;
+                font-size: .5rem;
+            }
         }
-    }
-    .home {
-        border-right: 1px solid #eee;
+        .home {
+            border-right: 1px solid #eee;
+        }
+        .icon_cart_black {
+            display: block;
+            transition: all 1s;
+        }
     }
     .addCart, .buyNow {
         text-align: center;
+        height: 100%;
         line-height: 2.25rem;
         font-size: .7rem;
         font-weight: 500;
@@ -774,6 +864,40 @@ export default {
         padding-left: .4rem;
         padding-right: .4rem;
         background-color: $red;
+    }
+    .badge {
+        position: absolute;
+        top: .2rem;
+        right: .6rem;
+        width: .6rem;
+        height: .6rem;
+        line-height: .54rem;
+        background-color: $red;
+        border-radius: 50%;
+        text-align: center;
+        span {
+            display: inline-block;
+            color: #fff;
+            font-size: .5rem;
+            transform: scale(.8);
+        }
+    }
+}
+
+.ball-container {
+    .ball {
+        position: fixed;
+        left: 2rem;
+        top: 4rem;
+        z-index: 1000;
+        transition: all .6s cubic-bezier(.6,-0.38,.83,.67);
+        .inner {
+            width: .8rem;
+            height: .8rem;
+            border-radius: 50%;
+            background-color: $red;
+            transition: all .6s;
+        }
     }
 }
 

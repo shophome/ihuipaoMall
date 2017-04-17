@@ -11,13 +11,15 @@
 
 <script>
 import { mapMutations } from 'vuex'
-import { getListData } from 'src/service/getData'
+import { getCategoryListData, getBrandListData } from 'src/service/getData'
 import goodsCard from '../../components/goodsCard/goodsCard'
 
 export default {
     name: 'list',
     data() {
         return {
+            type: '',
+            id: '',
             goodsList: [],
             page: 1,
             loading: false,
@@ -32,7 +34,19 @@ export default {
     beforeRouteEnter (to, from, next) {
         next(vm => {
             vm.type = vm.$route.query.type;
+            console.log(vm.type);
             vm.id = vm.$route.query.id;
+            if(vm.type === 'category') {
+                getCategoryListData().then(res => {
+                    console.log(res)
+                    vm.goodsList = res.data1;
+                });
+            } else if(vm.type === 'brand'){
+                getBrandListData(vm.id, 1).then(res => {
+                    console.log(res)
+                    vm.goodsList = res.data;
+                });
+            }
         })
     },
     created() {
@@ -40,16 +54,24 @@ export default {
         this.SHOW_HEADTOP_BACK(true);
         this.SHOW_HEADTOP_SEARCH(false);
         this.SHOW_FOOTNAV(false);
-        getListData().then(res => {
-            this.goodsList = res.data1;
+        console.log(this.type);
+        this.$http.interceptors.push((request, next)=> {
+            console.log(11212);
+            this.PAGE_LOADING(false);
+            next((response=> {
+                console.log(112222212);
+                this.PAGE_LOADING(false);
+            }));
         });
+        
     },
     mounted() {
         this.$el.style.height = window.screen.availHeight + 'px';
         this.scroller = this.$el;
+
     },
     methods: {
-        ...mapMutations(['SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV']),
+        ...mapMutations(['SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV','PAGE_LOADING']),
         loadMore () {
             this.loading = true;
             if(!this.scrollEnd) {
@@ -69,13 +91,11 @@ export default {
                     }, 2000);
                     return false;
                 } else {
-                    setTimeout(() => {
-                        getListData().then(res => {
-                            this.page += 1;
-                            this.goodsList = this.goodsList.concat(res['data' + this.page]);
-                        });
-                        this.loading = false;
-                    }, 2000);
+                    getBrandListData(this.id, this.page).then(res => {
+                        this.page += 1;
+                        this.goodsList = this.goodsList.concat(res.data);
+                    });
+                    this.loading = false;
                 }
             } else {
                 this.loading = false;

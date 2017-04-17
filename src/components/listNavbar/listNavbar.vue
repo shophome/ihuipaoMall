@@ -10,12 +10,13 @@
                 <li v-for="(item, index) in options" :key="index" :ref="'list'+index" class="list">
                     <div class="list-head">
                         <div class="title">{{ item.name }}</div>
-                        <div class="more" @click="$router.push('/list?type=category&id='+ item.id +'')">
+                        <div v-if="item.items.length > 0" class="more" @click="$router.push('/list?type=category&id='+ item.id +'')">
                             <span>更多</span>
                             <div class="icon icon_more"></div>
                         </div>
                     </div>
                     <div class="item_list">
+                        <div v-if="item.items.length === 0" class="no-goods">暂无商品</div>
                         <div class="item" v-for="(goods, index) in item.items" :key="index">
                             <goods-card :property="goods" :myClass="'category_card'"></goods-card>
                         </div>
@@ -324,6 +325,11 @@ export default {
         }
         .item_list {
             background-color: inherit;
+            .no-goods {
+                color: #bfbfbf;
+                text-align: center;
+                line-height: 2rem;
+            }
             .item {
                 width: 50%;
                 height: auto;

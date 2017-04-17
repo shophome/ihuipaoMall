@@ -51,20 +51,22 @@ export default {
     mounted() {
         const _self = this;
         setTimeout(() => {
-            const topH = document.getElementById('head_top').getBoundingClientRect().height;
-            const footH = document.getElementById('foot_nav').getBoundingClientRect().height;
-            const screenH = window.screen.availHeight;
-            var pecent = 1 - (topH + footH) / screenH;
-            if(!this.isWechat) {
-                this.$refs.listContainer.style.height = String(pecent * 100 + 1) + '%';
-            } else {
-                this.$refs.listContainer.style.height = String(pecent * 100 - 3.3) + '%';
-            }
-            var navWrapperChilds = this.$refs.navWrapper.childNodes;
-            navWrapperChilds.forEach(function(el) {
-                _self.navWrapperWidth += el.getBoundingClientRect().width;
+            _self.$nextTick(function() {
+                const topH = document.getElementById('head_top').getBoundingClientRect().height;
+                const footH = document.getElementById('foot_nav').getBoundingClientRect().height;
+                const screenH = window.screen.availHeight;
+                var pecent = 1 - (topH + footH) / screenH;
+                if(!this.isWechat) {
+                    this.$refs.listContainer.style.height = String(pecent * 100 + 1) + '%';
+                } else {
+                    this.$refs.listContainer.style.height = String(pecent * 100 - 3.3) + '%';
+                }
+                var navWrapperChilds = this.$refs.navWrapper.childNodes;
+                navWrapperChilds.forEach(function(el) {
+                    _self.navWrapperWidth += el.getBoundingClientRect().width;
+                });
+                this.$refs.navWrapper.style.width = this.navWrapperWidth + 'px';
             });
-            this.$refs.navWrapper.style.width = this.navWrapperWidth + 'px';
         }, 300);
         setTimeout(() => {
             this.initScroll();

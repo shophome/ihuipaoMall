@@ -5,100 +5,23 @@
         </head-top>
         <div class="present">
             <p>当前余额(元)</p>
-            <p>2092</p>
+            <p>{{ data.balance }}</p>
         </div>
         <div class="detail">
             <div class="detail-head">
                 <span>时间</span>
                 <span>类型</span>
                 <span>金额</span>
-                <span>余额</span>
+                <!-- <span>积分</span> -->
                 <span>备注</span>
             </div>
             <ul class="detail-list">
-                <li class="detail-item">
-                    <span>2017-04-10 09:55:51</span>
-                    <span>支出</span>
-                    <span>0.20</span>
-                    <span>986,931.09</span>
-                    <span>发送短信扣费 [239]</span>
-                </li>
-                <li class="detail-item">
-                    <span>2017-04-10 09:55:51</span>
-                    <span>支出</span>
-                    <span>0.20</span>
-                    <span>986,931.09</span>
-                    <span>发送短信扣费【134876】</span>
-                </li>
-                <li class="detail-item">
-                    <span>2017-04-10 09:55:51</span>
-                    <span>支出</span>
-                    <span>0.20</span>
-                    <span>986,931.09</span>
-                    <span>发送短信扣费 [239]</span>
-                </li>
-                <li class="detail-item">
-                    <span>2017-04-10 09:55:51</span>
-                    <span>支出</span>
-                    <span>0.20</span>
-                    <span>986,931.09</span>
-                    <span>发送短信扣费 [239]</span>
-                </li>
-                <li class="detail-item">
-                    <span>2017-04-10 09:55:51</span>
-                    <span>支出</span>
-                    <span>0.20</span>
-                    <span>986,931.09</span>
-                    <span>发送短信扣费【134876】</span>
-                </li>
-                <li class="detail-item">
-                    <span>2017-04-10 09:55:51</span>
-                    <span>支出</span>
-                    <span>0.20</span>
-                    <span>986,931.09</span>
-                    <span>发送短信扣费 [239]</span>
-                </li>
-                <li class="detail-item">
-                    <span>2017-04-10 09:55:51</span>
-                    <span>支出</span>
-                    <span>0.20</span>
-                    <span>986,931.09</span>
-                    <span>发送短信扣费 [239]</span>
-                </li>
-                <li class="detail-item">
-                    <span>2017-04-10 09:55:51</span>
-                    <span>支出</span>
-                    <span>0.20</span>
-                    <span>986,931.09</span>
-                    <span>发送短信扣费【134876】</span>
-                </li>
-                <li class="detail-item">
-                    <span>2017-04-10 09:55:51</span>
-                    <span>支出</span>
-                    <span>0.20</span>
-                    <span>986,931.09</span>
-                    <span>发送短信扣费 [239]</span>
-                </li>
-                <li class="detail-item">
-                    <span>2017-04-10 09:55:51</span>
-                    <span>支出</span>
-                    <span>0.20</span>
-                    <span>986,931.09</span>
-                    <span>发送短信扣费 [239]</span>
-                </li>
-                <li class="detail-item">
-                    <span>2017-04-10 09:55:51</span>
-                    <span>支出</span>
-                    <span>0.20</span>
-                    <span>986,931.09</span>
-                    <span>发送短信扣费【134876】</span>
-                </li>
-                <li class="detail-item">
-                    <span>2017-04-10 09:55:51</span>
-                    <span>支出</span>
-                    <span>0.20</span>
-                    <span>986,931.09</span>
-                    <span>发送短信扣费 [239]</span>
+                <li class="detail-item" v-for="item in data.history">
+                    <span>{{ item.time }}</span>
+                    <span>{{ item.type }}</span>
+                    <span>{{ item.money }}</span>
+                    <!-- <span>{{ item.point }}</span> -->
+                    <span>{{ item.remark }}</span>
                 </li>
             </ul>
         </div>
@@ -107,6 +30,7 @@
 
 <script>
 import headTop from 'components/headTop/headTop'
+import {mapState} from 'vuex'
 
 export default {
     name: 'balance',
@@ -115,12 +39,18 @@ export default {
     },
     data() {
         return {
+            data: {}
         }
     },
+    computed: {
+        ...mapState([
+            'login',
+        ])
+    },
     created() {
+        this.data = this.login.account;
     },
     methods: {
-        
     },
 }
 </script>
@@ -171,8 +101,9 @@ export default {
         padding-top: 1.6rem;
         .detail-item {
             @include fmidhoz;
+            background-color: #fff;
             &:nth-child(2n) {
-                background-color: #fff;
+                background-color: #eee;
             }
         }
         span {

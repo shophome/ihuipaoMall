@@ -1,188 +1,41 @@
 <template>
     <div class="child-page paddingTop">
-        <head-top :back="true"></head-top>
+        <head-top :back="true">
+            <span slot='title' class="head-title">优惠券</span>
+        </head-top>
         <div class="coupon-container">
             <div class="tab">
                 <div class="tab-container">
                     <mu-tabs :value="activeTab" @change="handleTabChange">
-                        <mu-tab value="unused" title="未使用"/>
+                        <mu-tab value="available" title="未使用"/>
                         <mu-tab value="used" title="已使用"/>
                         <mu-tab value="overdue" title="已过期"/>
                     </mu-tabs>
                 </div>
             </div>
             <div class="tab-content">
-                <div v-if="activeTab === 'unused'">
-                    <ul class="coupon-list">
-                        <li class="coupon-item">
-                            <div class="time">
-                                <span>时间：</span>
-                                <span>2017-03-10 15:26:58</span>
-                            </div>
-                            <div class="sum">
-                                <span>¥</span>
-                                <span>10</span>
-                            </div>
-                            <div class="condition">
-                                <span>使用条件：</span>
-                                <div>
-                                    <span>¥</span>
-                                    <span>10</span>
-                                </div>
-                            </div>
-                            <div class="overdue">
-                                <span>过期时间：</span>
-                                <span>2017-03-10 15:26:58</span>
-                            </div>
-                            <div class="dash"></div>
-                            <div class="state unused">未使用</div>
-                        </li>
-                        <li class="coupon-item">
-                            <div class="time">
-                                <span>时间：</span>
-                                <span>2017-03-10 15:26:58</span>
-                            </div>
-                            <div class="sum">
-                                <span>¥</span>
-                                <span>10</span>
-                            </div>
-                            <div class="condition">
-                                <span>使用条件：</span>
-                                <div>
-                                    <span>¥</span>
-                                    <span>10</span>
-                                </div>
-                            </div>
-                            <div class="overdue">
-                                <span>过期时间：</span>
-                                <span>2017-03-10 15:26:58</span>
-                            </div>
-                            <div class="dash"></div>
-                            <div class="state unused">未使用</div>
-                        </li>
-                        <li class="coupon-item">
-                            <div class="time">
-                                <span>时间：</span>
-                                <span>2017-03-10 15:26:58</span>
-                            </div>
-                            <div class="sum">
-                                <span>¥</span>
-                                <span>10</span>
-                            </div>
-                            <div class="condition">
-                                <span>使用条件：</span>
-                                <div>
-                                    <span>¥</span>
-                                    <span>10</span>
-                                </div>
-                            </div>
-                            <div class="overdue">
-                                <span>过期时间：</span>
-                                <span>2017-03-10 15:26:58</span>
-                            </div>
-                            <div class="dash"></div>
-                            <div class="state unused">未使用</div>
-                        </li>
-                        <li class="coupon-item">
-                            <div class="time">
-                                <span>时间：</span>
-                                <span>2017-03-10 15:26:58</span>
-                            </div>
-                            <div class="sum">
-                                <span>¥</span>
-                                <span>10</span>
-                            </div>
-                            <div class="condition">
-                                <span>使用条件：</span>
-                                <div>
-                                    <span>¥</span>
-                                    <span>10</span>
-                                </div>
-                            </div>
-                            <div class="overdue">
-                                <span>过期时间：</span>
-                                <span>2017-03-10 15:26:58</span>
-                            </div>
-                            <div class="dash"></div>
-                            <div class="state unused">未使用</div>
-                        </li>
-                    </ul>
+                <div v-if="activeTab === 'available'">
+                    <div v-if="data.available.length === 0" class="no-coupon">
+                        <span>暂无返券</span>
+                    </div>
+                    <div class="coupon-list">
+                        <coupon-card v-for="(item, index) in data.available" key="index" :data="item" :state="'available'"></coupon-card>
+                    </div>
                 </div>
                 <div v-if="activeTab === 'used'">
+                    <div v-if="data.used.length === 0" class="no-coupon">
+                        <span>暂无返券</span>
+                    </div>
                     <ul class="coupon-list">
-                        <li class="coupon-item">
-                            <div class="time">
-                                <span>时间：</span>
-                                <span>2017-03-10 15:26:58</span>
-                            </div>
-                            <div class="sum">
-                                <span>¥</span>
-                                <span>10</span>
-                            </div>
-                            <div class="condition">
-                                <span>使用条件：</span>
-                                <div>
-                                    <span>¥</span>
-                                    <span>10</span>
-                                </div>
-                            </div>
-                            <div class="overdue">
-                                <span>过期时间：</span>
-                                <span>2017-03-10 15:26:58</span>
-                            </div>
-                            <div class="dash"></div>
-                            <div class="state">已使用</div>
-                        </li>
-                        <li class="coupon-item">
-                            <div class="time">
-                                <span>时间：</span>
-                                <span>2017-03-10 15:26:58</span>
-                            </div>
-                            <div class="sum">
-                                <span>¥</span>
-                                <span>10</span>
-                            </div>
-                            <div class="condition">
-                                <span>使用条件：</span>
-                                <div>
-                                    <span>¥</span>
-                                    <span>10</span>
-                                </div>
-                            </div>
-                            <div class="overdue">
-                                <span>过期时间：</span>
-                                <span>2017-03-10 15:26:58</span>
-                            </div>
-                            <div class="dash"></div>
-                            <div class="state">已使用</div>
-                        </li>
+                        <coupon-card v-for="(item, index) in data.used" key="index" :data="item" :state="'used'"></coupon-card>
                     </ul>
                 </div>
                 <div v-if="activeTab === 'overdue'">
+                    <div v-if="data.overdue.length === 0" class="no-coupon">
+                        <span>暂无返券</span>
+                    </div>
                     <ul class="coupon-list">
-                        <li class="coupon-item">
-                            <div class="time">
-                                <span>时间：</span>
-                                <span>2017-03-10 15:26:58</span>
-                            </div>
-                            <div class="sum">
-                                <span>¥</span>
-                                <span>10</span>
-                            </div>
-                            <div class="condition">
-                                <span>使用条件：</span>
-                                <div>
-                                    <span>¥</span>
-                                    <span>10</span>
-                                </div>
-                            </div>
-                            <div class="overdue">
-                                <span>过期时间：</span>
-                                <span>2017-03-10 15:26:58</span>
-                            </div>
-                            <div class="dash"></div>
-                            <div class="state">已过期</div>
-                        </li>
+                        <coupon-card v-for="(item, index) in data.overdue" key="index" :data="item" :state="'overdue'"></coupon-card>
                     </ul>
                 </div>
             </div>
@@ -193,18 +46,78 @@
 
 <script>
 import headTop from 'components/headTop/headTop'
+import couponCard from 'components/couponCard/couponCard'
+import {mapState} from 'vuex'
 
 export default {
     name: 'coupon',
     components: {
         'head-top': headTop,
+        'coupon-card': couponCard,
     },
     data() {
         return {
-            activeTab: 'unused'
+            // data: {},
+            activeTab: 'available',
+            data: {
+                available: [
+                    {
+                        time: '2016-08-31 15:26:58',
+                        type: '未使用',
+                        money: '6.00',
+                        condition: '10.00',
+                        timeline: '2017-03-10 15:26:58',
+                    },
+                    {
+                        time: '2016-08-31 15:26:58',
+                        type: '未使用',
+                        money: '6.00',
+                        condition: '10.00',
+                        timeline: '2017-03-10 15:26:58',
+                    },
+                    {
+                        time: '2016-08-31 15:26:58',
+                        type: '未使用',
+                        money: '6.00',
+                        condition: '10.00',
+                        timeline: '2017-03-10 15:26:58',
+                    },
+                ],
+                used: [
+                    {
+                        time: '2016-08-31 15:26:58',
+                        type: '已使用',
+                        money: '6.00',
+                        condition: '10.00',
+                        timeline: '2017-03-10 15:26:58',
+                    },
+                    {
+                        time: '2016-08-31 15:26:58',
+                        type: '已使用',
+                        money: '6.00',
+                        condition: '10.00',
+                        timeline: '2017-03-10 15:26:58',
+                    },
+                ],
+                overdue: [
+                    {
+                        time: '2016-08-31 15:26:58',
+                        type: '已过期',
+                        money: '6.00',
+                        condition: '10.00',
+                        timeline: '2017-03-10 15:26:58',
+                    },
+                ],
+            }
         }
     },
+    computed: {
+        ...mapState([
+            'login',
+        ])
+    },
     created() {
+        // this.data = this.login.coupon;
     },
     methods: {
         handleTabChange(val) {
@@ -216,6 +129,36 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../../style/mixin';
+
+.no-coupon {
+    margin: 40% auto;
+    position: relative;
+    @include wh(4.6rem, 4.6rem);
+    span {
+        display: inline-block;
+        position: absolute;
+        left: .56rem;
+        bottom: -1rem;
+        font-size: .8rem;
+        color: #bfbfbf;
+    }
+    &:before {
+        position: absolute;
+        display: block;
+        content: '';
+        @include wh(4rem, 4rem);
+        @include bis('../../../images/ticket.png');
+    }
+    &:after {
+        position: absolute;
+        top: .4rem;
+        right: -1rem;
+        display: block;
+        content: '';
+        @include wh(1.6rem, 1.6rem);
+        @include bis('../../../images/warn-grey.png');   
+    }
+}
 
 .mu-tabs {
     background-color: #fff;
@@ -256,81 +199,7 @@ export default {
 }
 
 .tab-content {
-    margin-top: 3rem;
-}
-
-.coupon-item {
-    position: relative;
-    width: 90%;
-    height: 5.6rem;
-    background-color: #fff;
-    border-radius: 1rem;
-    margin: 1rem auto;
-    box-shadow: 0 3px 20px rgba(0,0,0,.198039), 0 5px 40px rgba(0,0,0,.119608);
-    .time {
-        position: absolute;
-        top: 5%;
-        left: 5%;
-        span {
-            color: #757575;
-            font-size: .5rem;
-        }
-    }
-    .overdue {
-        position: absolute;
-        top: 80%;
-        left: 5%;
-        span {
-            color: #757575;
-            font-size: .5rem;
-        }
-    }
-    .condition {
-        position: absolute;
-        top: 40%;
-        left: 50%;
-        span {
-            color: #757575;
-            font-size: .5rem;
-        }
-    }
-    .sum {
-        position: absolute;
-        top: 20%;
-        left: 10%;
-        font-size: 2.3rem;
-        span {
-            font-weight: 900;
-            color: #cab36a;
-            &:nth-child(1) {
-                font-size: 2rem;
-            }
-        }
-    }
-    .dash {
-        position: absolute;
-        width: .3rem;
-        height: 100%;
-        top: 0;
-        right: 23%;
-        border-right: .2rem dashed #eee;
-    }
-    .state {
-        position: absolute;
-        width: 1rem;
-        height: 50%;
-        text-align: center;
-        vertical-align: middle;
-        font-size: 1rem;
-        color: #a5a5a5;
-        font-weight: 600;
-        top: 0;
-        right: 10%;
-        transform: translate(20%, 30%);
-        &.unused {
-            color: #cab36a;
-        }
-    }
+    margin-top: 2.8rem;
 }
 
 </style>

@@ -12,7 +12,7 @@
                         <div class="title">{{ item.name }}</div>
                     </div>
                     <div class="item_list">
-                        <div class="item" v-for="(brand, index) in item.items" :key="index" @click="$router.push('/list?type=brand&id='+ brand.id +'')">
+                        <div class="item" v-for="(brand, index) in item.items" :key="index" @click="$router.push('/list?type=brand&id='+ brand.id + '&content=' + brand.name)">
                             <img :src="brand.img">
                         </div>
                     </div>
@@ -56,22 +56,22 @@ export default {
                 const footH = document.getElementById('foot_nav').getBoundingClientRect().height;
                 const screenH = window.screen.availHeight;
                 var pecent = 1 - (topH + footH) / screenH;
-                if(!this.isWechat) {
+                // if(!this.isWechat) {
                     this.$refs.listContainer.style.height = String(pecent * 100 + 1) + '%';
-                } else {
-                    this.$refs.listContainer.style.height = String(pecent * 100 - 3.3) + '%';
-                }
+                // } else {
+                //     this.$refs.listContainer.style.height = String(pecent * 100 - 3.3) + '%';
+                // }
                 var navWrapperChilds = this.$refs.navWrapper.childNodes;
                 navWrapperChilds.forEach(function(el) {
                     _self.navWrapperWidth += el.getBoundingClientRect().width;
                 });
                 this.$refs.navWrapper.style.width = this.navWrapperWidth + 'px';
             });
-        }, 300);
+        }, 500);
         setTimeout(() => {
             this.initScroll();
             this.getNavScrollArea();
-        }, 500);
+        }, 600);
     },
     props: ['options'],
     computed: {

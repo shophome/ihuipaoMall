@@ -2,27 +2,28 @@
     <div class="wrap">
         <div class="header">
             <div class="avatar">
-                <img src="../../images/avatar.png">
+                <img :src="login.avatar || 'http://r0.ihuipao.cn/vue/tpshop/img/avatar.png'">
+
             </div>
-            <div class="name">登录/注册</div>
+            <div class="name" @click="goLogin">{{ login.name || '登录/注册' }}</div>
         </div>
         <div class="order">
             <div class="nav">
-                <router-link to="/profile/order" tag="div" class="all collapse-right">
+                <router-link to="/profile/myOrder" tag="div" class="all collapse-right">
                     <div class="icon icon_order"></div>
                     <span class="title">我的订单</span>
                     <span class="content">全部订单</span>
                 </router-link>
                 <ul class="order-list">
-                    <router-link to="/profile/order?type=paying" tag="li" class="order-item">
+                    <router-link to="/profile/myOrder?type=WAITPAY" tag="li" class="order-item">
                         <div class="icon icon_order_paying"></div>
                         <span>待付款</span>
                     </router-link>
-                    <router-link to="/profile/order?type=delivering" tag="li" class="order-item">
+                    <router-link to="/profile/myOrder?type=WAITRECEIVE" tag="li" class="order-item">
                         <div class="icon icon_order_delivering"></div>
                         <span>待收货</span>
                     </router-link>
-                    <router-link to="/profile/order?type=finished" tag="li" class="order-item">
+                    <router-link to="/profile/myOrder?type=FINISH" tag="li" class="order-item">
                         <div class="icon icon_order_finished"></div>
                         <span>已完成</span>
                     </router-link>
@@ -43,10 +44,10 @@
                 <div class="content">我的返券</div>
             </router-link>
         </div>
-        <div class="collapse-right">
+        <router-link to="/profile/config" tag="div" class="collapse-right">
             <div class="icon icon_config"></div>
             <div class="content">账户设置</div>
-        </div>
+        </router-link>
         <transition name="router-slid" mode="out-in">
             <router-view></router-view>
         </transition>
@@ -54,15 +55,17 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 
 export default {
     name: 'profile',
     data() {
         return {
-            a: 1
         }
     },
+    computed: mapState([
+        'login',
+    ]),
     created() {
         this.SHOW_HEADTOP(false);
         this.SHOW_FOOTNAV(true);
@@ -71,6 +74,11 @@ export default {
     },
     methods: {
         ...mapMutations(['SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV']),
+        goLogin() {
+            if(!this.login) {
+                window.location.href = 'http://passport.ihuipao.cn/site/login';
+            }
+        }
     }
 }
 </script>
@@ -105,6 +113,8 @@ export default {
     .avatar {
         vertical-align: middle;
         display: inline-block;
+        border-radius: 50%;
+        overflow: hidden;
         @include wh(2rem, 2rem);
     }
     .name {

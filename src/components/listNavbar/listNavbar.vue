@@ -3,6 +3,7 @@
         <div id="list_nav" ref="listNav">
             <ul>
                 <li v-for="(item, index) in options" :key="index" :ref="'nav'+index" @click="pickNav(index, true)" :class="{active : navActive === index}"><span>{{ item.name }}</span></li>
+                <li></li>
             </ul>
         </div>
         <div id="list_container" class="shadow" ref="listContainer">
@@ -10,7 +11,7 @@
                 <li v-for="(item, index) in options" :key="index" :ref="'list'+index" class="list">
                     <div class="list-head">
                         <div class="title">{{ item.name }}</div>
-                        <div v-if="item.items.length > 0" class="more" @click="$router.push('/list?type=category&id='+ item.id +'')">
+                        <div v-if="item.items.length > 0" class="more" @click="$router.push('/list?type=category&id='+ item.id +'&content=' + item.name)">
                             <span>更多</span>
                             <div class="icon icon_more"></div>
                         </div>
@@ -22,6 +23,7 @@
                         </div>
                     </div>
                 </li>
+                <li class="blank"></li>
             </ul>
         </div>
     </div>
@@ -87,12 +89,7 @@ export default {
                 }
             }
             var pecent = 1 - (topH + footH) / screenH;
-
-            if(!this.isWechat) {
-                document.getElementById('list_navbar').style.height = String(pecent * 100) + '%';
-            } else {
-                document.getElementById('list_navbar').style.height = String(pecent * 100 - 3.3) + '%';
-            }
+            document.getElementById('list_navbar').style.height = String(pecent * 100) + '%';
         }, 300);
         setTimeout(() => {
             this.initScroll();
@@ -227,12 +224,8 @@ export default {
 
 #list_navbar {
     top: 1.95rem;
-    // bottom: 2.25rem;
-    // padding-bottom: 2.25rem;
-    // position: relative;
     display: flex;
     flex: 1;
-    // flex-direction: row;
     position: absolute;
     right: 0;
     left: 0;
@@ -242,21 +235,16 @@ export default {
     #list_nav {
         width: 20%;
         float: left;
-        // padding-top: 4.3rem;
-        // padding-bottom: 4.3rem;
         ul {
             width: 100%;
             li {
                 position: relative;
                 height: 1.8rem;
-                // border-bottom: 1px solid #f3f3f3;
-                // background-color: #ebedf1;
                 background-color: $theme;
                 display: block;
                 text-align: center;
                 vertical-align: middle;
                 &.active {
-                    // border-left: .12rem solid $yellow;
                     background-color: #fff;
                     span {
                         color: $yellow;
@@ -336,6 +324,10 @@ export default {
                 padding: .5rem .6rem;
                 display: inline-block;
             }
+
+        }
+        .blank {
+            height: 3rem;
         }
     }
 }

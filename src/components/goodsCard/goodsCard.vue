@@ -3,14 +3,14 @@
         <router-link 
             :to="{ path: '/goods?id=' + property.id}" 
             tag="div">
-            <img v-lazy="property.img" />
+            <img v-lazy="property.img + '?imageView2/1/w/180/h/180/q/100'" />
             <div class="info">
                 <p class="desc">
                     {{ property.desc }}
                 </p>
                 <div class="price">
                     <span class="price-count">¥{{ property.price }}</span>
-                    <span v-if="property.price !== property.priceOriginal" class="price-origin">¥{{ property.priceOriginal }}</span>
+                    <!-- <span v-if="property.price !== property.priceOriginal" class="price-origin">¥{{ property.priceOriginal }}</span> -->
                 </div>
             </div>
         </router-link>
@@ -42,17 +42,16 @@ img {
     margin: 0;
     .info {
         padding: .4rem .5rem;
-        // height: 3rem;
         .desc {
             height: 1.6rem;
             line-height: .8rem;
             color: #fff;
             font-size: .5rem;
-            text-align:justify;
+            text-align:left;
             overflow: hidden;
         }
         .price {
-            // text-align: center;
+            @include fbethoz;
             height: 1rem;
             p {
                 display: inline-block;
@@ -65,7 +64,6 @@ img {
             .price-count {
                 color: $yellow;
                 font-size: .6rem;
-                margin-right: 1rem;
             }
             .price-origin {
                 position: relative;

@@ -1,7 +1,39 @@
-// var baseUrl = 'http://rap.taobao.org/mockjsdata/15806';
-var baseUrl = 'http://tpshop.ihuipao.cn/index.php/ajax';
+// var baseUrl = process.env.NODE_ENV == 'development' ? '/index.php/ajax' : '';
+var baseUrl ='/index.php/ajax';
 
 export default {
+	get_userData: {
+		url: baseUrl + '/user/index',
+		method: 'GET',
+	},
+	get_searchData: {
+		url: baseUrl + '/goods/search',
+		method: 'GET',
+	},
+	get_cartData: {
+		url: baseUrl + '/cart/cartlist',
+		method: 'GET',
+	},
+	add_cartData: {
+		url: baseUrl + '/cart/addcart',
+		method: 'POST',
+	},
+	change_cartData: {
+		url: baseUrl + '/cart/changecart?_d',
+		method: 'POST',
+	},
+	del_cartData: {
+		url: baseUrl + '/cart/delCart',
+		method: 'POST',
+	},
+	get_orderData: {
+		url: baseUrl + '/cart/cart2',
+		method: 'GET',
+	},
+	add_order: {
+		url: baseUrl + '/cart/addorder',
+		method: 'POST'
+	},
 	get_homeData: {
 		url: baseUrl + '/index/data',
 		method: 'GET',
@@ -27,17 +59,31 @@ export default {
 		method: 'GET',
 	},
 	get_commentData: {
-		url: baseUrl + '/goods/comment',
+		url: baseUrl + '/goods/consult',
 		method: 'GET',
 	},
-	// get_carousel: {
-	// 	url: 'http://rap.taobao.org/mockjsdata/15806/carousel',
-	// 	// url: 'http://tpshop.ihuipao.cn/index.php/ajax/index/carousel',
-	// 	method: 'GET',
-	// },
-	// get_newProduct: {
-	// 	// url: 'https://c.y.qq.com/v8/fcg-bin/fcg_myqq_toplist.fcg',
-	// 	url: 'http://rap.taobao.org/mockjsdata/15806/newProduct',
-	// 	method: 'GET',
-	// },
+	get_orderDetail: {
+		url: baseUrl + '/user/order_detail',
+		method: 'GET',
+	},
+	get_addressData: {
+		url: baseUrl + '/user/address_list',
+		method: 'GET',
+	},
+	del_addressData: {
+		url: baseUrl + '/user/address_del',
+		method: 'POST',
+	},
+	add_addressData: {
+		url: baseUrl + '/user/address_add',
+		method: 'POST',
+	},
+	default_addressData: {
+		url: baseUrl + '/user/address_default',
+		method: 'POST',
+	},
+	post_addressEdit: {
+		url: baseUrl + '/user/address_edit',
+		method: 'POST'
+	}
 }

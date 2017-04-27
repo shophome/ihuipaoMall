@@ -4,7 +4,7 @@
             <div class="swiper-container">
                 <div class="swiper-wrapper">
                     <div class="swiper-slide" v-for="(item, index) in banner" :key="index">
-                        <img :src="item.img">
+                        <img :src="item.img + '?imageView2/1/w/540/h/260/q/100'">
                     </div>
                 </div>
                 <div class="swiper-pagination"></div>
@@ -43,13 +43,17 @@ export default {
         this.SHOW_HEADTOP(true);
         this.SHOW_HEADTOP_BACK(false);
         this.SHOW_HEADTOP_SEARCH(true);
+        this.SHOW_HEADTOP_LOGIN(true);
         this.SHOW_FOOTNAV(true);
+        this.HEAD_TOP_TITLE(null);
         getHomeData().then(res => {
-            console.log(res);
             var data = res.data;
             this.banner = data.banner;
             this.newGoods = data.newProduct;
         });
+    },
+    destroyed() {
+        this.SHOW_HEADTOP_LOGIN(false);
     },
     mounted() {
         setTimeout(function() {
@@ -59,10 +63,9 @@ export default {
                 pagination: '.swiper-pagination',
             });
         },1000);
-        
     },
     methods: {
-        ...mapMutations(['SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV']),
+        ...mapMutations(['HEAD_TOP_TITLE','SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_LOGIN','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV']),
     }
 }
 </script>

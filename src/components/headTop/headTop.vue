@@ -1,49 +1,58 @@
 <template>
     <header id='head_top'>
-        <slot name='logo'></slot>
+        <slot v-if="!showHeadTopBack" name='logo'></slot>
         <slot name='title'></slot>
+        <div v-if="headTopTitle" class="head-top-title">
+            <span class="title_text">{{ headTopTitle }}</span>
+        </div>
         <slot name='save'></slot>
-        <div v-if="back" class="icon icon_back head_goback" @click="$router.go(-1)"></div>
-        <section v-if="search" class="head_search">
-            <mu-text-field :fullWidth="true" hintText="搜索商品"/>
+        <div v-if="back || showHeadTopBack" class="icon icon_back head_goback" @click="$router.go(-1)"></div>
+        <section v-show="search" class="head_search">
+            <mu-text-field :fullWidth="true" hintText="搜索商品" v-model="searchText" @focus="$router.push('/search')"/>
+            <div v-show="!showHeadTopLogin" class="icon icon_search btn_search" @click="goSearch"></div>
         </section>
-        <section v-if="showLogin" class="head_login">
-            <a href="http://passport.ihuipao.cn/site/login" class="login_span">登录</a>
+        <section v-show="showHeadTopLogin" class="head_login">
+            <a v-if="!login" href="http://passport.ihuipao.cn/site/login" class="login_span">登录</a>
+            <div v-if="login" class="icon icon_profile_2" @click="$router.push('/profile')"></div>
         </section>
-        <!-- <router-link to="/profile" class="head_login" tag="section">
-            <span class="login_span">登录</span>
-        </router-link> -->
     </header>
 </template>
 
 <script>
-    // import {mapState, mapActions} from 'vuex'
-    export default {
-        name: 'headTop',
-        data(){
-            return{
-                userInfo: false,
-                signinUp: true
+import {mapState, mapMutations} from 'vuex'
+import {getCookie} from 'config/mUtils'
+
+export default {
+    name: 'headTop',
+    data(){
+        return{
+            userInfo: false,
+            signinUp: true,
+            searchText: '',
+            showLogin: false,
+        }
+    },
+    props: ['search','back'],
+    computed: {
+        ...mapState([
+            'login',
+            'showHeadTopLogin',
+            'showHeadTopBack',
+            'headTopTitle'
+        ]),
+    },
+    created() {
+    },
+    methods: {
+        ...mapMutations(['LOGIN']),
+        goSearch() {
+            if(this.searchText) {
+                this.$router.push('/list?type=search&content='+this.searchText +'');
             }
-        },
-        mounted(){
-            //获取用户信息
-            // this.getUserInfo();
+        }
+    },
 
-        },
-        props: ['search', 'back', 'showLogin'],
-        computed: {
-            // ...mapState([
-            //     'userInfo'
-            // ]),
-        },
-        methods: {
-            // ...mapActions([
-            //     'getUserInfo'
-            // ]),
-        },
-
-    }
+}
 
 </script>
 
@@ -95,7 +104,6 @@
 
 #head_top {
     background-color: $theme;
-    // background-color: rgba(42, 40, 43, .6);
     position: fixed;
     z-index: 1090;
     left: 0;
@@ -140,13 +148,39 @@
         @include wh(.8rem, .8rem);
     }
 }
-.title_head {
+.head-name {
+    position: absolute;
+    color: #fff;
+    line-height: 1.95rem;
+    left: 14%;
+    font-size: .6rem;
+}
+
+.head-action {
+    position: absolute;
+    color: #fff;
+    line-height: 1.95rem;
+    right: 6%;
+    font-size: .6rem;
+}
+.head-title {
     @include center;
     width: 50%;
     color: #fff;
     text-align: center;
     .title_text {
         @include sc(0.8rem, #fff);
+        text-align: center;
+        font-weight: bold;
+    }
+}
+.head-top-title {
+    @include center;
+    width: 50%;
+    color: #fff;
+    text-align: center;
+    .title_text {
+        @include sc(0.6rem, #fff);
         text-align: center;
         font-weight: bold;
     }

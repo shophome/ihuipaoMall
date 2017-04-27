@@ -1,14 +1,14 @@
 <template>
     <div class="wrap">
         <list-navbar :options="categoryData"></list-navbar>
-         <transition name="router-fade" mode="out-in">
+        <transition name="router-fade" mode="out-in">
             <router-view></router-view>
         </transition>
     </div>
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import listNavbar from '../../components/listNavbar/listNavbar'
 import { getCategoryData } from 'src/service/getData'
 
@@ -22,18 +22,33 @@ export default {
     components: {
         'list-navbar': listNavbar
     },
+    computed: mapState([
+        'category',
+    ]),
     created() {
         this.SHOW_HEADTOP(true);
         this.SHOW_HEADTOP_BACK(true);
         this.SHOW_HEADTOP_SEARCH(false);
         this.SHOW_FOOTNAV(true);
-        getCategoryData().then(res => {
-            this.categoryData = res.data;
-            // console.log(this.categoryData);
-        });
+        this.HEAD_TOP_TITLE('商品分类');
+        this.LOADING(true);
+        setTimeout(() => {
+            this.LOADING(false);
+        }, 800);
+        if(this.category.length > 0) {
+            this.categoryData = this.category;
+        } else {
+            getCategoryData().then(res => {
+                this.categoryData = res.data;
+                this.SAVE_CATEGORY(res.data);
+            });
+        }
+    },
+    destroyed() {
+        this.HEAD_TOP_TITLE(null);
     },
     methods: {
-        ...mapMutations(['SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV']),
+        ...mapMutations(['LOADING','HEAD_TOP_TITLE','SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV','SAVE_CATEGORY']),
     }
 }
 </script>

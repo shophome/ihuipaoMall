@@ -32,6 +32,10 @@
     @include bis('../../images/profile.png');
 }
 
+.icon_profile_2 {
+    @include bis('../../images/profile-2.png');
+}
+
 .icon_search {
     @include bis('../../images/search.png');
 }
@@ -40,12 +44,12 @@
     @include bis('../../images/back.png');
 }
 
-.icon_choosed {
-    @include bis('../../images/choosed.png');
-}
-
 .icon_choose {
     @include bis('../../images/choose.png');
+}
+
+.icon_choosed {
+    background-image: url('../../images/choosed.png') !important;
 }
 
 .icon_order {
@@ -67,6 +71,10 @@
 .icon_address {
     @include bis('../../images/icon-address-red.png');
     // @include bis('../../images/icon-address-blue.png');
+}
+
+.icon_location {
+    @include bis('../../images/location.png');
 }
 
 .icon_coupon {

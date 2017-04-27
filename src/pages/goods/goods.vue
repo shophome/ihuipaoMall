@@ -5,7 +5,7 @@
             <div class="swiper-container">
                 <div class="swiper-wrapper">
                     <div class="swiper-slide" v-for="(item, index) in imgList" :key="index">
-                        <img :src="item.image_url">
+                        <img :src="item.image_url + '?imageView2/1/w/400/h/400/q/100'">
                     </div>
                 </div>
                 <div class="swiper-pagination"></div>
@@ -21,7 +21,7 @@
             </section>
             <section class="spec-choose collapse-right" ref="specChoose" @click="showSpecMenu">
                 <p class="has">已选</p>
-                <p class="chooseInfo">{{ specSelectedStr }}{{ num == 0 ? '' : 'x' + num }}</p>
+                <p class="chooseInfo">{{ specSelectedStr + ' ' }}{{ num == 0 ? '' : 'x' + num }}</p>
             </section>
         </section>
         <section class="tab-view">
@@ -32,35 +32,12 @@
                 </ul>
             </div>
             <div class="consult" ref="consult">
+                <div v-if="commentList.consultCount === 0" class="no-comment">暂无评价</div>
                 <div class="comment-list">
-                    <div class="item">
-                        <div class="user">
-                            <div class="avatar">
-                                <img src="http://stor.ihuipao.cn/@/avatar/96606/1174.jpg?v=6893">
-                            </div>
-                            <div class="name">
-                                <p>陈城</p>
-                                <p class="date">2017-03-14</p>
-                            </div>
-                        </div>
-                        <div class="content">联系电话无人接，我的付款沒有成功，怎麼辦</div>
-                        <div class="reply">
-                            <ul>
-                                <li>
-                                    <div class="avatar">
-                                        <img src="http://r0.ihuipao.cn/img/huipao.png">
-                                    </div>
-                                    <div class="textbox">
-                                        <span class="tit">官方回复：</span>
-                                        <span>我想你，想打定话给你，想花胆信给你，想呛首歌给你，想做换给你，想请你喝咖灰，想跟你一起吹吹轰，想跟你一起看熏熏···想你，想到无花付息，想到牛眼内，想到昏古七。但，又想了想还是放哈了定话，我，要控计我计己。 感谢您对汇跑的支持。</span>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+                    <comment-card :data="commentList.consultList[0]"></comment-card>
                 </div>
-                <div class="more collapse-right">
-                    <span class="left">用户留言(1)</span>
+                <div class="more collapse-right" @click="$router.push({name: 'comment', params: commentList})">
+                    <span class="left">用户留言({{commentList.consultCount}})</span>
                     <span class="right">查看全部留言</span>
                 </div>
             </div>
@@ -71,7 +48,7 @@
                 <div ref="close" class="close" @click="closeSpecMenu"></div>
                 <div class="pro-info">
                     <div class="pro-thumbnail">
-                        <img :src="specSelectedImg">
+                        <img :src="specSelectedImg + '?imageView2/1/w/120/h/120/q/100'">
                     </div>
                     <div class="pro-desc">
                         <p class="price">{{ price }}</p>
@@ -83,21 +60,21 @@
                     <div class="spec-group" v-for="(spec, index) in filter_spec" :key="index">
                         <div class="spec-title">{{ spec.name }}</div>
                         <div class="spec-row">
-                            <div v-for="(item, idx) in spec.items" :key="idx" class="spec-item" :class="{ selected : (idx === specIdxSelected[index]), disabled : (specDisabled.indexOf(item.item_id) > -1) }" @click="selectSpec(index, idx)">
+                            <div v-for="(item, idx) in spec.items" :key="idx" class="spec-item" :class="{ selected : (specIdxSelected[index] === idx), disabled : (specDisabledVirtual.indexOf(item.item_id) > -1) }" @click="selectSpec(index, idx)">
                                 <div v-if="item.src" class="spec-img">
-                                    <img :src="item.src">
+                                    <img :src="item.src + '?imageView2/1/w/20/h/20/q/100'">
                                 </div>
                                 <p>{{ item.item }}</p>
                             </div>
                         </div>
                     </div>
-                    <div class="spec-num">
-                        <p class="spec-title">购买数量</p>
-                        <div class="input-num">
-                            <div class="sub" @click="subNum">-</div>
-                            <div class="input">{{ num }}</div>
-                            <div class="add" @click="addNum">+</div>
-                        </div>
+                </div>
+                <div class="spec-num">
+                    <p class="spec-title">购买数量</p>
+                    <div class="input-num">
+                        <div class="sub" :class="{ disabled : num === 0 }" @click="subNum">-</div>
+                        <div class="input">{{ num }}</div>
+                        <div class="add" :class="{ disabled : num === Number(store) }" @click="addNum">+</div>
                     </div>
                 </div>
             </div>
@@ -118,11 +95,11 @@
                     >
                         <div v-show="cartShow" ref="cart" class="icon icon_cart_black"></div>
                     </transition>
-                    <div class="badge"><span>{{ cartItemNum }}</span></div>
+                    <div class="badge"><span>{{ cart.num }}</span></div>
                     <p>购物车</p>
                 </div>
             </div>
-            <div class="addCart" @click="addToCart">加入购物车</div>
+            <div v-if="!goods.prompt" class="addCart" @click="addToCart">加入购物车</div>
             <div class="buyNow">立即购买</div>
         </div>
         <div class="ball-container">
@@ -137,12 +114,16 @@
                 </div>
             </transition>
         </div>
+        <transition name="router-slid" mode="out-in">
+            <router-view></router-view>
+        </transition>
     </div>
 </template>
 
 <script>
 import { mapMutations, mapState } from 'vuex'
-import { getGoodsData, getCommentData } from 'src/service/getData'
+import { getGoodsData, getCommentData, addCartData } from 'src/service/getData'
+import commentCard from 'components/commentCard/commentCard'
 import 'src/plugins/swiper.min.js'
 import 'src/style/swiper.min.css'
 import BScroll from 'better-scroll'
@@ -161,96 +142,138 @@ export default {
             imgList: [],
             filter_spec: [],
             spec_goods_price: {},
-            specIdxSelected: [],
-            specSelected: [],
-            specSelectedStr: '',
+            allSpecObj: {},
+            //已选择属性在filter_spec中的索引对象
+            specIdxSelected: {},
+            //点击当时选择属性在filter_spec中的索引
+            specSelected: {
+                level: null,
+                value: null
+            },
+            //已选择属性在filter_spec中的索引数组 
+            // [
+            //   {
+            //      level: (Number),**属性在filter_spec第一层的索引**, 
+            //      value: (Number),**属性在filter_spec第一层的索引**
+            //    }
+            // ]
+            specSelectedArr: [],
+            //已选择属性的字符串显示
+            specSelectedStr: '请选择属性',
             specSelectedImg: '',
             specSelectedId: '',
             specSelectedIdArr: [],
             specNoStore: [],
-            specDisabled: [],
-            num: 1,
+            //初始置灰的属性集合
+            initSpecDisabledArr: [],
+            //动态置灰的属性集合
+            specDisabledArr: [],
+            //所有库存为0的属性组合
+            specDisabledId: [],
+            num: 0,
             price: 0,
-            sumPrice: 0,
+            // sumPrice: 0,
             store: 0,
-            cartBadgeCount: 0,
+            addFlag: true,
             cartShow: true,
             ballShow: false,
+            commentList: {
+                consultCount: 0, 
+                consultList: [{}]
+            },
         }
+    },
+    components: {
+        'comment-card': commentCard,
     },
     beforeRouteEnter (to, from, next) {
         next(vm => {
             vm.id = vm.$route.query.id;
             getGoodsData(vm.id).then(res => {
-                var data = res.data;
+                let data = res.data;
                 vm.initSpecData(data);
                 setTimeout(function() {
                     vm.initSwiper();
                     vm.$refs.detail.innerHTML = vm.goods.goods_content;
                 }, 300);
             });
-            getCommentData(vm.id, 1).then(res => {
-                console.log(res);
+            getCommentData(110, 1).then(res => {
+                vm.commentList = res.data;
             });
         })
     },
     created() {
-        const _self = this;
-        _self.SHOW_HEADTOP(false);
-        _self.SHOW_FOOTNAV(false);
-    },
-    mounted() {
-        const _self = this;
-        setTimeout(function() {
-            _self.$refs.tabContainer.style.height = _self.$refs.tab.clientHeight + 'px';
-            _self.tabStick();
+        this.SHOW_HEADTOP(false);
+        this.SHOW_FOOTNAV(false);
+        setTimeout(() => {
+            this.PREVENT_LOADING(true);
         },300);
     },
-    computed: {
-        cartItemNum: function() {
-            let result = 0;
-            for(var i in this.cartList) {
-                result ++;
+    mounted() {
+        setTimeout(() => {
+            this.PREVENT_LOADING(true);
+            this.$refs.tabContainer.style.height = this.$refs.tab.clientHeight + 'px';
+            this.tabStick();
+
+        },300);
+        setTimeout(() => {
+            if(this.store === 0) {
+                this.$BMessage.show('该商品已下架');
             }
-            //计算中加入变量依赖以消除计算属性缓存
-            return result + this.cartBadgeCount - this.cartBadgeCount;
+        }, 1000);
+    },
+    computed: {
+        specDisabledVirtual: function() {
+            let result = this.initSpecDisabledArr.concat(this.specDisabledArr);
+            return result;
         },
-        ...mapState(['cartList'])
+        specClassNotSelected: function() {
+            let result = '';
+            for(let i in this.filter_spec) {
+                if(this.specIdxSelected[i] === undefined) {
+                    result += this.filter_spec[i].name + ' ';
+                }
+            }
+            return result;
+        },
+        commentURL: function() {
+            return '/goods/comment?id=' + this.id;
+        },
+        ...mapState(['cart'])
     },
     destroyed () {
         this.scrollWatch = false;
+        this.PREVENT_LOADING(false);
     },
     watch: {
         specIdxSelected: function(value) {
             this.updateSpecSelectedStr(value);
             this.updateSpecSelectedImg(value);
             this.updateSpecSelectedId(value);
-            if(!this.spec_goods_price[this.specSelectedId]) {
-                this.store = 0;
+            this.updateSpecDisabled(value);
+            this.updateSpecSelectedPrice();
+            let len = 0;
+            for(let i in value) {
+                len ++;
+            }
+            if(len === this.filter_spec.length) {
+                this.num = 1;
+            } else {
                 this.num = 0;
-            } else {
-                this.price = this.spec_goods_price[this.specSelectedId].price;
-                this.store = this.spec_goods_price[this.specSelectedId].store_count;
-                if(this.spec_goods_price[this.specSelectedId].store_count == 0) {
-                    this.num = 0;
-                } else {
-                    this.num = 1;
+            }
+        },
+        specSelectedArr: {
+            handler: function(value) {
+                this.specIdxSelected = {};
+                for(let i in value) {
+                    this.specIdxSelected[value[i].level] = value[i].value;
                 }
-            }
+            },
+            deep: true
         },
-        num: function(value) {
-            if(value > 0) {
-                this.sumPrice = (this.spec_goods_price[this.specSelectedId].price * value).toFixed(2);
-            } else {
-                this.sumPrice = 0;
-            }
-        },
-        cartList: function(value) {
-            console.log(121212);
-        }
     },
     methods: {
-        ...mapMutations(['LOADING','SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV','ADD_CART']),
+        ...mapMutations(['SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV','ADD_CART','PREVENT_LOADING']),
 //-----------  UI交互start  -----------
         initSwiper() {
             new Swiper('.swiper-container', {
@@ -265,7 +288,7 @@ export default {
             _self.$nextTick(function() {
                 window.addEventListener('scroll', function() {
                     if(_self.scrollWatch) {
-                        var top = document.getElementsByTagName('body')[0].scrollTop;
+                        let top = document.getElementsByTagName('body')[0].scrollTop;
                         if(top >= _self.$refs.tabContainer.offsetTop) {
                             _self.$refs.tab.style.position = 'fixed';
                             _self.$refs.tab.style.top = 0;
@@ -317,7 +340,7 @@ export default {
             if(data.goods_images_list.length > 0) {
                 this.imgList = data.goods_images_list;
             } else {
-                var obj = {
+                let obj = {
                     image_url: data.goods.original_img
                 }
                 this.imgList.push(obj);
@@ -325,102 +348,181 @@ export default {
             this.filter_spec = data.filter_spec;
             this.specSelectedImg = this.imgList[0].image_url;
             this.spec_goods_price = data.spec_goods_price;
-            this.setSpecDisabled();
-            for(var i in data.filter_spec) {
-                for(var j in data.filter_spec[i].items) {
-                    var obj = data.filter_spec[i].items[j];
-                    if(this.specDisabled.indexOf(String(obj.item_id)) === -1) {
-                        var temp = {
-                            name: data.filter_spec[i].name,
-                            item_id: obj.item_id,
-                            item: obj.item,
-                            src: obj.src
-                        }
-                        this.specIdxSelected.push(Number(j));
-                        this.specSelected.push(temp);
-                        this.specSelectedIdArr.push(obj.item_id);
-                        break;
+            this.initSpecNoStore();
+            this.initSpecDisabled();
+        },
+        getAllSpec() {     //取得所有属性组合
+            const _self = this;
+            _self.allSpecObj = _self.filter_spec.reduce((acc, val) => {
+                let obj = {items: []};
+                for(let i in acc.items) {
+                    for(let j in val.items) {
+                        let o = {
+                            item_id: acc.items[i].item_id + '_' + val.items[j].item_id
+                        };
+                        obj.items.push(o);
                     }
                 }
-            }
-            this.specSelectedId = this.specSelectedIdArr.join('_');
-            if(this.specSelected.length > 0) {
-                this.sumPrice = data.spec_goods_price[this.specSelectedId].price;
-            } else {
-                this.num = 0;
-                this.sumPrice = 0;
-                this.specSelectedStr = '没有库存了';
+                return obj;
+            })
+        },
+        initSpecNoStore() {    //获得所有库存为0的属性组合
+            const _self = this;
+            let flag = false;
+            _self.getAllSpec();
+            for(let i in _self.allSpecObj.items) {
+                if(_self.spec_goods_price[_self.allSpecObj.items[i].item_id] === undefined) {
+                    _self.allSpecObj.items[i].store_count = '0';
+                    _self.specDisabledId.push(_self.allSpecObj.items[i].item_id);
+                } else {
+                    _self.allSpecObj.items[i].store_count = _self.spec_goods_price[_self.allSpecObj.items[i].item_id].store_count;
+                    if(Number(_self.spec_goods_price[_self.allSpecObj.items[i].item_id].store_count) === 0) {
+                        _self.specDisabledId.push(_self.allSpecObj.items[i].item_id);
+                    }
+                }
+                this.store += Number(_self.allSpecObj.items[i].store_count);
             }
         },
-        setSpecDisabled() {   //初始进入没库存的置灰
-            var result = [];
-            for(var i in this.filter_spec) {
-                for(var j in this.filter_spec[i].items) {
-                    var id = this.filter_spec[i].items[j].item_id;
-                    var flag = false;
-                    for(var a in this.spec_goods_price) {
-                        if(a.indexOf(String(id)) > -1) {
-                            if(this.spec_goods_price[a].store_count > 0) {
+        initSpecDisabled() {   //初始进入没库存的置灰
+            let result = [];
+            let specLength = 0;
+            for(let i in this.filter_spec) {
+                let arrT = this.filter_spec.concat();
+                arrT.splice(i, 1);
+                if(this.filter_spec.length === 1) {
+                    specLength = 1;
+                } else {
+                    specLength = arrT.reduce(function(l, r) {
+                        return l.items.length * r.items.length;
+                    });
+                }
+                for(let j in this.filter_spec[i].items) {
+                    let id = this.filter_spec[i].items[j].item_id;
+                    let flag = false;
+                    let n = 0;
+                    for(let a in this.allSpecObj.items) {
+                        if(this.allSpecObj.items[a].item_id.indexOf(String(id)) > -1) {
+                            if(this.allSpecObj.items[a].store_count > 0) {
                                 flag = true;
                                 break;
+                            } else {
+                                n++;
                             }
                         }
                     }
-                    if(!flag) {
+                    if(!flag || n === specLength) {
                         result.push(id);
                     }
                 }
             }
-            this.specDisabled = result;
+            this.initSpecDisabledArr = result;
         },
         selectSpec(index, idx) {
-            if(this.specDisabled.indexOf(this.filter_spec[index].items[idx].item_id) > -1) {
-                return false;
-            } else {
-                this.specSelected[index] = this.filter_spec[index].items[idx];
-                this.$set(this.specIdxSelected, index, idx);  //调用Vue set方法，检测数组变动才能更新视图
+            if(this.specDisabledVirtual.indexOf(this.filter_spec[index].items[idx].item_id) > -1) {
+                return false;   //如果所选属性已被置灰，则禁止点击
             }
-            this.updateSpecDisabled(index, idx);
+            let flag = false;
+            if(this.specSelectedArr.length > 0) {
+                for(let i in this.specSelectedArr) {
+                    if(this.specSelectedArr[i].level === index) {
+                        if(this.specSelectedArr[i].value !== idx) {
+                            this.specSelectedArr[i].value = idx;   //如果为同一级，则变更该级属性
+                        } else {
+                            this.specSelectedArr.splice(i, 1);   //如果为同一属性，则移除该属性
+                        }
+                        flag = true;
+                    }
+                }
+                
+            } else {
+                flag = false;
+            }
+            if(!flag) {    //如果为同一属性，则添加该属性
+                let obj = {
+                    level: index,
+                    value: idx 
+                }
+                this.specSelected = obj;
+                this.specSelectedArr.push(obj);
+            }
         },
         updateSpecSelectedStr(value) {   //更新已选择属性显示文本
             this.specSelectedStr = '';
-            for(var i in value) {
-                this.specSelectedStr += this.specSelected[i].item + ' ';
+            for(let i in value) {
+                this.specSelectedStr += this.filter_spec[i].items[value[i]].item + ' ';
+            }
+            if(this.specSelectedStr === '') {
+                this.specSelectedStr = '请选择属性';
             }
         },
         updateSpecSelectedImg(value) {   //更新预览图
-            for(var i in value) {
-                if(this.specSelected[i].src) {
-                    this.specSelectedImg = this.specSelected[i].src;
+            for(let i in value) {
+                if(this.filter_spec[i].items[value[i]].src) {
+                    this.specSelectedImg = this.filter_spec[i].items[value[i]].src;
                 }
             }
         },
         updateSpecSelectedId(value) {   //更新已选择属性id
             this.specSelectedId = '';
             this.specSelectedIdArr = [];
-            for(var i in value) {
-                this.specSelectedIdArr.push(this.specSelected[i].item_id);
+            for(let i in value) {
+                this.specSelectedIdArr.push(this.filter_spec[i].items[value[i]].item_id);
             }
             this.specSelectedId = this.specSelectedIdArr.join('_');
+            this.updateSpecSelectedStore();
         },
-        updateSpecDisabled(index, idx) {   //更新已选择属性搭配的其他属性是否置灰
-            const _self = this;
-            const selectId = String(_self.filter_spec[index].items[idx].item_id);
-            for(var i in _self.spec_goods_price) {
-                if(i.indexOf(selectId) > -1) {
-                    var arr = String(i).split('_');
-                    arr.splice(arr.indexOf(selectId), 1);
-                    arr.forEach(function(item) {
-                        if(Number(_self.spec_goods_price[i].store_count) === 0) {
-                            if(_self.specDisabled.indexOf(item) === -1) {
-                                _self.specDisabled.push(item);
-                            }
-                        } else {
-                            if(_self.specDisabled.indexOf(item) > -1) {
-                                _self.specDisabled.splice(_self.specDisabled.indexOf(item), 1);
+        updateSpecSelectedStore() {   //更新已选择库存
+            this.store = 0;
+            for(let i in this.allSpecObj.items) {
+                let itemInAll = this.allSpecObj.items[i];
+                let flag = true;
+                for(let j in this.specSelectedIdArr) {
+                    if(itemInAll.item_id.indexOf(this.specSelectedIdArr[j]) === -1) {
+                        flag = false;
+                    }
+                }
+                if(flag) {
+                    this.store += Number(itemInAll.store_count);
+                }
+            }
+        },
+        updateSpecSelectedPrice() {
+            if(this.specSelectedArr.length === this.filter_spec.length) {
+                this.price = Number(this.spec_goods_price[this.specSelectedId].price).toFixed(2);
+            }
+        },
+        updateSpecDisabled(value) {   //动态置灰属性
+            let idL = '';
+            let idR = '';
+            this.specDisabledArr = [];
+            for(let i in this.filter_spec) {
+                for(let j in this.filter_spec[i].items) {
+                    let idx = Number(value[i]);
+                    idR = this.filter_spec[i].items[j].item_id;
+                    if(idx !== undefined && idx !== Number(j) && this.initSpecDisabledArr.indexOf(this.filter_spec[i].items[j].item_id) === -1) {   //取得未被选中的属性索引
+                        let idArr = [];
+                        let store = 0;
+                        idArr.push(this.filter_spec[i].items[j].item_id);
+                        for(let k in value) {
+                            if(Number(k) !== Number(i)) {
+                                idArr.push(this.filter_spec[k].items[value[k]].item_id);
                             }
                         }
-                    });
+                        for(let l in this.allSpecObj.items) {
+                            let flag = true;
+                            for(let m in idArr) {
+                                if(this.allSpecObj.items[l].item_id.indexOf(idArr[m]) === -1) {
+                                    flag = false;
+                                }
+                            }
+                            if(flag) {
+                                store += Number(this.allSpecObj.items[l].store_count);
+                            }
+                        }
+                        if(store === 0) {
+                            this.specDisabledArr.push(this.filter_spec[i].items[j].item_id);
+                        }
+                    }
                 }
             }
         },
@@ -430,48 +532,72 @@ export default {
             }
         },
         subNum() {
-            if(this.num > 1) {
+            if(this.num > 0) {
                 this.num --;
             }
         },
+        
         addToCart() {
             const _self = this;
-            let badgeFlag = false;
-            _self.LOADING(true);
-            setTimeout(function() {
-                const id = _self.goods.goods_id + '-' + _self.specSelectedId;
-                if(!_self.cartList[id]) {
-                    badgeFlag = true;
+            if(_self.addFlag) {
+                _self.addFlag = false;
+                if(_self.specSelectedArr.length < _self.filter_spec.length) {
+                    _self.$BMessage.show('请选择 数量', {a: 1});
+                    _self.$BMessage.show('请选择 ' + _self.specClassNotSelected);
+                    return false;
                 }
-                _self.ADD_CART({
-                    id: id,
-                    goods_id: _self.goods.goods_id,
-                    spec_id: _self.specSelectedId,
-                    goods_name: _self.goods.goods_name,
-                    store_count: _self.goods.store_count,
-                    price: _self.price,
-                    img: _self.specSelectedImg,
-                    spec: _self.specSelectedStr,
-                    num: _self.num
-                });
-                _self.LOADING(false);
-                _self.closeSpecMenu();
-                _self.ballShow = true;
-                setTimeout(() => {
-                    if(badgeFlag) {
-                        _self.cartBadgeCount ++ ;
+
+                if(_self.num === 0) {
+                    _self.$BMessage.show('请选择 数量');
+                    return false;
+                }
+                
+                for(let i in _self.cart.list) {
+                    if(_self.cart.list[i].goods_id == _self.goods.goods_id && _self.cart.list[i].spec_key == _self.specSelectedId) {
+                            if(_self.num + _self.cart.list[i].goods_num > _self.store) {
+                                _self.$BMessage.show('购物车中该商品数量已超过库存');
+                                return false;
+                        }
                     }
-                    _self.cartShow = !_self.cartShow;
-                }, 500);
-            }, 1000);
+                }
+
+                const obj = {
+                    goods_id: _self.goods.goods_id,
+                    goods_num: _self.num,
+                    goods_spec: _self.specSelectedId,
+                }
+                addCartData(obj).then(res => {
+                    const id = _self.goods.goods_id + '-' + _self.specSelectedId;
+                    _self.ADD_CART({
+                        goods_id: _self.goods.goods_id,
+                        goods_name: _self.goods.goods_name,
+                        store_count: _self.store,
+                        goods_price: _self.price,
+                        img: _self.specSelectedImg,
+                        spec_key: _self.specSelectedId,
+                        spec_key_name: _self.specSelectedStr,
+                        goods_num: _self.num,
+                        selected: '1',
+                    });
+                    _self.closeSpecMenu();
+                    _self.ballShow = true;
+                    setTimeout(() => {
+                        _self.cartShow = !_self.cartShow;
+                        _self.addFlag = true;
+                    }, 600);
+                });
+            }
+            
         },
 //-----------  数据逻辑 end  -----------
 //-----------  过渡效果 start  -----------
         cartBeforeEnter(el) {
             el.style.display = '';
+            el.style.animationDelay = '.6s';
         },
         cartAfterLeave(el) {
             el.style.display = '';
+            el.style.animationDelay = '.6s';
         },
         ballBeforeEnter(el) {
             let rect = this.$refs.specChoose.getBoundingClientRect();
@@ -496,6 +622,14 @@ export default {
     },
 }
 </script>
+
+<style lang="scss">
+.consult {
+    .divide {
+        display: none;
+    }
+}
+</style>
 
 <style lang="scss" scoped>
 @import '../../style/icon';
@@ -609,70 +743,34 @@ export default {
         }
     }
     .consult {
-        @include paddingLR;
-        @include paddingTB(1rem, 0rem);
+        // @include paddingLR;
+        // @include paddingTB(0rem, 0rem);
+        .no-comment {
+            text-align: center;
+        }
         .more {
             height: 2rem;
             padding-right: 1rem;
             border-bottom: 1px solid #eee;
             @include fbethoz;
+            @include paddingLR;
             .left {
-                font-size: .64rem;
+                font-size: .54rem;
                 font-weight: 400;
             }
             .right {
                 font-size: .4rem;
                 font-weight: 300;
+                margin-right: 1rem;
+            }
+            &:after {
+                right: .8rem;
             }
         }
         .comment-list {
-            .item {
-                margin: 20px 0;
-                .user {
-                    @include flefthoz;
-                    .avatar {
-                        @include wh(1.8rem, 1.8rem);
-                        border-radius: 50%;
-                        overflow: hidden;
-                        img {
-                            width: 100%;
-                        }
-                    }
-                    .name {
-                        box-flex: 1;
-                        width: 60%;
-                        margin-left: 6%;
-                    }
-                    .more {
-                        font-size: .5rem;
-                    }
-                }
-                .content {
-                    margin-top: 10px;
-                    margin-bottom: 10px;
-                }
-                .reply {
-                    padding: .4rem;
-                    background-color: #eee;
-                    ul {
-                        li {
-                            position: relative;
-                            .avatar {
-                                position: absolute;
-                                left: 0;
-                                top: 0;
-                                @include wh(1.2rem, 1.2rem);
-                                overflow: hidden; 
-                            }
-                            .textbox {
-                                font-size: .5rem;
-                                .tit {
-                                    color: $red;
-                                }
-                                text-indent: 1.6rem;
-                            }
-                        }
-                    }
+            .comment-card {
+                .divide {
+                    display: none;
                 }
             }
         }
@@ -755,7 +853,7 @@ export default {
             }
         }
         .spec-container {
-            max-height: 12rem;
+            max-height: 10rem;
             overflow-y: auto;
             border-top: 1px solid #eee;
             padding-top: .6rem;
@@ -789,27 +887,30 @@ export default {
                     }
                 }
             }
-            .spec-num {
-                @include fbethoz;
-                margin-bottom: .6rem;
-                .input-num {
-                    @include fmidhoz;
-                    border: 1px solid #eee;
-                    color: #333;
-                    .sub, .add {
-                        font-size: 1.2rem;
-                        font-weight: 300;
-                        color: #c9c9c9;
+        }
+        .spec-num {
+            @include fbethoz;
+            margin-bottom: .6rem;
+            .input-num {
+                @include fmidhoz;
+                border: 1px solid #eee;
+                color: #333;
+                .sub, .add {
+                    font-size: 1.2rem;
+                    font-weight: 300;
+                    color: #c9c9c9;
+                    &.disabled {
+                        opacity: .3;
                     }
-                    .sub, .input, .add,  {
-                        @include wh(1.6rem, 1.6rem);
-                        text-align: center;
-                        line-height: 1.6rem;
-                    }
-                    .input {
-                        border-left: 1px solid #eee;
-                        border-right: 1px solid #eee;
-                    }
+                }
+                .sub, .input, .add,  {
+                    @include wh(1.6rem, 1.6rem);
+                    text-align: center;
+                    line-height: 1.6rem;
+                }
+                .input {
+                    border-left: 1px solid #eee;
+                    border-right: 1px solid #eee;
                 }
             }
         }

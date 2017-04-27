@@ -1,30 +1,37 @@
 <template>
     <div class="wrap paddingTop paddingBottom">
+        <div v-if="!login" class="go-login collapse-right" @click="goLogin">
+            <span>登录后享受更多优惠</span>
+            <span class="login">去登录</span>
+        </div>
         <div class="cart">
             <div class="tip-nodata" v-show="itemNum === 0">您的购物车空空如也，赶紧去逛逛吧～</div>
             <ul class="cart-list">
-                <li v-for="(item, index) in cartList" :key="index" class="cart-item">
-                    <div class="choose-box" @click="checkItem(item.id)">
-                        <div class="icon icon_choosed" :class="{ icon_choose : !itemChecked[item.id].checked }"></div>
+                <li v-for="(item, index) in itemChecked" :key="index" class="cart-item">
+                    <div class="choose-box" @click="checkItem(index)">
+                        <div class="icon icon_choose" :class="{ icon_choosed : (item.selected === 1) }"></div>
                     </div>
                     <div class="pro-img">
-                        <img :src="item.img">
+                        <img :src="item.img + '?imageView2/1/w/120/h/120/q/100'">
                     </div>
                     <div class="pro-info">
-                        <p class="name" @click="$router.push('/product?id='+ item.goods_id +'')">{{ item.goods_name }}</p>
-                        <p class="spec">{{ item.spec }}</p>
+                        <p class="name" @click="$router.push('/goods?id='+ item.goods_id +'')">{{ item.goods_name }}</p>
+                        <div class="brief">
+                            <p class="spec">{{ item.spec_key_name }}</p>
+                            <p class="store">库存：{{ item.store_count }}</p>
+                        </div>
                         <div class="price">
                             <span>售价：</span>
-                            <span>{{ item.price }}元</span>
+                            <span>{{ item.goods_price }}元</span>
                             <span>合计：</span>
-                            <span>{{ (item.price * item.num).toFixed(2) }}元</span>
+                            <span>{{ (item.goods_price * Number(item.goods_num)).toFixed(2) }}元</span>
                         </div>
                         <div class="input-num">
-                            <div class="sub" @click="subCart(item.id)">-</div>
-                            <div class="input">{{ item.num }}</div>
-                            <div class="add" @click="addCart(item.id)">+</div>
+                            <div class="sub" :class="{ disabled : item.goods_num === 1 }" @click="subCart($event, index)">-</div>
+                            <div class="input">{{ item.goods_num }}</div>
+                            <div class="add" :class="{ disabled : item.goods_num === Number(item.store_count) }" @click="addCart($event, index)">+</div>
                         </div>
-                        <div class="delete" @click="callReduce(item)"></div>
+                        <div class="delete" @click="callReduce(index)"></div>
                     </div>
                 </li>
             </ul>
@@ -32,13 +39,13 @@
         <div class="bottom-submit">
             <div class="price">
                 <div class="up">
-                    <span>共{{ selectedNum }}件</span>
+                    <span>共{{ itemNum }}件</span>
                     <span>金额：</span>
                 </div>
                 <div class="down">{{ sumPrice }}<span>元</span></div>
             </div>
             <div class="btn btn-grey" @click="$router.push('/')">继续购物</div>
-            <div class="btn btn-alert">去结算</div>
+            <div class="btn btn-alert" @click="goPay">去结算</div>
         </div>
         <mu-dialog :open="dialog" title="" @close="closeDialog">
             确认要从购物车移除该商品吗？
@@ -51,6 +58,7 @@
 <script>
 import { mapMutations } from 'vuex'
 import { mapState } from 'vuex'
+import { getCartData, changeCartData, delCartData } from 'src/service/getData'
 import { Clone } from '../../config/mUtils'
 import BScroll from 'better-scroll'
 
@@ -68,7 +76,7 @@ export default {
         selectedNum() {
             var result = 0;
             for(var i in this.itemChecked) {
-                if(this.itemChecked[i].checked) {
+                if(this.itemChecked[i].selected) {
                     result ++ ;
                 }
             }
@@ -77,59 +85,94 @@ export default {
         sumPrice() {
             var result = 0;
             for(var i in this.itemChecked) {
-                if(this.itemChecked[i].checked) {
-                    result += this.itemChecked[i].price * this.cartList[i].num;
+                if(this.itemChecked[i].selected) {
+                    result += this.itemChecked[i].goods_price * Number(this.itemChecked[i].goods_num);
                 }
             }
             return result.toFixed(2);
         },
         ...mapState([
-           'cartList',
+            'login',
+            'cart',
         ])
+    },
+    beforeRouteEnter (to, from, next) {
+        next(vm => {
+            if(vm.login) {
+                getCartData().then(res => {
+                    vm.itemChecked = Clone(res.data.cartList);
+                    vm.itemNum = res.data.total_price.num;
+                });
+            } else {
+                    vm.itemChecked = Clone(this.cart.list);
+            }
+        })
+    },
+    beforeRouteLeave (to, from, next) {
+        if(this.login) {
+            changeCartData(this.itemChecked).then(res => {
+                this.SAVE_CART(res.data);
+                next();
+            });
+        } else {
+            let obj = {
+                cartList: this.itemChecked,
+                total_price: {
+                    num: this.itemNum
+                }
+            }
+            this.SAVE_CART(obj);
+            next();
+        }
     },
     created() {
         this.SHOW_HEADTOP(true);
         this.SHOW_HEADTOP_BACK(true);
         this.SHOW_HEADTOP_SEARCH(false);
         this.SHOW_FOOTNAV(false);
-        this.itemChecked = Clone(this.cartList);
-        for(var i in this.cartList) {
-            this.$set(this.itemChecked[i], 'checked', true);
-            this.itemNum ++ ;
-        }
+        this.HEAD_TOP_TITLE('购物车');
+        setTimeout(() => {
+            this.PREVENT_LOADING(true);
+        },300);
     },
     mounted() {
     },
+    destroyed() {
+        this.HEAD_TOP_TITLE(null);
+        this.PREVENT_LOADING(false);
+    },
     methods: {
-        ...mapMutations(['LOADING','SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV','REDUCE_CART','INIT_CART']),
-        checkItem(id) {
-            this.$set(this.itemChecked[id], 'checked', !this.itemChecked[id].checked);
+        ...mapMutations(['LOADING','HEAD_TOP_TITLE', 'SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV','REDUCE_CART','INIT_CART','SAVE_CART','PREVENT_LOADING']),
+        checkItem(index) {
+            this.$set(this.itemChecked[index], 'selected', this.itemChecked[index].selected === 1 ? 0 : 1);
         },
-        callReduce(value) {
-            this.deleteId = value.id;
+        callReduce(index) {
+            this.deleteId = index;
             this.openDialog();
         },
         reduceCart() {
-            const _self = this;
-            _self.LOADING(true);
-            setTimeout(function() {
-                _self.REDUCE_CART(_self.deleteId);
-                _self.INIT_CART();
-                _self.$delete(_self.itemChecked, _self.deleteId);
-                _self.LOADING(false);
-                _self.deleteId = '';
-                _self.itemNum --;
-                _self.closeDialog();
-            }, 1000);
+            this.LOADING(true);
+            let ids = this.deleteId;
+            delCartData(ids).then(res => {
+                this.REDUCE_CART(this.deleteId);
+                this.INIT_CART();
+                this.$delete(this.itemChecked, this.deleteId);
+                this.LOADING(false);
+                this.deleteId = '';
+                this.itemNum --;
+                this.closeDialog();
+            });
         },
-        addCart(id) {
-            if(this.cartList[id].num < this.cartList[id].store_count) {
-                this.cartList[id].num ++ ;
+        addCart(event, index) {
+            if(this.itemChecked[index].goods_num < this.itemChecked[index].store_count) {
+                this.itemChecked[index].goods_num ++ ;
+                this.itemNum ++ ;
             }
         },
-        subCart(id) {
-            if(this.cartList[id].num > 1) {
-                this.cartList[id].num -- ;
+        subCart(event, index) {
+            if(this.itemChecked[index].goods_num > 1) {
+                this.itemChecked[index].goods_num -- ;
+                this.itemNum -- ;
             }
         },
         openDialog() {
@@ -138,16 +181,44 @@ export default {
         closeDialog() {
             this.dialog = false;
         },
-        
+        goPay() {
+            if(this.login) {
+                this.$router.push('/order');
+            } else {
+                this.goLogin();
+            }
+        },
+        goLogin() {
+            window.location.href = 'http://passport.ihuipao.cn/site/login';
+        }
     }
 }
 </script>
 
 <style lang="scss" scoped>
 @import '../../style/icon';
+@import '../../style/component';
 
 .wrap {
     background-color: #f5f5f5;
+}
+
+.collapse-right:after {
+    right: .8rem;
+}
+
+.go-login {
+    background-color: #fff;
+    line-height: 2.4rem;
+    padding-left: .8rem;
+    padding-right: 2rem;
+    font-size: .66rem;
+    font-weight: 400;
+    @include fbethoz;
+    .login {
+        font-size: .5rem;
+        color: #808080;
+    }
 }
 
 .cart {
@@ -197,17 +268,25 @@ export default {
                     height: 2rem;
                     overflow: hidden;
                 }
-                .spec {
-                    font-size: .5rem;
-                    line-height: 1rem;
-                    color: $red;
+                .brief {
+                    width: 100%;
+                    @include fbethoz;
+                    .spec {
+                        font-size: .5rem;
+                        line-height: 1rem;
+                        color: $red;
+                    }
+                    .store {
+                        font-size: .5rem;
+                        color: #808080;
+                    }
                 }
                 .price {
                     width: 100%;
                     font-size: .5rem;
                     line-height: 1.2rem;
                     span {
-                        color: #999;
+                        color: #808080;
                         &:nth-child(3) {
                             margin-left: .3rem;
                         }
@@ -215,13 +294,17 @@ export default {
                 }
                 .input-num {
                     @include fmidhoz;
+                    border-radius: 2px;
                     border: 1px solid #eee;
                     color: #333;
                     .sub, .add {
                         font-size: 1.2rem;
                         font-weight: 300;
-                        color: #999;
+                        color: #808080;
                         background-color: #eee;
+                        &.disabled {
+                            opacity: .3;
+                        }
                     }
                     .sub {
                         background-color: #f5f5f5;
@@ -262,7 +345,7 @@ export default {
             width: 100%;
             line-height: 1.2rem;
             span {
-                color: #999;
+                color: #808080;
                 font-weight: 500;
             }
         }
@@ -274,7 +357,7 @@ export default {
             line-height: .8rem;
             span {
                 font-size: .5rem;
-                color: #999;
+                color: #808080;
             }
         }
     }

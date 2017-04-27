@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import topNavbar from '../../components/topNavbar/topNavbar'
 import { getBrandData } from 'src/service/getData'
 
@@ -19,18 +19,33 @@ export default {
     components: {
         'top-navbar': topNavbar
     },
+    computed: mapState([
+        'brand',
+    ]),
     created() {
         this.SHOW_HEADTOP(true);
         this.SHOW_HEADTOP_BACK(true);
         this.SHOW_HEADTOP_SEARCH(false);
         this.SHOW_FOOTNAV(true);
-        getBrandData().then(res => {
-            this.brandData = res.data;
-            console.log(res);
-        });
+        this.HEAD_TOP_TITLE('品牌')
+        this.LOADING(true);
+        setTimeout(() => {
+            this.LOADING(false);
+        }, 800)
+        if(this.brand.length > 0) {
+            this.brandData = this.brand;
+        } else {
+            getBrandData().then(res => {
+                this.brandData = res.data;
+                this.SAVE_BRAND(res.data);
+            });
+        }
+    },
+    destroyed() {
+        this.HEAD_TOP_TITLE(null);
     },
     methods: {
-        ...mapMutations(['SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV']),
+        ...mapMutations(['LOADING','HEAD_TOP_TITLE','SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV','SAVE_BRAND']),
     }
 }
 </script>

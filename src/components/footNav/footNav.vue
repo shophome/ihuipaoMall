@@ -14,9 +14,8 @@
                 <p>品牌</p>
             </router-link>
             <router-link :to="{ path: '/cart' }" tag="li" active-class="active" class="nav_item">
-                <mu-badge :content="cartItemNum" circle secondary class="badge" :class="{ hide : cartItemNum === '0'}">
-                    <div class="icon icon_cart"></div>
-                </mu-badge>
+                <div v-if="Number(cart.num) > 0" class="badge"><span>{{ cart.num }}</span></div>
+                <div class="icon icon_cart"></div>
                 <p>购物车</p>
             </router-link>
             <router-link :to="{ path: 'profile' }" tag="li" active-class="active" class="nav_item">
@@ -28,34 +27,17 @@
 </template>
 
 <script>
-    import { mapState } from 'vuex'
-    export default {
-        name: 'footNav',
-        data(){
-            return{
-            }
-        },
-        created() {
-        },
-        mounted() {
-        },
-        props: [''],
-        computed: {
-            cartItemNum() {
-                var result = 0;
-                for(var i in this.cartList) {
-                    result ++;
-                }
-                return String(result);
-            },
-            ...mapState([
-               'cartList',
-            ])
-        },
-        methods: {
-        },
-    }
-
+import { mapState } from 'vuex'
+export default {
+    name: 'footNav',
+    data(){
+        return {
+        }
+    },
+    computed: {
+        ...mapState(['cart'])
+    },
+}
 </script>
 
 <style lang="scss">
@@ -94,6 +76,7 @@
     }
     .nav_item {
         @include fmidver;
+        position: relative;
         flex-grow: 1;
         opacity: .3;
         transition: opacity .3s ease;
@@ -105,7 +88,24 @@
         &.active {
             opacity: 1;
         }
+        .badge {
+            position: absolute;
+            top: -.1rem;
+            right: .6rem;
+            width: .6rem;
+            height: .6rem;
+            line-height: .54rem;
+            background-color: $red;
+            border-radius: 50%;
+            text-align: center;
+            span {
+                display: inline-block;
+                color: #fff;
+                font-size: .5rem;
+                transform: scale(.8);
+            }
+        }
     }
-    
 }
+
 </style>

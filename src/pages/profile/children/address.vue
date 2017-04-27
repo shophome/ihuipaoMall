@@ -1,53 +1,34 @@
 <template>
     <div class="child-page paddingTop">
         <head-top :back="true">
-            <span slot='title' class="head-title">收货地址</span>
+            <span slot="title" class="head-name">收货地址</span>
+            <span slot="save" class="head-action" @click="save">保存</span>
         </head-top>
         <div class="address-container">
+            <div v-if="login.address.length === 0" class="no-address">
+                <span>请添加地址</span>
+            </div>
             <ul class="address-list">
-                <li class="address-item">
+                <li class="address-item" v-for="(item, index) in addressList">
                     <div class="profile">
-                        <span class="name">邵一波</span>
-                        <span class="mobile">13771084707</span>
+                        <span class="name">{{ item.consignee }}</span>
+                        <span class="mobile">{{ item.mobile }}</span>
                     </div>
                     <div class="address">
-                        <span>江苏无锡滨湖区东南大学立业楼D区402</span>
+                        <span></span>
+                        <span>{{ item.p_name + ' ' + item.c_name + ' ' + item.address}}{{  }}</span>
                     </div>
                     <div class="handle">
                         <div class="default">
-                            <div class="radio" :class="{ active : (defaultValue === '1') }">
-                                <mu-radio class="default-radio" label="设为默认" labelClass="radio-lable" name="group" nativeValue="1" v-model="defaultValue"/>
+                            <div class="radio" :class="{ active : (defaultValue === index) }">
+                                <mu-radio class="default-radio" label="设为默认" labelClass="radio-lable" name="group" :nativeValue="String(index)" v-model="defaultValue" @change="setDefalut"/>
                             </div>
                         </div>
-                        <div class="edit" @click="$router.push('/profile/address/edit' + '/?key=1')">
+                        <div class="edit" @click="$router.push('/profile/address/edit' + '/?key='+ index +'')">
                             <span class="icon icon_edit"></span>
                             <span>编辑</span>
                         </div>
-                        <div class="delete" @click="deleteAddress">
-                            <span class="icon icon_delete"></span>
-                            <span>删除</span>
-                        </div>
-                    </div>
-                </li>
-                <li class="address-item">
-                    <div class="profile">
-                        <span class="name">邵一波</span>
-                        <span class="mobile">13771084707</span>
-                    </div>
-                    <div class="address">
-                        <span>江苏无锡滨湖区东南大学立业楼D区402</span>
-                    </div>
-                    <div class="handle">
-                        <div class="default">
-                           <div class="radio" :class="{ active : (defaultValue === '2') }">
-                                <mu-radio class="default-radio" label="设为默认" labelClass="radio-lable" name="group" nativeValue="2" v-model="defaultValue"/>
-                            </div>
-                        </div>
-                        <div class="edit" @click="$router.push('/profile/address/edit' + '/?key=2')">
-                            <span class="icon icon_edit"></span>
-                            <span>编辑</span>
-                        </div>
-                        <div class="delete" @click="deleteAddress">
+                        <div class="delete" @click="openDialog(index)">
                             <span class="icon icon_delete"></span>
                             <span>删除</span>
                         </div>
@@ -58,9 +39,9 @@
         <mu-dialog :open="dialog" title="" @close="closeDialog">
             确认要删除该地址吗？
             <mu-flat-button slot="actions" @click="closeDialog" primary label="取消"/>
-            <mu-flat-button slot="actions" primary @click="closeDialog" label="确定"/>
+            <mu-flat-button slot="actions" primary @click="deleteAddress" label="确定"/>
         </mu-dialog>
-        <div class="address-add">
+        <div class="address-add" @click="$router.push('/profile/address/edit')">
             <span class="icon icon_add"></span>
             <span>添加新地址</span>
         </div>
@@ -72,6 +53,10 @@
 
 <script>
 import headTop from 'components/headTop/headTop'
+import {mapState, mapMutations} from 'vuex'
+import { delAddressData, defaultAddressData } from 'service/getData'
+import { cityData } from '../../../config/cityData'
+import { Clone } from '../../../config/mUtils'
 
 export default {
     name: 'address',
@@ -81,13 +66,43 @@ export default {
     data() {
         return {
             dialog: false,
-            defaultValue: '1'
+            deleteIdx: null,
+            defaultValue: '0',
+            region: []
         }
     },
+    computed: {
+        ...mapState([
+            'login',
+            'addressList'
+        ])
+    },
     created() {
+        let address = Clone(this.login.address);
+        for(let i in address) {
+            if(address[i].type === 'default') {
+                this.defaultValue = String(i);
+                break;
+            }
+        };
     },
     methods: {
+        ...mapMutations(['DELETE_ADDRESS']),
+        setDefalut(value) {
+            console.log(value);
+        },
+        save() {
+            console.log('save');
+        },
         deleteAddress() {
+            delAddressData(this.addressList[this.deleteIdx].address_id).then(res => {
+                this.DELETE_ADDRESS(this.deleteIdx);
+                this.dialog = false;
+                this.$BMessage.show(res.message);
+            });
+        },
+        openDialog(idx) {
+            this.deleteIdx = idx;
             this.dialog = true;
         },
         closeDialog() {
@@ -147,6 +162,40 @@ export default {
 
 .radio-lable {
     font-size: .6rem;
+}
+
+.no-address {
+    margin: 40% auto;
+    position: relative;
+    @include wh(4.6rem, 4.6rem);
+    span {
+        display: inline-block;
+        position: absolute;
+        left: .56rem;
+        bottom: -1rem;
+        font-size: .8rem;
+        color: #bfbfbf;
+    }
+    &:before {
+        position: absolute;
+        display: block;
+        content: '';
+        @include wh(4rem, 4rem);
+        @include bis('../../../images/map.png');
+    }
+    &:after {
+        position: absolute;
+        top: .4rem;
+        right: -1rem;
+        display: block;
+        content: '';
+        @include wh(1.6rem, 1.6rem);
+        @include bis('../../../images/warn-grey.png');   
+    }
+}
+
+.child-page {
+    padding-bottom: 1.95rem;
 }
 
 .address-container {

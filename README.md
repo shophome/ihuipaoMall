@@ -20,6 +20,7 @@ npm run build
 npm run build --report
 ```
 ## 项目结构:
+``` bash
     ├── build    <!--webpack配置-->
     │   ├── build.js
     │   ├── check-versions.js
@@ -139,12 +140,12 @@ npm run build --report
     ├── index.html  <!--html主文件--> 
     ├── package.json  <!--npm配置文件-->
     └── README.md  <!--说明文档-->
-    
+```
 ##自定义Vue插件
 
 目录：src/plugins
 ###BMessage（提示信息插件）
-```
+``` bash
 使用方法：  
 
 //main.js 入口文件引入

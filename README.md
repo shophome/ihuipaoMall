@@ -145,7 +145,7 @@ npm run build --report
 
 目录：src/plugins
 ###BMessage（提示信息插件）
-``` bash
+```
 使用方法：  
 
 //main.js 入口文件引入

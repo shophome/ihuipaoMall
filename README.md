@@ -139,43 +139,21 @@ npm run build --report
     ├── index.html  <!--html主文件--> 
     ├── package.json  <!--npm配置文件-->
     └── README.md  <!--说明文档-->
- 
-
-## TODOLIST: 
-    1.<!--登陆／注册的状态获取，以及app各组件的状态切换-->
-    2.<!--首页页面楼层-->
-    3.<!--品牌页分类效果-->
-    4.<!--选择商品属性的交互-->
-    5.<!--加入购物车动画效果-->
-    6.<!--购物车交互-->
-    7.<!--修改，新增地址交互-->
-    8.<!--查看优惠券-->
-    9.<!--订单页过渡效果优化（或以加载动画代替）-->
-    10.<!--所有页面ajax请求加载动画-->
-    11.<!--ajax api替换成线上版本-->
-    12.<!--生成订单页-->
-
-## 还需要的接口
-    1.<!--搜索-->
-    2.结算
-    3.<!--修改地址-->
-    4.留言
-    5.首页轮播图
-
+    
 ##自定义Vue插件
 
-####目录：src/plugins
-
-#####BMessage（提示信息插件）
-######使用方法：  
+目录：src/plugins
+###BMessage（提示信息插件）
 ```
-//main.js 引入
+使用方法：  
+
+//main.js 入口文件引入
 import BMessage from './plugins/BMessage/index'
 Vue.use(BMessage)
-
+	
 //vue全局调用
 Vue.BMessage.show('hello BMessage!!');
-
+	
 //vue组件调用
 this.$BMessage.show('hello BMessage!!');
 ```

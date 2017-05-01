@@ -21,7 +21,7 @@
                     <div class="handle">
                         <div class="default">
                             <div class="radio" :class="{ active : (defaultValue === index) }">
-                                <mu-radio class="default-radio" label="设为默认" labelClass="radio-lable" name="group" :nativeValue="String(index)" v-model="defaultValue" @change="setDefalut"/>
+                                <mu-radio class="default-radio" label="设为默认" labelClass="radio-lable" name="group" :nativeValue="String(index)" v-model="defaultValue"/>
                             </div>
                         </div>
                         <div class="edit" @click="$router.push('/profile/address/edit' + '/?key='+ index +'')">
@@ -78,24 +78,32 @@ export default {
         ])
     },
     created() {
-        let address = Clone(this.login.address);
-        for(let i in address) {
-            if(address[i].type === 'default') {
+        let address = Clone(this.addressList);
+        for(let i in this.addressList) {
+            if(this.addressList[i].is_default === '1') {
                 this.defaultValue = String(i);
                 break;
             }
         };
     },
     methods: {
-        ...mapMutations(['DELETE_ADDRESS']),
-        setDefalut(value) {
-            console.log(value);
-        },
+        ...mapMutations(['DELETE_ADDRESS','DEFAULT_ADDRESS']),
         save() {
-            console.log('save');
+            this.DEFAULT_ADDRESS(this.defaultValue);
+            defaultAddressData(this.addressList[this.defaultValue].address_id).then(res => {
+                this.$BMessage.show(res.message);
+                if(res.message === '操作成功') {
+                    this.$router.go(-1);
+                }
+            });
         },
         deleteAddress() {
             delAddressData(this.addressList[this.deleteIdx].address_id).then(res => {
+                if(this.addressList[this.deleteIdx].is_default === '1') {
+                    if(this.addressList[0]) {
+                        this.DEFAULT_ADDRESS(0);
+                    }
+                }
                 this.DELETE_ADDRESS(this.deleteIdx);
                 this.dialog = false;
                 this.$BMessage.show(res.message);

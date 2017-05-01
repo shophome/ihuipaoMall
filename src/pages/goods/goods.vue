@@ -27,13 +27,13 @@
         <section class="tab-view">
             <div class="tab-container" ref='tabContainer'>
                 <ul class="tabs" ref='tab'>
-                    <li :class="{ active : (tabActive === 0) }" @click="scrollToConsult">商品咨询</li>
+                    <li :class="{ active : (tabActive === 0) }" @click="scrollToConsult">商品留言</li>
                     <li :class="{ active : (tabActive === 1) }" @click="scrollToDetail">商品详情</li>
                 </ul>
             </div>
             <div class="consult" ref="consult">
-                <div v-if="commentList.consultCount === 0" class="no-comment">暂无评价</div>
-                <div class="comment-list">
+                <div v-if="commentList.consultCount === 0" class="no-comment" @click="$router.push({name: 'comment', params: commentList})">快来抢沙发～</div>
+                <div class="comment-list" v-if="commentList.consultCount > 0">
                     <comment-card :data="commentList.consultList[0]"></comment-card>
                 </div>
                 <div class="more collapse-right" @click="$router.push({name: 'comment', params: commentList})">
@@ -100,7 +100,7 @@
                 </div>
             </div>
             <div v-if="!goods.prompt" class="addCart" @click="addToCart">加入购物车</div>
-            <div class="buyNow">立即购买</div>
+            <div class="buyNow" @click="buyNow">立即购买</div>
         </div>
         <div class="ball-container">
             <transition
@@ -122,7 +122,7 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex'
-import { getGoodsData, getCommentData, addCartData } from 'src/service/getData'
+import { getGoodsData, getCommentData, addCartData, addBuyNow } from 'src/service/getData'
 import commentCard from 'components/commentCard/commentCard'
 import 'src/plugins/swiper.min.js'
 import 'src/style/swiper.min.css'
@@ -172,15 +172,10 @@ export default {
             specDisabledId: [],
             num: 0,
             price: 0,
-            // sumPrice: 0,
             store: 0,
             addFlag: true,
             cartShow: true,
             ballShow: false,
-            commentList: {
-                consultCount: 0, 
-                consultList: [{}]
-            },
         }
     },
     components: {
@@ -197,8 +192,11 @@ export default {
                     vm.$refs.detail.innerHTML = vm.goods.goods_content;
                 }, 300);
             });
-            getCommentData(110, 1).then(res => {
-                vm.commentList = res.data;
+            getCommentData(vm.id, 1).then(res => {
+                vm.commentList.consultCount = res.data.consultCount;
+                vm.commentList.consultList = res.data.consultList;
+                vm.commentList.goods_id = vm.id;
+                vm.SAVE_COMMENT(vm.commentList);
             });
         })
     },
@@ -239,7 +237,7 @@ export default {
         commentURL: function() {
             return '/goods/comment?id=' + this.id;
         },
-        ...mapState(['cart'])
+        ...mapState(['cart','commentList'])
     },
     destroyed () {
         this.scrollWatch = false;
@@ -273,7 +271,7 @@ export default {
         },
     },
     methods: {
-        ...mapMutations(['SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV','ADD_CART','PREVENT_LOADING']),
+        ...mapMutations(['SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV','ADD_CART','PREVENT_LOADING','SAVE_COMMENT']),
 //-----------  UI交互start  -----------
         initSwiper() {
             new Swiper('.swiper-container', {
@@ -536,56 +534,76 @@ export default {
                 this.num --;
             }
         },
-        
+        checkSelect(type) {
+            const _self = this;
+            _self.addFlag = false;
+            if(_self.specSelectedArr.length < _self.filter_spec.length) {
+                _self.$BMessage.show('请选择 ' + _self.specClassNotSelected);
+                _self.addFlag = true;
+                return false;
+            } else if(_self.num === 0) {
+                _self.$BMessage.show('请选择 数量');
+                _self.addFlag = true;
+                return false;
+            }
+            
+            if(type !== 'buyNow') {
+                for(let i in _self.cart.list) {
+                    if(_self.cart.list[i].goods_id == _self.goods.goods_id && _self.cart.list[i].spec_key == _self.specSelectedId) {
+                        if(_self.num + _self.cart.list[i].goods_num > _self.store) {
+                            _self.$BMessage.show('购物车中该商品数量已超过库存');
+                            setTimeout(() => {
+                                _self.addFlag = true;
+                            }, 1000);
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        },
+        buyNow() {
+            if(this.checkSelect('buyNow')) {
+                let obj = {
+                    goods_id: this.goods.goods_id,
+                    goods_num: this.num,
+                    goods_spec: this.specSelectedId,
+                }
+                this.$router.push({name: 'order', params: obj});
+            }
+        },
         addToCart() {
             const _self = this;
             if(_self.addFlag) {
                 _self.addFlag = false;
-                if(_self.specSelectedArr.length < _self.filter_spec.length) {
-                    _self.$BMessage.show('请选择 数量', {a: 1});
-                    _self.$BMessage.show('请选择 ' + _self.specClassNotSelected);
-                    return false;
-                }
-
-                if(_self.num === 0) {
-                    _self.$BMessage.show('请选择 数量');
-                    return false;
-                }
-                
-                for(let i in _self.cart.list) {
-                    if(_self.cart.list[i].goods_id == _self.goods.goods_id && _self.cart.list[i].spec_key == _self.specSelectedId) {
-                            if(_self.num + _self.cart.list[i].goods_num > _self.store) {
-                                _self.$BMessage.show('购物车中该商品数量已超过库存');
-                                return false;
-                        }
-                    }
-                }
-
-                const obj = {
-                    goods_id: _self.goods.goods_id,
-                    goods_num: _self.num,
-                    goods_spec: _self.specSelectedId,
-                }
-                addCartData(obj).then(res => {
-                    const id = _self.goods.goods_id + '-' + _self.specSelectedId;
-                    _self.ADD_CART({
+                if(_self.checkSelect('adddCart')) {
+                    const obj = {
                         goods_id: _self.goods.goods_id,
-                        goods_name: _self.goods.goods_name,
-                        store_count: _self.store,
-                        goods_price: _self.price,
-                        img: _self.specSelectedImg,
-                        spec_key: _self.specSelectedId,
-                        spec_key_name: _self.specSelectedStr,
                         goods_num: _self.num,
-                        selected: '1',
+                        goods_spec: _self.specSelectedId,
+                    }
+                    addCartData(obj).then(res => {
+                        const id = _self.goods.goods_id + '-' + _self.specSelectedId;
+                        _self.ADD_CART({
+                            goods_id: _self.goods.goods_id,
+                            goods_name: _self.goods.goods_name,
+                            id: id,
+                            store_count: _self.store,
+                            goods_price: _self.price,
+                            img: _self.specSelectedImg,
+                            spec_key: _self.specSelectedId,
+                            spec_key_name: _self.specSelectedStr,
+                            goods_num: _self.num,
+                            selected: '1',
+                        });
+                        _self.closeSpecMenu();
+                        _self.ballShow = true;
+                        setTimeout(() => {
+                            _self.cartShow = !_self.cartShow;
+                            _self.addFlag = true;
+                        }, 600);
                     });
-                    _self.closeSpecMenu();
-                    _self.ballShow = true;
-                    setTimeout(() => {
-                        _self.cartShow = !_self.cartShow;
-                        _self.addFlag = true;
-                    }, 600);
-                });
+                }
             }
             
         },
@@ -747,6 +765,8 @@ export default {
         // @include paddingTB(0rem, 0rem);
         .no-comment {
             text-align: center;
+            line-height: 3rem;
+            margin-top: 1rem;
         }
         .more {
             height: 2rem;
@@ -768,6 +788,7 @@ export default {
             }
         }
         .comment-list {
+            padding-top: 1rem;
             .comment-card {
                 .divide {
                     display: none;

@@ -35,7 +35,7 @@ export default {
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 99999;
+    z-index: 99999999;
     .bmessage-container {
         display: flex;
         align-items: center;

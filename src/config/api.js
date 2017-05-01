@@ -34,6 +34,10 @@ export default {
 		url: baseUrl + '/cart/addorder',
 		method: 'POST'
 	},
+	add_buyNow: {
+		url: baseUrl + '/cart/addbuynow',
+		method: 'POST'
+	},
 	get_homeData: {
 		url: baseUrl + '/index/data',
 		method: 'GET',
@@ -62,6 +66,10 @@ export default {
 		url: baseUrl + '/goods/consult',
 		method: 'GET',
 	},
+	add_comment: {
+		url: baseUrl + '/user/add_consult',
+		method: 'POST',
+	},
 	get_orderDetail: {
 		url: baseUrl + '/user/order_detail',
 		method: 'GET',
@@ -84,6 +92,10 @@ export default {
 	},
 	post_addressEdit: {
 		url: baseUrl + '/user/address_edit',
+		method: 'POST'
+	},
+	use_couponCode: {
+		url: baseUrl + '/cart/query_couponcode',
 		method: 'POST'
 	}
 }

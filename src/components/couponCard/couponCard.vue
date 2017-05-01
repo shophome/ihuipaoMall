@@ -82,11 +82,9 @@ export default {
 
 .coupon-card {
     position: relative;
-    width: 90%;
     height: 5rem;
     background-color: #fff;
     border-radius: 2px;
-    margin: .6rem auto;
     padding: .6rem .8rem;
     .overdue {
         span {

@@ -11,7 +11,6 @@
         <transition name="fade">
             <page-loading v-if="pageLoading"></page-loading>
         </transition>
-        <message-box v-on:show="showMessage"></message-box>
     </div>
 </template>
 
@@ -21,7 +20,6 @@ import headTop from 'components/headTop/headTop'
 import footNav from 'components/footNav/footNav'
 import loading from 'components/loading/loading'
 import pageLoading from 'components/pageLoading/pageLoading'
-import messageBox from 'components/messageBox/messageBox'
 import { getUserData, getCartData, getAddressData } from 'service/getData'
 import {mapState, mapMutations} from 'vuex'
 import {getCookie, Clone} from 'config/mUtils'
@@ -33,7 +31,6 @@ export default {
         'foot-nav': footNav,
         'loading': loading,
         'page-loading': pageLoading,
-        'message-box': messageBox
     },
     computed: {
         ...mapState([
@@ -71,13 +68,9 @@ export default {
         } else {
             this.LOGIN(false);
         }
-        // this.CLEAR_CART();
     },
     methods: {
         ...mapMutations(['LOGIN','INIT_CART','CLEAR_CART','SAVE_CART','SAVE_ADDRESS','SAVE_COUPON']),
-        showMessage() {
-            console.log('messageBox');
-        }
     }
 }
 

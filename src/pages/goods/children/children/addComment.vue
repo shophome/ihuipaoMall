@@ -5,10 +5,10 @@
         </head-top>
         <div class="content">
             <div class="text-area">
-                <mu-text-field hintText="不允许超过100个字符" multiLine :rows="3" :rowsMax="6" :maxLength="100"/>
+                <mu-text-field v-model="content" multiLine :rows="3" :rowsMax="6" :maxLength="200"/>
             </div>
         </div>
-        <div class="comment-add">
+        <div class="comment-add" @click="add">
             <!-- <span class="icon icon_comment"></span> -->
             <span>发布</span>
         </div>
@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
+import { addComment } from 'src/service/getData'
 import headTop from 'components/headTop/headTop'
 
 export default {
@@ -25,15 +27,40 @@ export default {
     },
     data() {
         return {
+            id: 0,
+            content: ''
         }
+    },
+    computed: {
+        ...mapState(['login'])
     },
     beforeRouteEnter (to, from, next) {
         next(vm => {
+            vm.id = vm.$route.query.id;
         })
     },
     created() {
     },
     methods: {
+        ...mapMutations(['SAVE_COMMENT']),
+        add() {
+            let dataSend = {
+                goods_id: this.id,
+                username: this.login.name,
+                content: this.content
+            };
+            addComment(dataSend).then(res => {
+                this.$BMessage.show(res.message);
+                let commentList = {};
+                commentList.consultCount = res.data.consultCount;
+                commentList.consultList = res.data.consultList;
+                commentList.goods_id = this.id;
+                this.SAVE_COMMENT(commentList);
+                setTimeout(() => {
+                    this.$router.go(-1);
+                }, 1000);
+            });
+        }
     },
 }
 </script>

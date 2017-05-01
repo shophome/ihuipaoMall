@@ -15,28 +15,34 @@
             </div>
             <div class="tab-content">
                 <div v-if="activeTab === 'available'">
-                    <div v-if="data.available.length === 0" class="no-coupon">
+                    <div v-if="login.coupon.available.length === 0" class="no-coupon">
                         <span>暂无返券</span>
                     </div>
                     <div class="coupon-list">
-                        <coupon-card v-for="(item, index) in data.available" key="index" :data="item" :state="'available'"></coupon-card>
+                        <div class="coupon-item" v-for="(item, index) in login.coupon.available" key="index">
+                            <coupon-card :data="item" :state="'available'"></coupon-card>
+                        </div>
                     </div>
                 </div>
                 <div v-if="activeTab === 'used'">
-                    <div v-if="data.used.length === 0" class="no-coupon">
+                    <div v-if="login.coupon.used.length === 0" class="no-coupon">
                         <span>暂无返券</span>
                     </div>
-                    <ul class="coupon-list">
-                        <coupon-card v-for="(item, index) in data.used" key="index" :data="item" :state="'used'"></coupon-card>
-                    </ul>
+                    <div class="coupon-list">
+                        <div class="coupon-item" v-for="(item, index) in login.coupon.used" key="index">
+                            <coupon-card :data="item" :state="'used'"></coupon-card>
+                        </div>
+                    </div>
                 </div>
                 <div v-if="activeTab === 'overdue'">
-                    <div v-if="data.overdue.length === 0" class="no-coupon">
+                    <div v-if="login.coupon.overdue.length === 0" class="no-coupon">
                         <span>暂无返券</span>
                     </div>
-                    <ul class="coupon-list">
-                        <coupon-card v-for="(item, index) in data.overdue" key="index" :data="item" :state="'overdue'"></coupon-card>
-                    </ul>
+                    <div class="coupon-list">
+                        <div class="coupon-item" v-for="(item, index) in login.coupon.overdue" key="index">
+                            <coupon-card :data="item" :state="'overdue'"></coupon-card>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -57,58 +63,7 @@ export default {
     },
     data() {
         return {
-            // data: {},
             activeTab: 'available',
-            data: {
-                available: [
-                    {
-                        time: '2016-08-31 15:26:58',
-                        type: '未使用',
-                        money: '6.00',
-                        condition: '10.00',
-                        timeline: '2017-03-10 15:26:58',
-                    },
-                    {
-                        time: '2016-08-31 15:26:58',
-                        type: '未使用',
-                        money: '6.00',
-                        condition: '10.00',
-                        timeline: '2017-03-10 15:26:58',
-                    },
-                    {
-                        time: '2016-08-31 15:26:58',
-                        type: '未使用',
-                        money: '6.00',
-                        condition: '10.00',
-                        timeline: '2017-03-10 15:26:58',
-                    },
-                ],
-                used: [
-                    {
-                        time: '2016-08-31 15:26:58',
-                        type: '已使用',
-                        money: '6.00',
-                        condition: '10.00',
-                        timeline: '2017-03-10 15:26:58',
-                    },
-                    {
-                        time: '2016-08-31 15:26:58',
-                        type: '已使用',
-                        money: '6.00',
-                        condition: '10.00',
-                        timeline: '2017-03-10 15:26:58',
-                    },
-                ],
-                overdue: [
-                    {
-                        time: '2016-08-31 15:26:58',
-                        type: '已过期',
-                        money: '6.00',
-                        condition: '10.00',
-                        timeline: '2017-03-10 15:26:58',
-                    },
-                ],
-            }
         }
     },
     computed: {
@@ -117,7 +72,6 @@ export default {
         ])
     },
     created() {
-        // this.data = this.login.coupon;
     },
     methods: {
         handleTabChange(val) {
@@ -200,6 +154,11 @@ export default {
 
 .tab-content {
     margin-top: 2.8rem;
+    padding: .6rem;
+}
+
+.coupon-item {
+    margin-bottom: .8rem;
 }
 
 </style>

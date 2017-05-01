@@ -6,10 +6,12 @@
         <div class="content">
             <div v-if="commentList.consultList.length === 0" class="no-comment">暂无留言</div>
             <div class="comment-list">
-                <comment-card v-for="(item, index) in commentList.consultList" :key="index" :data="item"></comment-card>
+                <div class="comment-item shadow-light" v-for="(item, index) in commentList.consultList" :key="index" >
+                    <comment-card :data="item"></comment-card>
+                </div>
             </div>
         </div>
-        <div class="comment-add" @click="$router.push({name: 'addComment'})">
+        <div class="comment-add" @click="$router.push('comment/addComment?id='+ commentList.goods_id )">
             <span class="icon icon_comment"></span>
             <span>我有话说</span>
         </div>
@@ -20,6 +22,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import headTop from 'components/headTop/headTop'
 import commentCard from 'components/commentCard/commentCard'
 
@@ -31,23 +34,12 @@ export default {
     },
     data() {
         return {
-            commentList: {
-                consultCount: 0, 
-                consultList: [{}]
-            },
         }
-    },
-    beforeRouteEnter (to, from, next) {
-        next(vm => {
-            console.log(vm.$route.params);
-            // console.log(vm.$route.params);
-            vm.commentList = vm.$route.params;
-            // console.log(vm.commentList);
-        })
     },
     created() {
     },
-    methods: {
+    computed: {
+        ...mapState(['commentList'])
     },
 }
 </script>
@@ -106,6 +98,9 @@ export default {
     }
     .comment-list {
         padding-bottom: 2rem;
+        .comment-item {
+            margin-top: .8rem;
+        }
         .item {
             @include paddingTB(.4rem, .4rem);
             background-color: #fff;

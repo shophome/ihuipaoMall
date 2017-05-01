@@ -153,9 +153,12 @@ export default {
             this.pickerIsShow = false;
         },
         deleteAddress() {
-            this.DELETE_ADDRESS(this.key);
-            this.dialog = false;
-            this.$router.go(-1);
+            delAddressData(this.addressList[this.key].address_id).then(res => {
+                this.$BMessage.show(res.message);
+                this.DELETE_ADDRESS(this.key);
+                this.dialog = false;
+                this.$router.go(-1);
+            });
         },
         closeDialog() {
             this.dialog = false;
@@ -178,16 +181,10 @@ export default {
             if(this.key !== '') {
                 dataSend.id = this.data.address_id;
                 postAddressEdit(dataSend).then(res => {
-                    console.log(res);
                     if(res.message) {
                         this.$BMessage.show(res.message);
                     }
                     let dataSave = Clone(res.data.address);
-                    dataSave.p_name = this.pickedProvince.name;
-                    dataSave.c_name = this.pickedCity.name;
-                    console.log(121313131);
-                    console.log(dataSave);
-                    console.log(121313131);
                     if(res.data) {
                         this.EDIT_ADDRESS({
                             idx: this.key,
@@ -202,8 +199,8 @@ export default {
                         this.$BMessage.show(res.message);
                     }
                     if(res.data) {
-                        dataSend.address_id = res.data.address_id;
-                        this.ADD_ADDRESS(dataSend);
+                        let dataSave = Clone(res.data.address);
+                        this.ADD_ADDRESS(dataSave);
                         this.$router.go(-1);
                     }
                 });

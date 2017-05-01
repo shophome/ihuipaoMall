@@ -29,12 +29,12 @@
                 </li>
             </ul>
         </div>
-        <div class="coupon collapse-right" @click="$router.push('/order/useCoupon')">
+        <div class="coupon collapse-right" @click="$router.push({name:'useCoupon', params: {order_money: payables}})">
             <div>
                 <span>优惠券</span>
-                <span class="coupon-available">{{ couponList.length }}张可用</span>
+                <span class="coupon-available">{{ coupon.available.length }}张可用</span>
             </div>
-            <span class="coupon-choose">未使用</span>
+            <span class="coupon-choose">{{ couponUsed.id ? '¥' + couponUsed.money : '未使用' }}</span>
         </div>
         <div class="balance" @click="">
             <div>
@@ -51,22 +51,22 @@
                 </div>
                 <div>
                     <span>+ 运费：</span>
-                    <span>¥{{ 10 }}</span>
+                    <span>¥{{ postFee }}</span>
                 </div>
                 <div>
                     <span>- 折扣优惠：</span>
-                    <span>¥{{ 0 }}</span>
+                    <span>¥{{ cutfee }}</span>
                 </div>
                 <div>
                     <span>- 优惠券：</span>
-                    <span>¥{{ 0 }}</span>
+                    <span>¥{{ couponFee }}</span>
                 </div>
                 <div>
                     <span>- 使用余额：</span>
-                    <span>¥{{ Number(balanceAmount).toFixed(2) }}</span>
+                    <span>¥{{ balanceUse }}</span>
                 </div>
             </div>
-            <div class="price">总价：¥{{ allPrice.toFixed(2) }}</div>
+            <div class="price">总价：¥{{ Number(payables).toFixed(2) }}</div>
             <div class="pay-btn" @click="goOrder">在线支付</div>
         </div>
         <transition name="router-slid" mode="out-in">
@@ -77,12 +77,13 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import { getOrderData, addOrder } from 'src/service/getData'
+import { getOrderData, addOrder, addBuyNow } from 'src/service/getData'
 
 export default {
     name: 'order',
     data() {
         return {
+            buyNowGoods: {},
             addressSelected: {},
             addressDefault: {},
             cartList: {},
@@ -91,21 +92,43 @@ export default {
             useBalance: false,
             total_price: {
                 total_fee: 0
-            }
+            },
+            discount: '0.00',
+            couponFee: '0.00',
+            cutfee: '0.00',
+            postFee: '0.00',
+            buynow: 0,
+            user_money: '0.00',
+            balanceUse: 0,
+            payables: '0.00'
         }
     },
     computed: {
         allPrice() {
             return this.total_price.total_fee;
         },
-        balanceAmount() {
-            return this.useBalance ? this.balance : 0;
-        },
         ...mapState([
             'login',
             'coupon',
+            'couponUsed',
             'addressList',
         ]),
+    },
+    watch: {
+        addressSelected(val) {
+            this.checkOrder();
+        },
+        useBalance(val) {
+            this.checkOrder();
+        },
+        couponUsed(val) {
+            if( Number(this.total_price.total_fee) < Number(val.condition)) {
+                this.$BMessage.show('此优惠券不满足使用条件');
+                this.USE_COUPON({});
+            } else {
+                this.checkOrder();
+            }
+        }
     },
     created() {
         this.PAGE_LOADING(true);
@@ -113,14 +136,31 @@ export default {
         this.SHOW_HEADTOP_BACK(true);
         this.SHOW_HEADTOP_SEARCH(false);
         this.SHOW_FOOTNAV(false);
-        this.balance = this.login.account.balance;
-        console.log(this.balance);
-        getOrderData().then(res => {
-            this.cartList = res.data.cartList;
-            this.couponList = res.data.couponList;
-            this.total_price = res.data.total_price;
-
-        });
+        if(this.login.account) {
+            this.balance = this.login.account.balance;
+        } else {
+            this.$router.push('/cart');
+        }
+        let paramsLen = 0;
+        for(let i in this.$route.params) {
+            paramsLen ++;
+        }
+        if(paramsLen > 0) {
+            let obj = this.$route.params;
+            addBuyNow(obj).then(res => {
+                getOrderData({act: 'buy_now'}).then(res => {
+                    this.getData(res.data);
+                });
+            });
+        } else {
+            getOrderData().then(res => {
+                this.getData(res.data);
+            });
+        }
+        
+        setTimeout(() => {
+            this.PREVENT_LOADING(true);
+        },300);
         setInterval(() => {
             this.setAddressSelected();
         }, 500);
@@ -131,9 +171,12 @@ export default {
         }, 1000);
     },
     destroyed() {
+        this.PREVENT_LOADING(false);
+        this.USE_COUPON({});
+        this.SELECT_ADDRESS(-1);
     },
     methods: {
-        ...mapMutations(['SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV','PAGE_LOADING']),
+        ...mapMutations(['SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV','PAGE_LOADING','PREVENT_LOADING','USE_COUPON','SELECT_ADDRESS']),
         setAddressSelected() {
             let flag = false;
             for(let i in this.addressList) {
@@ -149,10 +192,46 @@ export default {
                 this.addressSelected = this.addressDefault;
             }
         },
+        getData(data) {
+            this.buynow = data.buynow;
+            this.cartList = data.cartList;
+            this.couponList = data.couponList;
+            this.total_price = data.total_price;
+            this.cutfee = Number(String(this.total_price.cut_fee).replace('-', '')).toFixed(2);
+            this.payables = this.total_price.total_fee;
+            if(Number(this.balance) >= Number(this.total_price.total_fee)) {
+                this.user_money = Number(this.total_price.total_fee).toFixed(2);
+            } else {
+                this.user_money = this.balance;
+            }
+        },
+        checkOrder() {
+            let dataSend = {
+                address_id: this.addressSelected.address_id,
+                user_money: this.useBalance ? this.user_money : 0,
+                buynow: this.buynow,
+                shipping_code: 'shunfeng',
+            };
+            if(this.couponUsed.id) {
+                dataSend.coupon_id = this.couponUsed.id;
+            }
+            if(this.couponCode) {
+                dataSend.couponCode = this.couponCode;
+            }
+            addOrder(dataSend).then(res => {
+                let data = res.data.result;
+                this.payables = data.payables;
+                this.goodsFee = data.goodsFee;
+                this.postFee = data.postFee;
+                this.couponFee = data.couponFee;
+                this.balanceUse = data.balance;
+            });
+        },
         goOrder() {
             let dataSend = {
                 address_id: this.addressSelected.address_id,
                 act: 'submit_order',
+                buynow: this.buynow,
                 shipping_code: 'shunfeng',
             };
             addOrder(dataSend).then(res => {

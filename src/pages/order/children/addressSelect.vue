@@ -9,10 +9,12 @@
                 <span>请添加地址</span>
             </div>
             <ul class="address-list">
-                <li class="address-item" v-for="(item, index) in addressList" @click="select(index)" :class="{ selected : index === idxSelected }">
-                    <div v-if="index === idxSelected" class="triangle-topright">
-                        <div class="icon icon_select"></div>
-                    </div>
+                <li class="address-item" v-for="(item, index) in addressList" @click="select(index)" :class="{ shadow : index === idxSelected }">
+                    <transition name="fade">
+                        <div v-if="index === idxSelected" class="triangle-topright">
+                            <div class="icon icon_select"></div>
+                        </div>
+                    </transition>  
                     <div class="profile">
                         <span class="name">{{ item.consignee }}</span>
                         <span class="mobile">{{ item.mobile }}</span>
@@ -158,6 +160,7 @@ export default {
 }
 
 .address-container {
+    padding: 0 .8rem;
     .address-list {
         .address-item {
             position: relative;
@@ -166,10 +169,7 @@ export default {
             background-color: #fff;
             @include fbethoz;
             align-content: center;
-            &.selected {
-                min-height: 5rem;
-                border: 2px solid $red;
-            }
+            transition: all ease .3s;
             .profile {
                 width: 100%;
                 @include paddingLR;

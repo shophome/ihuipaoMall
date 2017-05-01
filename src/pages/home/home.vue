@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import 'src/plugins/swiper.min.js'
 import 'src/style/swiper.min.css'
 import goodsCard from '../../components/goodsCard/goodsCard'
@@ -36,6 +36,11 @@ export default {
             newGoods: []
         }
     },
+    computed: {
+        ...mapState([
+            'home',
+        ])
+    },
     components: {
         'goods-card': goodsCard
     },
@@ -46,11 +51,26 @@ export default {
         this.SHOW_HEADTOP_LOGIN(true);
         this.SHOW_FOOTNAV(true);
         this.HEAD_TOP_TITLE(null);
-        getHomeData().then(res => {
-            var data = res.data;
-            this.banner = data.banner;
-            this.newGoods = data.newProduct;
-        });
+        // if(!this.home) {
+            getHomeData().then(res => {
+                var data = res.data;
+                this.banner = data.banner;
+                this.newGoods = data.newProduct;
+                this.SAVE_HOME(data);
+            });
+        // } else {
+            // for(let i in this.home.banner) {
+            //     this.banner.$set(this.home.banner[i])
+            // }
+            // this.$set(this.newGoods, this.home.newGoods);
+            // for(let i in this.home.newGoods) {
+            //     this.$set(this.newGoods, i, this.home.newGoods[i]);
+            //     // this.newGoods.$set(this.home.newGoods[i])
+            // }
+            // this.banner = this.home.banner;
+            // this.newGoods = this.home.newGoods;
+            // console.log(this.newGoods);
+        // }
     },
     destroyed() {
         this.SHOW_HEADTOP_LOGIN(false);
@@ -65,7 +85,7 @@ export default {
         },1000);
     },
     methods: {
-        ...mapMutations(['HEAD_TOP_TITLE','SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_LOGIN','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV']),
+        ...mapMutations(['SAVE_HOME','HEAD_TOP_TITLE','SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_LOGIN','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV']),
     }
 }
 </script>

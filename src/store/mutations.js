@@ -1,4 +1,5 @@
 import {
+    SAVE_TOKEN,
     LOGIN,
     LOADING,
     PREVENT_LOADING,
@@ -9,8 +10,10 @@ import {
     SHOW_HEADTOP_BACK,
     SHOW_HEADTOP_SEARCH,
     SHOW_FOOTNAV,
+    SAVE_HOME,
     SAVE_CATEGORY,
     SAVE_BRAND,
+    BUY_NOW,
     ADD_CART,
     SAVE_CART,
     REDUCE_CART,
@@ -20,8 +23,11 @@ import {
     ADD_ADDRESS,
     SAVE_ADDRESS,
     EDIT_ADDRESS,
+    DEFAULT_ADDRESS,
     SELECT_ADDRESS,
     SAVE_COUPON,
+    USE_COUPON,
+    SAVE_COMMENT,
 } from './mutation-types'
 
 import {
@@ -30,6 +36,10 @@ import {
 } from '../config/mUtils'
 
 export default {
+    //保存token
+    [SAVE_TOKEN] (state, token) {
+        state.token = token;
+    },
     //是否登陆状态
     [LOGIN] (state, login) {
         state.login = login;
@@ -70,6 +80,10 @@ export default {
     [SHOW_FOOTNAV] (state, showFootNav) {
         state.showFootNav = showFootNav;
     },
+    //保存首页数据
+    [SAVE_HOME] (state, home) {
+        state.home = home;
+    },
     //保存列表页数据
     [SAVE_CATEGORY] (state, category) {
         state.category = category;
@@ -78,6 +92,10 @@ export default {
     [SAVE_BRAND] (state, brand) {
         state.brand = brand;
     },
+    //立即购买商品数据
+    [BUY_NOW] (state, buyNowGoods) {
+        state.buyNowGoods = buyNowGoods;
+    },
     //添加购物车商品
     [ADD_CART] (state, {
         id,
@@ -85,9 +103,9 @@ export default {
         spec_key,
         goods_name,
         store_count,
-        price,
+        goods_price,
         img,
-        spec,
+        spec_key_name,
         goods_num,
     }) {
         let list = state.cart.list;
@@ -100,9 +118,9 @@ export default {
                     spec_key: spec_key,
                     goods_name : goods_name,
                     store_count : store_count,
-                    price : price,
+                    goods_price : goods_price,
                     img : img,
-                    spec : spec,
+                    spec_key_name : spec_key_name,
                     goods_num : goods_num
             };
         }
@@ -120,10 +138,12 @@ export default {
     //删除购物车商品
     [REDUCE_CART] (state, id) {
         let cart = state.cart;
-        console.log(id);
-        console.log(cart.list[id]);
-        cart.num -= cart.list[id].goods_num;
-        delete cart.list[id];
+        for (let i in state.cart) {
+            if(state.cart[i].goods_id === id) {
+                cart.num -= state.cart[i].goods_num;
+                delete state.cart.list[i];
+            }
+        }
         state.cart = cart;
         //存入localStorage
         setStore('cart', state.cart);
@@ -150,11 +170,14 @@ export default {
     },
     //修改地址
     [EDIT_ADDRESS](state, {idx, data}) {
-        console.log(idx);
-        console.log(data);
-        console.log(state.addressList[idx]);
         state.addressList[idx] = data;
-        console.log(state.addressList[idx]);
+    },
+    //设置默认地址
+    [DEFAULT_ADDRESS](state, idx) {
+        for(let i in state.addressList) {
+            state.addressList[i].is_default = '0';
+        }
+        state.addressList[idx].is_default = '1';
     },
     //保存编辑地址
     [SAVE_ADDRESS](state, addressList) {
@@ -170,11 +193,13 @@ export default {
     //保存优惠券
     [SAVE_COUPON](state, coupon) {
         state.coupon = coupon;
+    },
+    //保存使用的优惠券
+    [USE_COUPON](state, couponUsed) {
+        state.couponUsed = couponUsed;
+    },
+    //保存留言
+    [SAVE_COMMENT](state, commentList) {
+        state.commentList = commentList;
     }
-    // [EDIT_ADDRESS](state, {idx, data}) {
-    //     console.log(idx);
-    //     console.log(data);
-    //     state.login.address[idx] = data;
-    // }
-    
 }

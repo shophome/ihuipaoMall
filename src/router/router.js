@@ -15,7 +15,6 @@ import useCoupon from '../pages/order/children/useCoupon'
 import profile from '../pages/profile/profile'
 import address from '../pages/profile/children/address'
 import addressEdit from '../pages/profile/children/children/addressEdit'
-import add from '../pages/profile/children/children/children/add'
 import balance from '../pages/profile/children/balance'
 import coupon from '../pages/profile/children/coupon'
 import myOrder from '../pages/profile/children/myOrder'
@@ -83,6 +82,7 @@ export default [
     //结算页
     {
         path: '/order',
+        name: 'order',
         component: order,
         children: [
             {
@@ -90,6 +90,7 @@ export default [
                 component: addressSelect,
             },
             {
+                name: 'useCoupon',
                 path: 'useCoupon',  //使用优惠券
                 component: useCoupon,
             }

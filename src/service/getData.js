@@ -18,7 +18,6 @@ function apiFactory(api, params) {
     }
     var resource = Vue.resource(api.url, {}, customActions);
     return resource.foo(params).then(response => {
-        response.body.headers = response.headers;
         return response.body;
     });
 }
@@ -27,8 +26,7 @@ function apiFactory(api, params) {
 //     var customActions = {
 //         foo: {method: api.method, url: api.url},
 //     }
-//     console.log(params);
-//     var resource = Vue.resource(api.url, params, customActions);   //form格式提交参数
+//     var resource = Vue.resource(api.url, params, customActions);   //formData格式提交参数
 //     return resource.foo().then(response => {
 //         response.body.headers = response.headers;
 //         return response.body;
@@ -64,8 +62,9 @@ if (process.env.NODE_ENV == 'development') {    //开发环境
 
     var addOrder = (data) => apiFactory(API.add_order, data);
 
-    var getHomeData = () => setpromise(home);
-    // var getHomeData = () => apiFactory(API.get_homeData, {});
+    var addBuyNow = (data) => apiFactory(API.add_buyNow, data);
+
+    var getHomeData = () => apiFactory(API.get_homeData, {});
 
     var getCategoryData = () => apiFactory(API.get_categoryData, {});
 
@@ -79,6 +78,8 @@ if (process.env.NODE_ENV == 'development') {    //开发环境
 
     var getCommentData = (goods_id, p) => apiFactory(API.get_commentData, {goods_id: goods_id, p: p});
 
+    var addComment = (data) => apiFactory(API.add_comment, data);
+
     var getOrderDetail = (id) => apiFactory(API.get_orderDetail, {id: id});
 
     var getAddressData = (data) => apiFactory(API.get_addressData, data);
@@ -90,6 +91,8 @@ if (process.env.NODE_ENV == 'development') {    //开发环境
     var defaultAddressData  = (id) => apiFactory(API.default_addressData, {id: id});
 
     var postAddressEdit = (data) => apiFactory(API.post_addressEdit, data);
+
+    var useCouponCode = (data) => apiFactory(API.use_couponCode, data);
 
 }else{                                           //真实环境
     
@@ -110,8 +113,9 @@ if (process.env.NODE_ENV == 'development') {    //开发环境
 
     var addOrder = (data) => apiFactory(API.add_order, data);
 
-    var getHomeData = () => setpromise(home);
-    // var getHomeData = () => apiFactory(API.get_homeData, {});
+    var addBuyNow = (data) => apiFactory(API.add_buyNow, data);
+
+    var getHomeData = () => apiFactory(API.get_homeData, {});
     
     var getCategoryData = () => apiFactory(API.get_categoryData, {});
 
@@ -125,6 +129,10 @@ if (process.env.NODE_ENV == 'development') {    //开发环境
 
     var getCommentData = (goods_id, p) => apiFactory(API.get_commentData, {goods_id: goods_id, p: p});
 
+    var addComment = (data) => apiFactory(API.add_comment, data);
+
+    var getOrderDetail = (id) => apiFactory(API.get_orderDetail, {id: id});
+
     var getAddressData = (data) => apiFactory(API.get_addressData, data);
 
     var delAddressData  = (id) => apiFactory(API.del_addressData, {id: id});
@@ -135,12 +143,7 @@ if (process.env.NODE_ENV == 'development') {    //开发环境
 
     var postAddressEdit = (data) => apiFactory(API.post_addressEdit, data);
 
+    var useCouponCode = (data) => apiFactory(API.use_couponCode, data);
 }
 
-// /**
-//  * 以下Api接口不需要进行反向代理
-//  */
-
-// var sendLogin = (code, mobile, validate_token) => setpromise(login.userInfo);
-
-export { getUserData, getSearchData, getCartData, addCartData, changeCartData, delCartData, getOrderData, addOrder, getHomeData, getCategoryData, getBrandData, getCategoryListData, getBrandListData, getGoodsData, getCommentData, getOrderDetail, getAddressData, delAddressData, addAddressData, defaultAddressData, postAddressEdit }
+export { getUserData, getSearchData, getCartData, addCartData, changeCartData, delCartData, getOrderData, addOrder, addBuyNow, getHomeData, getCategoryData, getBrandData, getCategoryListData, getBrandListData, getGoodsData, getCommentData, addComment, getOrderDetail, getAddressData, delAddressData, addAddressData, defaultAddressData, postAddressEdit, useCouponCode }

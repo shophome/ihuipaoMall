@@ -4,7 +4,7 @@
             <span>下单时间：</span>
             <span>{{ data.time }}</span>
         </div>
-        <router-link :to="'/profile/myOrder/orderDetail?id='+data.order_id" tag="div" class="info" v-for="goods in data.goods_list">
+        <router-link :to="'/profile/myOrder/orderDetail?id='+data.order_id" tag="div" class="info" v-for="(goods, index) in data.goods_list" key="index">
             <div class="thumbnail">
                 <img :src="goods.img + '?imageView2/1/w/120/h/120/q/100'">
             </div>

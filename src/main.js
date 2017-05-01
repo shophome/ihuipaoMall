@@ -53,7 +53,7 @@ import BMessage from './plugins/BMessage/index'
 // Vue.use(ElementUI)
 Vue.use(MuseUI)
 Vue.use(Toasted)
-Vue.use(BMessage, {b: 2})
+Vue.use(BMessage)
 
 Vue.use(VueLazyload, {
     error: require('./images/loading.svg'),
@@ -73,13 +73,20 @@ Vue.http.interceptors.push((request, next)=> {
     if(!store.state.preventLoading) {    //某些情况http请求不需要loading动画
         store.commit('PAGE_LOADING', true);
     }
+    if(request.method === 'POST') {
+        if(store.state.token) {
+            request.headers.set('token', store.state.token);
+        }
+    }
     store.commit('LOADING', true);
 
     next((response=> {
-        console.log(response);
         if(!response.ok) {
             Vue.BMessage.show('网络出错！');
         };
+        if(response.body.token) {
+            store.commit('SAVE_TOKEN', response.body.token);
+        }
         store.commit('LOADING', false);
         setTimeout(function() {
             store.commit('PAGE_LOADING', false);

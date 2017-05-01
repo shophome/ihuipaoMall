@@ -41,8 +41,9 @@ export default {
             });
         }
     },
-    destroyed() {
+    beforeRouteLeave (to, from, next) {
         this.HEAD_TOP_TITLE(null);
+        next();
     },
     methods: {
         ...mapMutations(['LOADING','HEAD_TOP_TITLE','SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV','SAVE_BRAND']),

@@ -12,7 +12,7 @@
                         <div class="icon icon_choose" :class="{ icon_choosed : (item.selected === 1) }"></div>
                     </div>
                     <div class="pro-img">
-                        <img :src="item.img + '?imageView2/1/w/120/h/120/q/100'">
+                        <img :src="item.original_img + '?imageView2/1/w/120/h/120/q/100'">
                     </div>
                     <div class="pro-info">
                         <p class="name" @click="$router.push('/goods?id='+ item.goods_id +'')">{{ item.goods_name }}</p>
@@ -102,6 +102,11 @@ export default {
                 getCartData().then(res => {
                     vm.itemChecked = Clone(res.data.cartList);
                     vm.itemNum = res.data.total_price.num;
+                    for(let i in vm.itemChecked) {
+                        if(vm.itemChecked[i].goods_num > vm.itemChecked[i].store_count) {
+                            vm.itemChecked[i].goods_num = vm.itemChecked[i].store_count;
+                        }
+                    }
                 });
             } else {
                     vm.itemChecked = Clone(this.cart.list);
@@ -109,6 +114,8 @@ export default {
         })
     },
     beforeRouteLeave (to, from, next) {
+        this.HEAD_TOP_TITLE(null);
+        this.PREVENT_LOADING(false);
         if(this.login) {
             changeCartData(this.itemChecked).then(res => {
                 this.SAVE_CART(res.data);
@@ -136,10 +143,6 @@ export default {
         },300);
     },
     mounted() {
-    },
-    destroyed() {
-        this.HEAD_TOP_TITLE(null);
-        this.PREVENT_LOADING(false);
     },
     methods: {
         ...mapMutations(['LOADING','HEAD_TOP_TITLE', 'SHOW_HEADTOP','SHOW_HEADTOP_BACK','SHOW_HEADTOP_SEARCH','SHOW_FOOTNAV','REDUCE_CART','INIT_CART','SAVE_CART','PREVENT_LOADING']),
@@ -181,11 +184,36 @@ export default {
         closeDialog() {
             this.dialog = false;
         },
-        goPay() {
-            if(this.login) {
-                this.$router.push('/order');
+        checkSelected() {
+            let selectFlag = false;
+            let len = 0;
+            for(let i in this.itemChecked) {
+                len ++ ;
+                if(this.itemChecked[i].selected === 1) {
+                    selectFlag = true;
+                    break;
+                }
+            }
+            if(len === 0) {
+                return '请先加入商品'
             } else {
-                this.goLogin();
+                if(!selectFlag) {
+                    return '请选择商品'
+                } else {
+                    return false;
+                }
+            }
+        },
+        goPay() {
+            if(this.checkSelected()) {
+                this.$BMessage.show(this.checkSelected());
+                return false;
+            } else {
+                if(this.login) {
+                    this.$router.push('/order');
+                } else {
+                    this.goLogin();
+                }
             }
         },
         goLogin() {

@@ -125,7 +125,6 @@ export default {
             const navPicked = this.$refs['nav' + index][0];
             const listPicked = this.$refs['list' + index][0];
             const distanceToMid = navPicked.offsetLeft - this.navContainerWidth / 2;
-            // console.log(distanceToMid);
             this.navActive = index;
             //顶部菜单定位
             if(index > this.navLeftIdx && index < this.navRightIdx) {

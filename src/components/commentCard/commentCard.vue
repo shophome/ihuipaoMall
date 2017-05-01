@@ -42,7 +42,6 @@ export default {
     props: ['data'],
     watch: {
         data: function(val) {
-            console.log(val);
             this.commentData = val;
         },
     },
@@ -69,7 +68,6 @@ export default {
 .comment-card {
     @include paddingTB(.4rem, .4rem);
     background-color: #fff;
-    margin-bottom: 10px;
     .user {
         @include paddingLR;
         @include flefthoz;

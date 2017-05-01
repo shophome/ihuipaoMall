@@ -144,10 +144,10 @@ npm run build --report
     ├── package.json  <!--npm配置文件-->
     └── README.md  <!--说明文档-->
 ```
-##自定义Vue插件
+## 自定义Vue插件
 
 目录：src/plugins
-###BMessage（提示信息插件）
+### BMessage（提示信息插件）
 ```
 使用方法：
 
@@ -165,19 +165,19 @@ this.$BMessage.show('hello BMessage!!');
     1.商品页购物车按钮隐藏：'/goods/goodsinfo' , api加入返回参数：prompt: true
     2.订单详情页，未支付的跳转：'/user/order_detail' , api返回值data加入参数：pay_url: 'http://xx/xxx'作为去支付跳转链接
 
-##截图预览
-![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.43.56.png)
-![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.44.08.png)
-![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.44.23.png)
-![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.44.34.png)
-![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.44.45.png)
-![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.44.58.png)
-![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.45.24.png)
-![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.49.21.png)
-![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.49.50.png)
-![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.50.08.png)
-![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.52.25.png)
-![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.52.38.png)
-![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.52.46.png)
-![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.53.10.png)
-    
+## 截图预览
+
+![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.43.56.png?imageView2/1/w/320/q/100)
+![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.44.08.png?imageView2/1/w/320/q/100)
+![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.44.23.png?imageView2/1/w/320/q/100)
+![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.44.34.png?imageView2/1/w/320/q/100)
+![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.44.45.png?imageView2/1/w/320/q/100)
+![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.44.58.png?imageView2/1/w/320/q/100)
+![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.45.24.png?imageView2/1/w/320/q/100)
+![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.49.21.png?imageView2/1/w/320/q/100)
+![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.49.50.png?imageView2/1/w/320/q/100)
+![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.50.08.png?imageView2/1/w/320/q/100)
+![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.52.25.png?imageView2/1/w/320/q/100)
+![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.52.38.png?imageView2/1/w/320/q/100)
+![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.52.46.png?imageView2/1/w/320/q/100)
+![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.53.10.png?imageView2/1/w/320/q/100)

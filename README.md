@@ -4,6 +4,9 @@
 > 
 > [**在线预览**](http://t.cn/RXGYel7)
 
+Windows或Mac系统，访问[**Nodejs官网**](https://nodejs.org/)，安装LTS版本的
+node(v4.2.3及以上)，默认安装即可。
+
 ## Build Setup
 
 ``` bash
@@ -37,25 +40,25 @@ npm run build --report
     ├── screenshots   <!--参考截图-->
     ├── src  <!--开发资源目录-->
     │   ├── components  <!--vue单文件组件-->
-    │   │   ├── commentCard  
-    │   │   │   └── commentCard.vue         
+    │   │   ├── commentCard
+    │   │   │   └── commentCard.vue
     │   │   ├── couponCard 
     │   │   │   └── couponCard.vue
-    │   │   ├── footNav            
+    │   │   ├── footNav
     │   │   │   └── footNav.vue
-    │   │   ├── goodsCard              
+    │   │   ├── goodsCard
     │   │   │   └── goodsCard.vue
-    │   │   ├── headTop            
+    │   │   ├── headTop
     │   │   │   └── headTop.vue
-    │   │   ├── listNavbar             
+    │   │   ├── listNavbar
     │   │   │   └── listNavbar.vue
-    │   │   ├── loading            
+    │   │   ├── loading
     │   │   │   └── loading.vue
-    │   │   ├── orderCard              
+    │   │   ├── orderCard
     │   │   │   └── orderCard.vue
-    │   │   ├── pageLoading            
+    │   │   ├── pageLoading
     │   │   │   └── pageLoading.vue
-    │   │   └── topNavbar              
+    │   │   └── topNavbar
     │   │       └── topNavbar.vue
     │   ├── config
     │   │   ├── api.js  <!--api接口-->
@@ -111,7 +114,7 @@ npm run build --report
     │   │   │   └── index.js
     │   │   └── swiper.min.js  <!--swiper轮播插件-->
     │   ├── router  <!--路由配置-->
-    │   │   └── router.js   
+    │   │   └── router.js
     │   ├── service
     │   │   ├── tempdata  <!--mock数据-->
     │   │   │   ├── brand.js
@@ -146,7 +149,7 @@ npm run build --report
 目录：src/plugins
 ###BMessage（提示信息插件）
 ```
-使用方法：  
+使用方法：
 
 //main.js 入口文件引入
 import BMessage from './plugins/BMessage/index'
@@ -160,4 +163,5 @@ this.$BMessage.show('hello BMessage!!');
 ```
 ## 后续:
     1.商品页购物车按钮隐藏：'/goods/goodsinfo' , api加入返回参数：prompt: true
+    2.订单详情页，未支付的跳转：'/user/order_detail' , api返回值data加入参数：pay_url: 'http://xx/xxx'作为去支付跳转链接
     

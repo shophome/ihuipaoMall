@@ -170,6 +170,8 @@ this.$BMessage.show('hello BMessage!!');
 ![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.43.56.png?imageView2/1/w/300/h/493/q/100)
 ![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.44.08.png?imageView2/1/w/300/h/493/q/100)
 ![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.44.23.png?imageView2/1/w/300/h/493/q/100)
+![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.53.10.png?imageView2/1/w/300/h/493/q/100)
+![Screenshot](http://o9kkuebr4.bkt.clouddn.com/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%883.15.11.png?imageView2/1/w/300/h/493/q/100)
 ![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.44.34.png?imageView2/1/w/300/h/493/q/100)
 ![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.44.45.png?imageView2/1/w/300/h/493/q/100)
 ![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.44.58.png?imageView2/1/w/300/h/493/q/100)
@@ -181,3 +183,4 @@ this.$BMessage.show('hello BMessage!!');
 ![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.52.38.png?imageView2/1/w/300/h/493/q/100)
 ![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.52.46.png?imageView2/1/w/300/h/493/q/100)
 ![Screenshot](http://o9kkuebr4.bkt.clouddn.com/ihuipaomall%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-05-01%20%E4%B8%8B%E5%8D%882.53.10.png?imageView2/1/w/300/h/493/q/100)
+

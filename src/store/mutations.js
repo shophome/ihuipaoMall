@@ -119,9 +119,10 @@ export default {
                     goods_name : goods_name,
                     store_count : store_count,
                     goods_price : goods_price,
-                    img : img,
+                    original_img : img,
                     spec_key_name : spec_key_name,
-                    goods_num : goods_num
+                    goods_num : goods_num,
+                    selected : 1,
             };
         }
         state.cart.list = list;

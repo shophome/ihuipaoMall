@@ -94,7 +94,7 @@
                     </div>
                 </li>
             </ul>
-            <div class="goPay" v-if="data.order_info.order_status === '0'">去支付</div>
+            <div class="goPay" v-if="data.order_info.order_status === '0'" @click="goPay">去支付</div>
         </div>
     </div>
 </template>
@@ -120,11 +120,6 @@ export default {
     },
     created() {
     },
-    methods: {
-        handleTabChange (val) {
-            this.activeTab = val
-        },
-    },
     beforeRouteEnter (to, from, next) {
         next(vm => {
             vm.id = vm.$route.query.id;
@@ -132,6 +127,14 @@ export default {
                 vm.data = res.data;
             });
         })
+    },
+    methods: {
+        handleTabChange (val) {
+            this.activeTab = val
+        },
+        goPay() {
+            window.location.href = this.data.pay_url;
+        }
     },
 }
 </script>

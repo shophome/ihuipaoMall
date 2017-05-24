@@ -29,6 +29,9 @@
                 </li>
             </ul>
         </div>
+        <transition name="router-float" mode="out-in">
+            <router-view></router-view>
+        </transition>
     </div>
 </template>
 
@@ -95,6 +98,14 @@ export default {
 @mixin paddingTB($top, $bottom) {
     padding-top: $top;
     padding-bottom: $bottom;
+}
+
+.router-float-enter-active, .router-float-leave-active {
+    transition: all .2s;
+}
+.router-float-enter, .router-float-leave-active {
+    transform: translate3d(0, 30%, 0);
+    opacity: 0;
 }
 
 .icon {

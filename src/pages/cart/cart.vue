@@ -109,7 +109,11 @@ export default {
                     }
                 });
             } else {
-                    vm.itemChecked = Clone(this.cart.list);
+                    vm.itemChecked = Clone(vm.cart.list);
+                    vm.itemNum = 0;
+                    for(var i in vm.itemChecked) {
+                        vm.itemNum ++ ;
+                    }
             }
         })
     },
@@ -162,8 +166,8 @@ export default {
                 this.$delete(this.itemChecked, this.deleteId);
                 this.LOADING(false);
                 this.deleteId = '';
-                this.itemNum --;
                 this.closeDialog();
+                this.itemNum --;
             });
         },
         addCart(event, index) {

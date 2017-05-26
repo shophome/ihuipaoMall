@@ -109,11 +109,11 @@ export default {
                     }
                 });
             } else {
-                    vm.itemChecked = Clone(vm.cart.list);
-                    vm.itemNum = 0;
-                    for(var i in vm.itemChecked) {
-                        vm.itemNum ++ ;
-                    }
+                vm.itemChecked = Clone(vm.cart.list);
+                vm.itemNum = 0;
+                for(let i in vm.itemChecked) {
+                    vm.itemNum += vm.itemChecked[i].goods_num;
+                }
             }
         })
     },
@@ -158,17 +158,25 @@ export default {
             this.openDialog();
         },
         reduceCart() {
+            const _self = this;
             this.LOADING(true);
             let ids = this.deleteId;
-            delCartData(ids).then(res => {
-                this.REDUCE_CART(this.deleteId);
-                this.INIT_CART();
-                this.$delete(this.itemChecked, this.deleteId);
-                this.LOADING(false);
-                this.deleteId = '';
-                this.closeDialog();
-                this.itemNum --;
-            });
+            if(this.login) {
+                delCartData(ids).then(res => {
+                    reduce();
+                });
+            } else {
+                reduce();
+            }
+            function reduce() {
+                _self.REDUCE_CART(_self.deleteId);
+                _self.INIT_CART();
+                _self.$delete(_self.itemChecked, _self.deleteId);
+                _self.LOADING(false);
+                _self.deleteId = '';
+                _self.closeDialog();
+                _self.itemNum --;
+            }
         },
         addCart(event, index) {
             if(this.itemChecked[index].goods_num < this.itemChecked[index].store_count) {
